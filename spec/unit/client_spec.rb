@@ -33,7 +33,7 @@ module VCloudSdk
       existing_media_state = "busy"
       metadata_value = ""
       metadata_xml = ""
-      rest_client = mock("Rest Client")
+      rest_client = double("Rest Client")
       response_mapping = {
           :get => {
               Test::Response::ADMIN_VCLOUD_LINK => lambda {
@@ -432,7 +432,7 @@ module VCloudSdk
 
     def create_mock_client
       @rest_connection = mock_rest_connection()
-      file_uploader = mock("File Uploader")
+      file_uploader = double("File Uploader")
       file_uploader.stub(:upload) do
         @rest_connection.vapp_state = @upload_file_state == "success" ?
           "disks_uploaded" : "disks_upload_failed"
@@ -450,7 +450,7 @@ module VCloudSdk
     end
 
     def create_mock_ovf_directory(string_io)
-      directory = mock("Directory")
+      directory = double("Directory")
       # Actual content of the OVF is irrelevant as long as the client gives
       # back the same one given to it
       ovf_string = "ovf_string"
@@ -484,7 +484,7 @@ module VCloudSdk
     describe "VCD Adapter client", :positive, :min, :all do
       it "logs into organization with usename and password and get the " +
          "organization VDC" do
-        conn = mock("Connection")
+        conn = double("Connection")
         root_session = Xml::WrapperFactory.wrap_document(
           Test::Response::SESSION)
         vcloud_response = Xml::WrapperFactory.wrap_document(
