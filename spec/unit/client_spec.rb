@@ -33,7 +33,7 @@ module VCloudSdk
       existing_media_state = "busy"
       metadata_value = ""
       metadata_xml = ""
-      rest_client = double("Rest Client")
+      rest_client = double('Rest Client')
       response_mapping = {
           :get => {
               Test::Response::ADMIN_VCLOUD_LINK => lambda {
