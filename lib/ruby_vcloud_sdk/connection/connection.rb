@@ -1,33 +1,32 @@
-require "base64"
-require "rest_client"
+require 'base64'
+require 'rest_client'
 
 module VCloudSdk
   module Connection
 
     class Connection
-      SECURITY_CHECK = "/cloud/security_check"
-      ACCEPT = "application/*+xml;version=5.1"
+      ACCEPT = 'application/*+xml;version=5.1'
 
-      def initialize(hostname_port, organization, request_timeout = nil,
+      def initialize(url, request_timeout = nil,
           rest_client = nil, site = nil, file_uploader = nil)
-        @organization = organization
         @logger = Config.logger
         @rest_logger = Config.rest_logger
         @rest_throttle = Config.rest_throttle
         rest_client = RestClient unless rest_client
         rest_client.log = @rest_logger
         request_timeout = 60 unless request_timeout
-        @site = site.nil? ? rest_client::Resource.new(hostname_port,
-          :timeout => request_timeout) : site
-        @file_uploader = file_uploader.nil? ? FileUploader : file_uploader
+        @site = site || rest_client::Resource.new(
+                          url,
+                          timeout: request_timeout)
+        @file_uploader = file_uploader || FileUploader
       end
 
       def connect(username, password)
-        login = "#{username}@#{@organization}"
-        login_password = "#{login}:#{password}"
+        login_password = "#{username}:#{password}"
         auth_header_value = "Basic #{Base64.encode64(login_password)}"
+        # TODO: call 'api/versions' first
         response = @site["/api/sessions"].post(
-          {:Authorization=>auth_header_value, :Accept=>ACCEPT})
+          { Authorization: auth_header_value, Accept: ACCEPT })
         @logger.debug(response)
         @cookies = response.cookies
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
@@ -130,8 +129,8 @@ module VCloudSdk
       end
 
       def delay()
-        @rest_throttle["min"] + rand(@rest_throttle["max"] -
-          @rest_throttle["min"])
+        @rest_throttle[:min] + rand(@rest_throttle[:max] -
+          @rest_throttle[:min])
       end
 
       def get_nested_resource(destination)
