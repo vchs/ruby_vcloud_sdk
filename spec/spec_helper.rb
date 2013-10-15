@@ -60,8 +60,14 @@ module VCloudSdk
         end
         rest_logger
       end
-    end
 
+      def verify_settings(obj, settings)
+        settings.each do |instance_variable_name, target_value|
+          instance_variable = obj.instance_variable_get(instance_variable_name)
+          instance_variable.should == target_value
+        end
+      end
+    end
   end
 
   module Xml

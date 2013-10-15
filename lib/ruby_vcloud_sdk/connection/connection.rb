@@ -1,11 +1,13 @@
-require 'base64'
-require 'rest_client'
+require "base64"
+require "rest_client"
 
 module VCloudSdk
   module Connection
 
     class Connection
-      ACCEPT = 'application/*+xml;version=5.1'
+      ACCEPT = "application/*+xml;version=5.1"
+
+      private_constant :ACCEPT
 
       def initialize(url, request_timeout = nil,
           rest_client = nil, site = nil, file_uploader = nil)
@@ -27,7 +29,7 @@ module VCloudSdk
       def connect(username, password)
         login_password = "#{username}:#{password}"
         auth_header_value = "Basic #{Base64.encode64(login_password)}"
-        # TODO: call 'api/versions' first
+        # TODO: call "api/versions" first
         response = @site["/api/sessions"].post(
             Authorization: auth_header_value, Accept: ACCEPT)
         @logger.debug(response)
@@ -50,7 +52,7 @@ module VCloudSdk
         Xml::WrapperFactory.wrap_document(response)
       end
 
-      def post(destination, data, content_type = '*/*')
+      def post(destination, data, content_type = "*/*")
         @rest_logger.info "#{__method__.to_s.upcase} #{delay}\t " +
                            "#{self.class.get_href(destination)}"
         sleep(delay)
@@ -64,7 +66,7 @@ module VCloudSdk
             cookies: @cookies,
             content_type: content_type
         })
-        raise ApiRequestError if http_error?(response)
+        fail ApiRequestError if http_error?(response)
         @rest_logger.debug(response)
         Xml::WrapperFactory.wrap_document(response)
       end
@@ -123,11 +125,11 @@ module VCloudSdk
       private
 
       def construct_rest_logger
-        @logger.debug('constructing rest_logger')
+        @logger.debug("constructing rest_logger")
         rest_log_filename = File.join(
             File.dirname(@logger.instance_eval { @logdev }.dev.path),
-            'rest')
-        log_file = File.open(rest_log_filename, 'w')
+            "rest")
+        log_file = File.open(rest_log_filename, "w")
         log_file.sync = true
 
         @rest_logger = Logger.new(log_file || STDOUT)
