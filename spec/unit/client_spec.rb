@@ -1,49 +1,12 @@
 require 'spec_helper'
-require_relative 'client_response'
+require_relative 'mocks/client_response'
+require_relative 'mocks/response_mapping'
 
 module VCloudSdk
   logger = Config.logger
   Config.configure(
-  {
       logger: logger,
-      rest_throttle: { min: 0, max: 1 }
-  })
-
-  response_mapping = {
-      get: {
-          Test::Response::ADMIN_VCLOUD_LINK =>
-              lambda do |url, headers|
-                Test::Response::VCLOUD_RESPONSE
-              end,
-          Test::Response::ADMIN_ORG_LINK =>
-              lambda do |url, headers|
-                Test::Response::ADMIN_ORG_RESPONSE
-              end
-      },
-      post: {
-          Test::Response::LOGIN_LINK =>
-              lambda do |url, data, headers|
-                session_object = Test::Response::SESSION
-
-                def session_object.cookies
-                  { 'vcloud-token' => 'fake-cookie' }
-                end
-
-                session_object
-              end
-      }
-  }
-
-  def response_mapping.get_mapping(http_method, url)
-    mapping = self[http_method][url]
-    if mapping.nil?
-      err_msg = "Response mapping not found for #{http_method} and #{url}"
-      Config.logger.error(err_msg)
-      raise err_msg
-    end
-
-    mapping
-  end
+      rest_throttle: { min: 0, max: 1 })
 
   describe Client, :min, :all do
 
@@ -59,11 +22,12 @@ module VCloudSdk
     def mock_rest_connection
       rest_client = double('Rest Client')
       rest_client.stub(:get) do |headers|
-        response_mapping.get_mapping(:get, build_url).call(build_url, headers)
+        Test::ResponseMapping.get_mapping(:get, build_url).call(build_url,
+                                                                headers)
       end
       rest_client.stub(:post) do |data, headers|
-        response_mapping.get_mapping(:post, build_url).call(build_url, data,
-                                                            headers)
+        Test::ResponseMapping.get_mapping(:post, build_url).call(build_url,
+                                                                 data, headers)
       end
       rest_client.stub(:[]) do |value|
         @resource = value
