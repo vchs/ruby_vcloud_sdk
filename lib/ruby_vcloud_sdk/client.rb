@@ -35,17 +35,10 @@ module VCloudSdk
 
     private_constant :RETRIES, :TIME_LIMIT_SEC, :REST_THROTTLE
 
-    def initialize(url, username, password, option = {}, logger = nil)
+    def initialize(url, username, password, options = {}, logger = nil)
       @logger = logger || Logger.new(STDOUT)
-      @retries = option[:retries] || RETRIES
-      @time_limit = option[:time_limit_sec] || TIME_LIMIT_SEC
-
-      construct_rest_logger
-      Config.configure(
-      {
-        rest_logger: @rest_logger,
-        rest_throttle: option[:rest_throttle] || REST_THROTTLE
-      })
+      @retries = options[:retries] || RETRIES
+      @time_limit = options[:time_limit_sec] || TIME_LIMIT_SEC
 
       @connection = Connection::Connection.new(
           @url,
@@ -904,19 +897,6 @@ module VCloudSdk
           return t
         end
       end
-    end
-
-    def construct_rest_logger
-      @logger.debug('constructing rest_logger')
-      rest_log_filename = File.join(
-          File.dirname(@logger.instance_eval { @logdev }.dev.path),
-          'rest')
-      log_file = File.open(rest_log_filename, 'w')
-      log_file.sync = true
-
-      @rest_logger = Logger.new(log_file || STDOUT)
-      @rest_logger.level = @logger.level
-      @rest_logger.formatter = @logger.formatter
     end
   end
 
