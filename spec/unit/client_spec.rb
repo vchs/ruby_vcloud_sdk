@@ -20,6 +20,7 @@ module VCloudSdk
 
       def mock_rest_connection
         rest_client = double("Rest Client")
+        site = double("site")
         rest_client.stub(:get) do |headers|
           ResponseMapping.get_mapping(:get, build_url).call(build_url,
                                                             headers)
@@ -28,12 +29,12 @@ module VCloudSdk
           ResponseMapping.get_mapping(:post, build_url).call(build_url,
                                                              data, headers)
         end
-        rest_client.stub(:[]) do |value|
+        site.stub(:[]) do |value|
           @resource = value
           rest_client
         end
 
-        conn = Connection::Connection.new(url, nil, nil, rest_client)
+        conn = Connection::Connection.new(url, nil, nil, site)
       end
 
       describe ".initialize" do
