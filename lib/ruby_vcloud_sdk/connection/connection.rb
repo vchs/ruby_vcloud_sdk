@@ -10,8 +10,11 @@ module VCloudSdk
       def initialize(url, request_timeout = nil,
           rest_client = nil, site = nil, file_uploader = nil)
         @logger = Config.logger
-        @rest_logger = Config.rest_logger
         @rest_throttle = Config.rest_throttle
+
+        construct_rest_logger
+        Config.configure(rest_logger: @rest_logger)
+
         rest_client = RestClient unless rest_client
         rest_client.log = @rest_logger
         request_timeout = 60 unless request_timeout
@@ -26,7 +29,7 @@ module VCloudSdk
         auth_header_value = "Basic #{Base64.encode64(login_password)}"
         # TODO: call 'api/versions' first
         response = @site["/api/sessions"].post(
-          { Authorization: auth_header_value, Accept: ACCEPT })
+            Authorization: auth_header_value, Accept: ACCEPT)
         @logger.debug(response)
         @cookies = response.cookies
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
@@ -40,10 +43,9 @@ module VCloudSdk
         @rest_logger.info "#{__method__.to_s.upcase} #{delay}\t " +
                            "#{self.class.get_href(destination)}"
         sleep(delay)
-        response = @site[get_nested_resource(destination)].get({
-            :Accept=>ACCEPT,
-            :cookies=>@cookies
-        })
+        response = @site[get_nested_resource(destination)].get(
+            Accept: ACCEPT,
+            cookies: @cookies)
         @rest_logger.debug(response)
         Xml::WrapperFactory.wrap_document(response)
       end
@@ -58,9 +60,9 @@ module VCloudSdk
         end
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
         response = @site[get_nested_resource(destination)].post(data.to_s, {
-            :Accept=>ACCEPT,
-            :cookies=>@cookies,
-            :content_type=>content_type
+            Accept: ACCEPT,
+            cookies: @cookies,
+            content_type: content_type
         })
         raise ApiRequestError if http_error?(response)
         @rest_logger.debug(response)
@@ -119,6 +121,20 @@ module VCloudSdk
       end
 
       private
+
+      def construct_rest_logger
+        @logger.debug('constructing rest_logger')
+        rest_log_filename = File.join(
+            File.dirname(@logger.instance_eval { @logdev }.dev.path),
+            'rest')
+        log_file = File.open(rest_log_filename, 'w')
+        log_file.sync = true
+
+        @rest_logger = Logger.new(log_file || STDOUT)
+        @rest_logger.level = @logger.level
+        @rest_logger.formatter = @logger.formatter
+      end
+
       def log_exceptions(e)
         if e.is_a? RestClient::Exception
           @logger.error("HTTP Code: #{e.http_code}")
