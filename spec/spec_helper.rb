@@ -18,7 +18,7 @@ module VCloudSdk
       end
 
       def test_configuration
-        @@test_config ||= Psych.load_file(spec_asset("test-config.yml"))
+        @@test_config ||= YAML.load_file(spec_asset("test-config.yml"))
       end
 
       def properties
