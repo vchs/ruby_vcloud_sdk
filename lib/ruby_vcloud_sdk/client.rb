@@ -1,5 +1,5 @@
-require 'rest_client' # Need this for the exception classes
-require 'set'
+require "rest_client" # Need this for the exception classes
+require "set"
 
 module VCloudSdk
 
@@ -39,6 +39,7 @@ module VCloudSdk
       @logger = logger || Logger.new(STDOUT)
       @retries = options[:retries] || RETRIES
       @time_limit = options[:time_limit_sec] || TIME_LIMIT_SEC
+      Config.configure(rest_throttle: options[:rest_throttle] || REST_THROTTLE)
 
       @connection = Connection::Connection.new(
           @url,
