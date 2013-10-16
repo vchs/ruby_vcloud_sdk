@@ -3,129 +3,129 @@ require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
 require "nokogiri/diff"
 
-module VCloudSdk
-  module Test
-    logger = Config.logger
+logger = VCloudSdk::Config.logger
 
-    describe Client, :min, :all do
+describe VCloudSdk::Client, :min, :all do
 
-      let(:url) { "https://10.147.0.0:8443" }
-      let(:username) { "cfadmin" }
-      let(:password) { "akimbi" }
-      let(:response_mapping) { response_mapping }
+  let(:url) { "https://10.147.0.0:8443" }
+  let(:username) { "cfadmin" }
+  let(:password) { "akimbi" }
+  let(:response_mapping) { response_mapping }
+  let(:conn) { double("Connection") }
+  let(:root_session) do
+    VCloudSdk::Xml::WrapperFactory
+    .wrap_document(VCloudSdk::Test::Response::SESSION)
+  end
 
-      def build_url
-        url + @resource
-      end
+  let(:vcloud_response) do
+    VCloudSdk::Xml::WrapperFactory
+    .wrap_document(VCloudSdk::Test::Response::VCLOUD_RESPONSE)
+  end
 
-      def mock_rest_connection
-        rest_client = double("Rest Client")
-        site = double("site")
-        rest_client.stub(:get) do |headers|
-          ResponseMapping.get_mapping(:get, build_url).call(build_url,
-                                                            headers)
-        end
-        rest_client.stub(:post) do |data, headers|
-          ResponseMapping.get_mapping(:post, build_url).call(build_url,
-                                                             data, headers)
-        end
-        site.stub(:[]) do |value|
-          @resource = value
-          rest_client
-        end
+  let(:admin_org_response) do
+    VCloudSdk::Xml::WrapperFactory
+    .wrap_document(VCloudSdk::Test::Response::ADMIN_ORG_RESPONSE)
+  end
 
-        conn = Connection::Connection.new(url, nil, nil, site)
-      end
+  def build_url
+    url + @resource
+  end
 
-      describe ".initialize" do
-        it "set up connection successfully" do
-          Config.configure(
-              logger: logger,
-              rest_throttle: { min: 0, max: 1 })
+  def mock_rest_connection
+    rest_client = double("Rest Client")
+    site = double("site")
+    rest_client.stub(:get) do |headers|
+      VCloudSdk::Test::ResponseMapping
+      .get_mapping(:get, build_url).call(build_url, headers)
+    end
+    rest_client.stub(:post) do |data, headers|
+      VCloudSdk::Test::ResponseMapping
+      .get_mapping(:post, build_url).call(build_url, data, headers)
+    end
+    site.stub(:[]) do |value|
+      @resource = value
+      rest_client
+    end
 
-          conn = mock_rest_connection
-          Connection::Connection.should_receive(:new).with(anything, anything).once.and_return conn
-          Client.new(url, username, password, {}, logger)
-        end
+    VCloudSdk::Connection::Connection.new(url, nil, nil, site)
+  end
 
-        it "use default settings if not specified in input arguments" do
-          conn = double("Connection")
-          root_session = Xml::WrapperFactory.wrap_document(
-              Response::SESSION)
-          vcloud_response = Xml::WrapperFactory.wrap_document(
-              Response::VCLOUD_RESPONSE)
-          admin_org_response = Xml::WrapperFactory.wrap_document(
-              Response::ADMIN_ORG_RESPONSE)
+  describe "#initialize" do
+    it "set up connection successfully" do
+      VCloudSdk::Config.configure(
+          logger: logger,
+          rest_throttle: { min: 0, max: 1 })
 
-          Connection::Connection.should_receive(:new).with(anything, anything).once.and_return conn
-          conn.should_receive(:connect).with(username, password).once.ordered.and_return(
-              root_session)
-          conn.should_receive(:get).with(root_session.admin_root).once.ordered.and_return(
-              vcloud_response)
-          conn.should_receive(:get).with(vcloud_response.organization).once.ordered.and_return(
-              admin_org_response)
-          client = Client.new(nil, username, password, {}, logger)
-          Test.verify_settings client,
-                               :@retries => Client.const_get(:RETRIES),
-                               :@time_limit => Client.const_get(:TIME_LIMIT_SEC)
+      connection = mock_rest_connection
+      VCloudSdk::Connection::Connection.should_receive(:new)
+      .with(anything, anything).once.and_return connection
+      described_class.new(url, username, password, {}, logger)
+    end
 
-          Config.rest_throttle.should eq Client.const_get(:REST_THROTTLE)
-        end
+    it "use default settings if not specified in input arguments" do
+      VCloudSdk::Connection::Connection.should_receive(:new)
+      .with(anything, anything).once.and_return conn
+      conn.should_receive(:connect).with(username, password)
+      .once.ordered.and_return(root_session)
+      conn.should_receive(:get).with(root_session.admin_root)
+      .once.ordered.and_return(vcloud_response)
+      conn.should_receive(:get).with(vcloud_response.organization)
+      .once.ordered.and_return(admin_org_response)
+      client = described_class.new(nil, username, password, {}, logger)
+      VCloudSdk::Test.verify_settings client,
+                                      :@retries => VCloudSdk::Client
+                                      .const_get(:RETRIES),
+                                      :@time_limit => VCloudSdk::Client
+                                      .const_get(:TIME_LIMIT_SEC)
 
-        it "use settings in input arguments" do
-          conn = double("Connection")
-          root_session = Xml::WrapperFactory.wrap_document(
-              Response::SESSION)
-          vcloud_response = Xml::WrapperFactory.wrap_document(
-              Response::VCLOUD_RESPONSE)
-          admin_org_response = Xml::WrapperFactory.wrap_document(
-              Response::ADMIN_ORG_RESPONSE)
+      VCloudSdk::Config.rest_throttle.should eq VCloudSdk::Client.const_get(:REST_THROTTLE)
+    end
 
-          Connection::Connection.should_receive(:new).with(anything, anything).once.and_return conn
-          conn.should_receive(:connect).with(username, password).once.ordered.and_return(
-              root_session)
-          conn.should_receive(:get).with(root_session.admin_root).once.ordered.and_return(
-              vcloud_response)
-          conn.should_receive(:get).with(vcloud_response.organization).once.ordered.and_return(
-              admin_org_response)
+    it "use settings in input arguments" do
+      VCloudSdk::Connection::Connection.should_receive(:new)
+      .with(anything, anything).once.and_return conn
+      conn.should_receive(:connect).with(username, password)
+      .once.ordered.and_return(root_session)
+      conn.should_receive(:get).with(root_session.admin_root)
+      .once.ordered.and_return(vcloud_response)
+      conn.should_receive(:get).with(vcloud_response.organization)
+      .once.ordered.and_return(admin_org_response)
 
-          retries =
-              {
-                  default: 5,
-                  upload_vapp_files: 7,
-                  cpi: 1
-              }
+      retries =
+          {
+              default: 5,
+              upload_vapp_files: 7,
+              cpi: 1
+          }
 
-          time_limit_sec =
-              {
-                  default: 120,
-                  delete_vapp_template: 120,
-                  delete_vapp: 120,
-                  delete_media: 120,
-                  instantiate_vapp_template: 300,
-                  power_on: 600,
-                  power_off: 600,
-                  undeploy: 720,
-                  process_descriptor_vapp_template: 300,
-                  http_request: 240
-              }
+      time_limit_sec =
+          {
+              default: 120,
+              delete_vapp_template: 120,
+              delete_vapp: 120,
+              delete_media: 120,
+              instantiate_vapp_template: 300,
+              power_on: 600,
+              power_off: 600,
+              undeploy: 720,
+              process_descriptor_vapp_template: 300,
+              http_request: 240
+          }
 
-          rest_throttle =
-              {
-                  min: 0,
-                  max: 1
-              }
+      rest_throttle =
+          {
+              min: 0,
+              max: 1
+          }
 
-          options = { retries: retries, time_limit_sec: time_limit_sec, rest_throttle: rest_throttle }
-          client = Client.new(nil, username, password,
-                              options, logger)
-          Test.verify_settings client,
-                               :@retries => retries,
-                               :@time_limit => time_limit_sec
+      options = { retries: retries, time_limit_sec: time_limit_sec, rest_throttle: rest_throttle }
+      client = described_class.new(nil, username, password,
+                                   options, logger)
+      VCloudSdk::Test.verify_settings client,
+                                      :@retries => retries,
+                                      :@time_limit => time_limit_sec
 
-          Config.rest_throttle.should eq rest_throttle
-        end
-      end
+      VCloudSdk::Config.rest_throttle.should eq rest_throttle
     end
   end
 end
