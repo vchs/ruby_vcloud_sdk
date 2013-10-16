@@ -6,32 +6,29 @@ module VCloudSdk
   class Client
     attr_reader :ovdc
 
-    RETRIES =
-        {
-            default: 5,
-            upload_vapp_files: 7,
-            cpi: 1
-        }
+    RETRIES = {
+      default: 5,
+      upload_vapp_files: 7,
+      cpi: 1,
+    }
 
-    TIME_LIMIT_SEC =
-        {
-            default: 120,
-            delete_vapp_template: 120,
-            delete_vapp: 120,
-            delete_media: 120,
-            instantiate_vapp_template: 300,
-            power_on: 600,
-            power_off: 600,
-            undeploy: 720,
-            process_descriptor_vapp_template: 300,
-            http_request: 240
-        }
+    TIME_LIMIT_SEC = {
+      default: 120,
+      delete_vapp_template: 120,
+      delete_vapp: 120,
+      delete_media: 120,
+      instantiate_vapp_template: 300,
+      power_on: 600,
+      power_off: 600,
+      undeploy: 720,
+      process_descriptor_vapp_template: 300,
+      http_request: 240,
+    }
 
-    REST_THROTTLE =
-        {
-            min: 0,
-            max: 1
-        }
+    REST_THROTTLE = {
+      min: 0,
+      max: 1,
+    }
 
     private_constant :RETRIES, :TIME_LIMIT_SEC, :REST_THROTTLE
 
