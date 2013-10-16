@@ -6,35 +6,54 @@ module VCloudSdk
   class Client
     attr_reader :ovdc
 
-    def initialize(url, username, password, entities, control,
-        connection = nil)
-      @logger = Config.logger
-      @url = url
-      @organization = entities["organization"]
-      @ovdc_name = entities["virtual_datacenter"]
-      @vapp_catalog_name = entities["vapp_catalog"]
-      @media_catalog_name = entities["media_catalog"]
-      @control = control
-      @retries = @control["retries"]
-      @time_limit = @control["time_limit_sec"]
-      construct_rest_logger
-      Config.configure({ "rest_logger" => @rest_logger,
-        "rest_throttle" => control["rest_throttle"] })
+    RETRIES =
+        {
+            default: 5,
+            upload_vapp_files: 7,
+            cpi: 1
+        }
 
-      if connection
-        @connection = connection
-      else
-        @connection = Connection::Connection.new(@url, @organization,
-          @time_limit["http_request"])
-      end
+    TIME_LIMIT_SEC =
+        {
+            default: 120,
+            delete_vapp_template: 120,
+            delete_vapp: 120,
+            delete_media: 120,
+            instantiate_vapp_template: 300,
+            power_on: 600,
+            power_off: 600,
+            undeploy: 720,
+            process_descriptor_vapp_template: 300,
+            http_request: 240
+        }
+
+    REST_THROTTLE =
+        {
+            min: 0,
+            max: 1
+        }
+
+    private_constant :RETRIES, :TIME_LIMIT_SEC, :REST_THROTTLE
+
+    def initialize(url, username, password, options = {}, logger = nil)
+      @logger = logger || Logger.new(STDOUT)
+      @retries = options[:retries] || RETRIES
+      @time_limit = options[:time_limit_sec] || TIME_LIMIT_SEC
+      Config.configure(rest_throttle: options[:rest_throttle] || REST_THROTTLE)
+
+      @connection = Connection::Connection.new(
+          @url,
+          @time_limit[:http_request])
       @root = @connection.connect(username, password)
       @admin_root = @connection.get(@root.admin_root)
       @entity_resolver_link = @root.entity_resolver.href
       # We assume the organization does not change often so we can get it at
       # login and cache it
-      @admin_org = @connection.get(@admin_root.organization(@organization))
-      @logger.info("Successfully connected.")
+      @admin_org = @connection.get(@admin_root.organization)
+      @logger.info('Successfully connected.')
     end
+
+    private
 
     def get_catalog_vapp(id)
       resolve_entity(id)
@@ -499,8 +518,6 @@ module VCloudSdk
       catalog = @connection.get(@admin_org.catalog(name))
     end
 
-    private
-
     ERROR_STATUSES = [Xml::TASK_STATUS[:ABORTED], Xml::TASK_STATUS[:ERROR],
       Xml::TASK_STATUS[:CANCELED]]
     SUCCESS_STATUS = [Xml::TASK_STATUS[:SUCCESS]]
@@ -881,18 +898,6 @@ module VCloudSdk
           return t
         end
       end
-    end
-
-    def construct_rest_logger
-      @logger.debug("constructing rest_logger")
-      rest_log_filename = File.join(File.dirname(@logger.instance_eval {
-        @logdev }.dev.path), "rest")
-      log_file = File.open(rest_log_filename, "w")
-      log_file.sync = true
-
-      @rest_logger = Logger.new(log_file || STDOUT)
-      @rest_logger.level = @logger.level
-      @rest_logger.formatter = @logger.formatter
     end
   end
 

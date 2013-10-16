@@ -5,29 +5,33 @@ module VCloudSdk
   module Connection
 
     class Connection
-      SECURITY_CHECK = "/cloud/security_check"
       ACCEPT = "application/*+xml;version=5.1"
 
-      def initialize(hostname_port, organization, request_timeout = nil,
+      private_constant :ACCEPT
+
+      def initialize(url, request_timeout = nil,
           rest_client = nil, site = nil, file_uploader = nil)
-        @organization = organization
         @logger = Config.logger
-        @rest_logger = Config.rest_logger
         @rest_throttle = Config.rest_throttle
+
+        construct_rest_logger
+        Config.configure(rest_logger: @rest_logger)
+
         rest_client = RestClient unless rest_client
         rest_client.log = @rest_logger
         request_timeout = 60 unless request_timeout
-        @site = site.nil? ? rest_client::Resource.new(hostname_port,
-          :timeout => request_timeout) : site
-        @file_uploader = file_uploader.nil? ? FileUploader : file_uploader
+        @site = site || rest_client::Resource.new(
+                          url,
+                          timeout: request_timeout)
+        @file_uploader = file_uploader || FileUploader
       end
 
       def connect(username, password)
-        login = "#{username}@#{@organization}"
-        login_password = "#{login}:#{password}"
+        login_password = "#{username}:#{password}"
         auth_header_value = "Basic #{Base64.encode64(login_password)}"
+        # TODO: call "api/versions" first
         response = @site["/api/sessions"].post(
-          {:Authorization=>auth_header_value, :Accept=>ACCEPT})
+            Authorization: auth_header_value, Accept: ACCEPT)
         @logger.debug(response)
         @cookies = response.cookies
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
@@ -41,15 +45,14 @@ module VCloudSdk
         @rest_logger.info "#{__method__.to_s.upcase} #{delay}\t " +
                            "#{self.class.get_href(destination)}"
         sleep(delay)
-        response = @site[get_nested_resource(destination)].get({
-            :Accept=>ACCEPT,
-            :cookies=>@cookies
-        })
+        response = @site[get_nested_resource(destination)].get(
+            Accept: ACCEPT,
+            cookies: @cookies)
         @rest_logger.debug(response)
         Xml::WrapperFactory.wrap_document(response)
       end
 
-      def post(destination, data, content_type = '*/*')
+      def post(destination, data, content_type = "*/*")
         @rest_logger.info "#{__method__.to_s.upcase} #{delay}\t " +
                            "#{self.class.get_href(destination)}"
         sleep(delay)
@@ -59,11 +62,11 @@ module VCloudSdk
         end
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
         response = @site[get_nested_resource(destination)].post(data.to_s, {
-            :Accept=>ACCEPT,
-            :cookies=>@cookies,
-            :content_type=>content_type
+            Accept: ACCEPT,
+            cookies: @cookies,
+            content_type: content_type
         })
-        raise ApiRequestError if http_error?(response)
+        fail ApiRequestError if http_error?(response)
         @rest_logger.debug(response)
         Xml::WrapperFactory.wrap_document(response)
       end
@@ -120,6 +123,20 @@ module VCloudSdk
       end
 
       private
+
+      def construct_rest_logger
+        @logger.debug("constructing rest_logger")
+        rest_log_filename = File.join(
+            File.dirname(@logger.instance_eval { @logdev }.dev.path),
+            "rest")
+        log_file = File.open(rest_log_filename, "w")
+        log_file.sync = true
+
+        @rest_logger = Logger.new(log_file || STDOUT)
+        @rest_logger.level = @logger.level
+        @rest_logger.formatter = @logger.formatter
+      end
+
       def log_exceptions(e)
         if e.is_a? RestClient::Exception
           @logger.error("HTTP Code: #{e.http_code}")
@@ -130,8 +147,8 @@ module VCloudSdk
       end
 
       def delay()
-        @rest_throttle["min"] + rand(@rest_throttle["max"] -
-          @rest_throttle["min"])
+        @rest_throttle[:min] + rand(@rest_throttle[:max] -
+          @rest_throttle[:min])
       end
 
       def get_nested_resource(destination)
