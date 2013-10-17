@@ -39,7 +39,7 @@ module VCloudSdk
       Config.configure(rest_throttle: options[:rest_throttle] || REST_THROTTLE)
 
       @connection = Connection::Connection.new(
-          @url,
+          url,
           @time_limit[:http_request])
       @root = @connection.connect(username, password)
       @admin_root = @connection.get(@root.admin_root)
