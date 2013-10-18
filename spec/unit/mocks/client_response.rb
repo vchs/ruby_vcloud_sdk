@@ -49,10 +49,40 @@ module VCloudSdk
         INDY_DISK_URL = "#{URL}/api/disk/#{INDY_DISK_ID}"
         INDY_DISK_SIZE = 200
         SCSI_CONTROLLER_ID = "2"
+        SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
         ORG_LINK = "#{URL}/api/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
 
         SESSION = (File.read(Test.spec_asset("session.xml")) %
           [USERNAME, ORGANIZATION, URL, URL, ORGANIZATION, ORG_LINK, URL, URL, URL]).strip
+
+        SUPPORTED_VERSIONS_RESPONSE = (File.read(Test.spec_asset("supported_versions_response.xml")) %
+          [URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,]).strip
 
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
             [ORGANIZATION, URL, OVDC, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,

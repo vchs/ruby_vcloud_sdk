@@ -5,7 +5,7 @@ module VCloudSdk
   module Connection
 
     class Connection
-      ACCEPT = "application/*+xml;version=5.1"
+      ACCEPT = "application/*+xml;version=#{VCloudSdk::Client::VCLOUD_VERSION_NUMBER}"
 
       private_constant :ACCEPT
 
@@ -29,8 +29,7 @@ module VCloudSdk
       def connect(username, password)
         login_password = "#{username}:#{password}"
         auth_header_value = "Basic #{Base64.encode64(login_password)}"
-        # TODO: call "api/versions" first
-        response = @site["/api/sessions"].post(
+        response = @site[login_url].post(
             Authorization: auth_header_value, Accept: ACCEPT)
         @logger.debug(response)
         @cookies = response.cookies
@@ -124,6 +123,31 @@ module VCloudSdk
 
       private
 
+      def login_url
+        return @login_url if @login_url
+        default_login_url = "/api/sessions"
+
+        begin
+          response = get("/api/versions")
+          url_node = wrap_response(response)
+          if url_node.nil?
+            @logger.warn "Unable to find version=#{VCLOUD_VERSION_NUMBER}. Default to #{default_login_url}"
+            @login_url = default_login_url
+          else
+            @login_url = url_node.login_url.content
+          end
+        rescue => ex
+          @logger.warn %Q{
+            Caught exception when retrieving login url:
+            #{ex.to_s}"
+
+            Default to #{default_login_url}
+          }
+
+          @login_url = default_login_url
+        end
+      end
+
       def construct_rest_logger
         @logger.debug("constructing rest_logger")
         rest_log_filename = File.join(
@@ -146,7 +170,7 @@ module VCloudSdk
         end
       end
 
-      def delay()
+      def delay
         @rest_throttle[:min] + rand(@rest_throttle[:max] -
           @rest_throttle[:min])
       end

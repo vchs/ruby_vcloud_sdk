@@ -3,6 +3,10 @@ module VCloudSdk
     class ResponseMapping
       LINK_TO_RESPONSE = {
           get: {
+              Test::Response::SUPPORTED_VERSIONS_LINK =>
+                lambda do |url, headers|
+                  Test::Response::SUPPORTED_VERSIONS_RESPONSE
+                end,
               Test::Response::ORG_LINK =>
                 lambda do |url, headers|
                   Test::Response::ORG_RESPONSE
