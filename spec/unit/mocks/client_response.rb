@@ -8,7 +8,7 @@ module VCloudSdk
         OVDC = vcd["entities"]["virtual_datacenter"]
         VAPP_CATALOG_NAME = vcd["entities"]["vapp_catalog"]
         CATALOG_ID = "cfab326c-ab71-445c-bc0b-abf15239de8b"
-        VDC_ID = "a974dae0-d10c-4f7c-9f4f-4bdaf7826a3a"
+        VDC_ID = "7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"
         URL = vcd["url"]
         URLN = URI.parse(vcd["url"]).normalize.to_s
         VAPP_TEMPLATE_NAME = "test_vapp_template"
@@ -49,10 +49,14 @@ module VCloudSdk
         INDY_DISK_URL = "#{URL}/api/disk/#{INDY_DISK_ID}"
         INDY_DISK_SIZE = 200
         SCSI_CONTROLLER_ID = "2"
-
+        ORG_LINK = "#{URL}/api/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
 
         SESSION = (File.read(Test.spec_asset("session.xml")) %
-          [USERNAME, ORGANIZATION, URL, URL, URL, URL, URL]).strip
+          [USERNAME, ORGANIZATION, URL, URL, ORGANIZATION, ORG_LINK, URL, URL, URL]).strip
+
+        ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
+            [ORGANIZATION, URL, OVDC, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+             URL, URL, URL, URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
 
@@ -62,8 +66,6 @@ module VCloudSdk
           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
           URL, URL, URL, URL, URL, URL, URL, URL, URL, URL]).strip
-
-        ADMIN_ORG_LINK = "#{URL}/api/admin/org/b689c06e-1de0-4fd1-a5a3-050c479546ac"
 
         ADMIN_ORG_RESPONSE = (File.read(Test.spec_asset("admin_org_response.xml")) %
           [ORGANIZATION, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,

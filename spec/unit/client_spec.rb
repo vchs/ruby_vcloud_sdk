@@ -11,19 +11,14 @@ describe VCloudSdk::Client, :min, :all do
   let(:password) { "akimbi" }
   let(:response_mapping) { response_mapping }
   let(:conn) { double("Connection") }
-  let(:root_session) do
+  let(:session) do
     VCloudSdk::Xml::WrapperFactory
       .wrap_document(VCloudSdk::Test::Response::SESSION)
   end
 
-  let(:vcloud_response) do
+  let(:org_response) do
     VCloudSdk::Xml::WrapperFactory
-      .wrap_document(VCloudSdk::Test::Response::VCLOUD_RESPONSE)
-  end
-
-  let(:admin_org_response) do
-    VCloudSdk::Xml::WrapperFactory
-      .wrap_document(VCloudSdk::Test::Response::ADMIN_ORG_RESPONSE)
+      .wrap_document(VCloudSdk::Test::Response::ORG_RESPONSE)
   end
 
   def build_url
@@ -72,17 +67,12 @@ describe VCloudSdk::Client, :min, :all do
         .with(username, password)
         .once
         .ordered
-        .and_return(root_session)
+        .and_return(session)
       conn.should_receive(:get)
-        .with(root_session.admin_root)
+        .with(session.organization)
         .once
         .ordered
-        .and_return(vcloud_response)
-      conn.should_receive(:get)
-        .with(vcloud_response.organization)
-        .once
-        .ordered
-        .and_return(admin_org_response)
+        .and_return(org_response)
 
       client = described_class.new(nil, username, password, {}, logger)
       VCloudSdk::Test.verify_settings client,
@@ -97,21 +87,17 @@ describe VCloudSdk::Client, :min, :all do
     it "use settings in input arguments" do
       VCloudSdk::Connection::Connection
         .should_receive(:new).once.and_return conn
+
       conn.should_receive(:connect)
         .with(username, password)
         .once
         .ordered
-        .and_return(root_session)
+        .and_return(session)
       conn.should_receive(:get)
-        .with(root_session.admin_root)
+        .with(session.organization)
         .once
         .ordered
-        .and_return(vcloud_response)
-      conn.should_receive(:get)
-        .with(vcloud_response.organization)
-        .once
-        .ordered
-        .and_return(admin_org_response)
+        .and_return(org_response)
 
       retries = {
         default: 5,
@@ -150,5 +136,29 @@ describe VCloudSdk::Client, :min, :all do
                                       :@time_limit => time_limit_sec
       VCloudSdk::Config.rest_throttle.should eq rest_throttle
     end
+  end
+
+  describe "#find_vdc_by_name" do
+    subject { initialize_client }
+
+    it "fail if targeted vdc does not exist" do
+      expect { subject.find_vdc_by_name("xxxx") }.to raise_error
+    end
+
+    it "find targeted vdc if it exists" do
+      vdc = subject.find_vdc_by_name(VCloudSdk::Test::Response::OVDC)
+      vdc.should_not be_nil
+    end
+  end
+
+  private
+  def initialize_client
+    VCloudSdk::Config.configure(
+        logger: logger,
+        rest_throttle: { min: 0, max: 1 })
+
+    connection = mock_rest_connection
+    VCloudSdk::Connection::Connection.stub(:new) { connection }
+    described_class.new(url, username, password, {}, logger)
   end
 end

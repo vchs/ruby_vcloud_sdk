@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Org xmlns="http://www.vmware.com/vcloud/v1.5" name="%s"
+     id="urn:vcloud:org:82124610-59dc-4070-9181-bfca2c04cab0"
+     type="application/vnd.vmware.vcloud.org+xml"
+     href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
+  <Link rel="down" type="application/vnd.vmware.vcloud.vdc+xml" name="%s"
+        href="%s/api/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.tasksList+xml"
+        href="%s/api/tasksList/82124610-59dc-4070-9181-bfca2c04cab0"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="Public Catalog"
+        href="%s/api/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
+        href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4/controlAccess/"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="cloudfoundry"
+        href="%s/api/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
+        href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1/controlAccess/"/>
+  <Link rel="controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml"
+        href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1/action/controlAccess"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="images"
+        href="%s/api/catalog/1d39dd4d-5472-440d-91c2-831cb370a7e6"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
+        href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/1d39dd4d-5472-440d-91c2-831cb370a7e6/controlAccess/"/>
+  <Link rel="controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml"
+        href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/1d39dd4d-5472-440d-91c2-831cb370a7e6/action/controlAccess"/>
+  <Link rel="add" type="application/vnd.vmware.admin.catalog+xml"
+        href="%s/api/admin/org/82124610-59dc-4070-9181-bfca2c04cab0/catalogs"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.orgNetwork+xml" name="164-935-default-isolated"
+        href="%s/api/network/4a3e486d-be33-4480-a6cb-7c43462376e3"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.orgNetwork+xml" name="164-935-default-routed"
+        href="%s/api/network/b00a5e85-34aa-459f-a129-ac722c7b630f"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.supportedSystemsInfo+xml"
+        href="%s/api/supportedSystemsInfo/"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml"
+        href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/metadata"/>
+  <Description/>
+  <FullName>%s</FullName>
+</Org>

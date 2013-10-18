@@ -3,14 +3,14 @@ module VCloudSdk
     class ResponseMapping
       LINK_TO_RESPONSE = {
           get: {
-              Test::Response::ADMIN_VCLOUD_LINK =>
-                  lambda do |url, headers|
-                    Test::Response::VCLOUD_RESPONSE
-                  end,
-              Test::Response::ADMIN_ORG_LINK =>
-                  lambda do |url, headers|
-                    Test::Response::ADMIN_ORG_RESPONSE
-                  end
+              Test::Response::ORG_LINK =>
+                lambda do |url, headers|
+                  Test::Response::ORG_RESPONSE
+                end,
+              Test::Response::VDC_LINK =>
+                lambda do
+                  |url, headers| Test::Response::VDC_RESPONSE
+                end
           },
           post: {
               Test::Response::LOGIN_LINK =>

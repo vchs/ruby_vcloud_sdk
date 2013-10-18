@@ -2,9 +2,9 @@ module VCloudSdk
   module Xml
 
     class Session < Wrapper
-      def admin_root
+      def organization
         get_nodes("Link", {"type" =>
-          VCloudSdk::Xml::ADMIN_MEDIA_TYPE[:VCLOUD]}).first
+          VCloudSdk::Xml::MEDIA_TYPE[:ORGANIZATION]}).first
       end
 
       def entity_resolver

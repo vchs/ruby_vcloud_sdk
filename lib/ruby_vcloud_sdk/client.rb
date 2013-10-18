@@ -1,5 +1,6 @@
 require "rest_client" # Need this for the exception classes
 require "set"
+require_relative "vdc"
 
 module VCloudSdk
 
@@ -42,13 +43,18 @@ module VCloudSdk
       @connection = Connection::Connection.new(
           @url,
           @time_limit[:http_request])
-      @root = @connection.connect(username, password)
-      @admin_root = @connection.get(@root.admin_root)
-      @entity_resolver_link = @root.entity_resolver.href
+      @session = @connection.connect(username, password)
+      @entity_resolver_link = @session.entity_resolver.href
       # We assume the organization does not change often so we can get it at
       # login and cache it
-      @admin_org = @connection.get(@admin_root.organization)
+      @org = @connection.get(@session.organization)
       @logger.info('Successfully connected.')
+    end
+
+    def find_vdc_by_name(name)
+      vdc_link = @org.vdc_link(name)
+      fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
+      VCloudSdk::VDC.new(name, @connection, @connection.get(vdc_link))
     end
 
     private
