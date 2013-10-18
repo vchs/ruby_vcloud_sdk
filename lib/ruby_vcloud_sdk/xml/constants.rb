@@ -174,7 +174,6 @@ module VCloudSdk
 
     ADMIN_MEDIA_TYPE = {
       :ADMIN_MEDIA_TYPE_PREFIX => "application/vnd.vmware.admin.",
-      :VCLOUD => "application/vnd.vmware.admin.vcloud+xml",
       :PROVIDER_VDC => "application/vnd.vmware.admin.providervdc+xml",
       :ADMIN_VDC => "application/vnd.vmware.admin.vdc+xml",
       :VDC => "application/vnd.vmware.vcloud.vdc+xml",
@@ -185,7 +184,6 @@ module VCloudSdk
       :SYSTEM_ADMIN_ORGANIZATION =>
         "application/vnd.vmware.admin.systemOrganization+xml",
       :ADMIN_ORGANIZATION => "application/vnd.vmware.admin.organization+xml",
-      :ORGANIZATION => "application/vnd.vmware.vcloud.org+xml",
       :TASKS_LIST => "application/vnd.vmware.vcloud.tasksList+xml",
       :USER => "application/vnd.vmware.admin.user+xml",
       :GROUP => "application/vnd.vmware.admin.group+xml",
