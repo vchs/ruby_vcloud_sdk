@@ -42,6 +42,8 @@ describe VCloudSdk::Client, :min, :all do
       rest_client
     end
 
+    site.stub(:url) { url }
+
     VCloudSdk::Connection::Connection.new(url, nil, nil, site)
   end
 

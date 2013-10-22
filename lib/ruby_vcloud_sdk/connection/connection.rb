@@ -36,7 +36,7 @@ module VCloudSdk
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
           @logger.debug("@cookies: #{@cookies.inspect}.")
         end
-        VCloudSdk::Xml::WrapperFactory.wrap_document(response)
+        wrap_response(response)
       end
 
       # GET an object from REST and return the unmarshalled object
@@ -48,7 +48,7 @@ module VCloudSdk
             Accept: ACCEPT,
             cookies: @cookies)
         @rest_logger.debug(response)
-        Xml::WrapperFactory.wrap_document(response)
+        wrap_response(response)
       end
 
       def post(destination, data, content_type = "*/*")
@@ -67,7 +67,7 @@ module VCloudSdk
         })
         fail ApiRequestError if http_error?(response)
         @rest_logger.debug(response)
-        Xml::WrapperFactory.wrap_document(response)
+        wrap_response(response)
       end
 
       def put(destination, data, content_type = "*/*")
@@ -88,7 +88,7 @@ module VCloudSdk
         @rest_logger.debug((response && !response.strip.empty?) ?
           response : "Received empty response.")
         if response && !response.strip.empty?
-          Xml::WrapperFactory.wrap_document(response)
+          wrap_response(response)
         else
           nil
         end
@@ -104,7 +104,7 @@ module VCloudSdk
         })
         @rest_logger.debug(response)
         if response && !response.strip.empty?
-          Xml::WrapperFactory.wrap_document(response)
+          wrap_response(response)
         else
           nil
         end
@@ -123,18 +123,23 @@ module VCloudSdk
 
       private
 
+      def wrap_response(response)
+        VCloudSdk::Xml::WrapperFactory.wrap_document response
+      end
+
       def login_url
         return @login_url if @login_url
         default_login_url = "/api/sessions"
 
         begin
-          response = get("/api/versions")
-          url_node = wrap_response(response)
+          url_node = get("/api/versions")
           if url_node.nil?
             @logger.warn "Unable to find version=#{VCLOUD_VERSION_NUMBER}. Default to #{default_login_url}"
             @login_url = default_login_url
           else
-            @login_url = url_node.login_url.content
+            # Typically url_content is the full URL such as "https://10.146.21.135/api/sessions"
+            # In this case we need to trim the beginning of the url string
+            @login_url = get_nested_resource(url_node.login_url.content)
           end
         rescue => ex
           @logger.warn %Q{
@@ -178,7 +183,12 @@ module VCloudSdk
       def get_nested_resource(destination)
         href = self.class.get_href(destination)
         if href.is_a?(String)
-          URI.parse(href).path
+          uri = URI.parse(href)
+          if uri.query.nil?
+            uri.path
+          else
+            "#{uri.path}?#{uri.query}"
+          end
         else
           raise ApiError,
             "href is not a string. href:#{href.inspect}, dst:#{destination}."
