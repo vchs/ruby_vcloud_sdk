@@ -62,7 +62,7 @@
   <VmQuota>100</VmQuota>
   <IsEnabled>true</IsEnabled>
   <VdcStorageProfiles>
-    <VdcStorageProfile type="application/vnd.vmware.vcloud.vdcStorageProfile+xml" name="tenant-iscsi"
+    <VdcStorageProfile type="application/vnd.vmware.vcloud.vdcStorageProfile+xml" name="%s"
                        href="%s/api/vdcStorageProfile/8ed8ce46-2029-4b20-8dc7-cf3b575d1ef9"/>
   </VdcStorageProfiles>
 </Vdc>

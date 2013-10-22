@@ -16,5 +16,15 @@ module VCloudSdk
           .new(@connection, storage_profile)
       end
     end
+
+    # Return a storage profile given targeted name
+    # Return nil if targeted storage profile with given name does not exist
+    def find_storage_profile_by_name(name)
+      storage_profiles.each do |storage_profile|
+        return storage_profile if storage_profile.name == name
+      end
+
+      return nil
+    end
   end
 end

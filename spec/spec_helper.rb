@@ -74,6 +74,7 @@ module VCloudSdk
       VCLOUD_USERNAME = "dev_mgr@dev"
       VCLOUD_PWD = "vmware"
       VDC_NAME = "tempest"
+      STORAGE_PROFILE_NAME = "large"
     end
   end
 
