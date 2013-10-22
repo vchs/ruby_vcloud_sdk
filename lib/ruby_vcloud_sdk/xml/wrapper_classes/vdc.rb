@@ -2,6 +2,10 @@ module VCloudSdk
   module Xml
 
     class Vdc < Wrapper
+      def name
+        @root["name"]
+      end
+
       def add_disk_link
          get_nodes("Link", {"type"=>MEDIA_TYPE[:DISK_CREATE_PARAMS]}).first
       end
