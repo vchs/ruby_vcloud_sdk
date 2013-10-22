@@ -4,10 +4,10 @@ require "nokogiri/diff"
 describe VCloudSdk::Client do
 
   let(:logger) { VCloudSdk::Config.logger }
-  let(:url) { ENV['VCLOUD_URL'] || 'https://10.146.21.135' }
-  let(:username) { ENV['VCLOUD_USERNAME'] || 'dev_mgr@dev' }
-  let(:password) { ENV['VCLOUD_PWD'] || 'vmware' }
-  let(:vdc_name) { ENV['VDC_NAME'] }
+  let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
+  let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
+  let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
+  let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
 
   describe "#initialize" do
     it "set up connection successfully" do

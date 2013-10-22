@@ -68,6 +68,13 @@ module VCloudSdk
         end
       end
     end
+
+    module DefaultSetting
+      VCLOUD_URL = "https://10.146.21.135"
+      VCLOUD_USERNAME = "dev_mgr@dev"
+      VCLOUD_PWD = "vmware"
+      VDC_NAME = "tempest"
+    end
   end
 
   module Xml
