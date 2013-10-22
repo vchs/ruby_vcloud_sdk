@@ -56,7 +56,7 @@ module VCloudSdk
     def find_vdc_by_name(name)
       vdc_link = @org.vdc_link(name)
       fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
-      @vdc = VCloudSdk::VDC.new(name, @connection, @connection.get(vdc_link))
+      @vdc = VCloudSdk::VDC.new(@connection, @connection.get(vdc_link))
     end
 
     private
