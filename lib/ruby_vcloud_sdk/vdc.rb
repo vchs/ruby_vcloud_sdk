@@ -13,8 +13,7 @@ module VCloudSdk
     def storage_profiles
       @connection.get("/api/query?type=orgVdcStorageProfile")
         .org_vdc_storage_profile_records.map do |storage_profile|
-          VCloudSdk::VdcStorageProfile
-            .new(@connection, storage_profile)
+          VCloudSdk::VdcStorageProfile.new(storage_profile)
         end
     end
 
