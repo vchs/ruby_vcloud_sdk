@@ -1,6 +1,7 @@
 require "spec_helper"
 require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
+require_relative "mocks/rest_connection"
 require "nokogiri/diff"
 
 describe VCloudSdk::Client, :min, :all do
@@ -21,39 +22,14 @@ describe VCloudSdk::Client, :min, :all do
       .wrap_document(VCloudSdk::Test::Response::ORG_RESPONSE)
   end
 
-  def build_url
-    url + @resource
-  end
-
-  def mock_rest_connection
-    rest_client = double("Rest Client")
-    rest_client.stub(:get) do |headers|
-      VCloudSdk::Test::ResponseMapping
-        .get_mapping(:get, build_url).call(build_url, headers)
-    end
-    rest_client.stub(:post) do |data, headers|
-      VCloudSdk::Test::ResponseMapping
-        .get_mapping(:post, build_url).call(build_url, data, headers)
-    end
-
-    site = double("site")
-    site.stub(:[]) do |value|
-      @resource = value
-      rest_client
-    end
-
-    site.stub(:url) { url }
-
-    VCloudSdk::Connection::Connection.new(url, nil, nil, site)
-  end
-
   describe "#initialize" do
     it "set up connection successfully" do
       VCloudSdk::Config.configure(
         logger: logger,
         rest_throttle: { min: 0, max: 1 })
 
-      connection = mock_rest_connection
+      connection = VCloudSdk::Mocks::RestConnection
+        .new(url).mock_connection
       VCloudSdk::Connection::Connection
         .should_receive(:new)
         .once
@@ -159,7 +135,8 @@ describe VCloudSdk::Client, :min, :all do
         logger: logger,
         rest_throttle: { min: 0, max: 1 })
 
-    connection = mock_rest_connection
+    connection = VCloudSdk::Mocks::RestConnection
+      .new(url).mock_connection
     VCloudSdk::Connection::Connection.stub(:new) { connection }
     described_class.new(url, username, password, {}, logger)
   end
