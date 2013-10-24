@@ -11,10 +11,11 @@ module VCloudSdk
     end
 
     def storage_profiles
-      @vdc_xml_obj.storage_profiles.map do |storage_profile|
-        VCloudSdk::VdcStorageProfile
-          .new(@connection, storage_profile)
-      end
+      @connection.get("/api/query?type=orgVdcStorageProfile")
+        .org_vdc_storage_profile_records.map do |storage_profile|
+          VCloudSdk::VdcStorageProfile
+            .new(@connection, storage_profile)
+        end
     end
 
     # Return a storage profile given targeted name
@@ -24,7 +25,7 @@ module VCloudSdk
         return storage_profile if storage_profile.name == name
       end
 
-      return nil
+      nil
     end
   end
 end
