@@ -67,6 +67,15 @@ module VCloudSdk
           instance_variable.should == target_value
         end
       end
+
+      def mock_connection(logger, url)
+        VCloudSdk::Config.configure(
+          logger: logger,
+          rest_throttle: VCloudSdk::Client.const_get(:REST_THROTTLE))
+
+        rest_client = VCloudSdk::Mocks::RestClient.new(url)
+        VCloudSdk::Connection::Connection.new(@url, nil, nil, rest_client)
+      end
     end
 
     module DefaultSetting

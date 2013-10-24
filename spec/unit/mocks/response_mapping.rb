@@ -14,7 +14,11 @@ module VCloudSdk
               Test::Response::VDC_LINK =>
                 lambda do
                   |url, headers| Test::Response::VDC_RESPONSE
-                end
+                end,
+              Test::Response::ORG_VDC_STORAGE_PROFILE_LINK =>
+                lambda do
+                  |url, headers| Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
+                end,
           },
           post: {
               Test::Response::LOGIN_LINK =>

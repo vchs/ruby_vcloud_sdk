@@ -51,6 +51,7 @@ module VCloudSdk
         SCSI_CONTROLLER_ID = "2"
         SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
         ORG_LINK = "#{URL}/api/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
+        ORG_VDC_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile"
 
         SESSION = (File.read(Test.spec_asset("session.xml")) %
           [USERNAME, ORGANIZATION, URL, URL, ORGANIZATION, ORG_LINK, URL, URL, URL]).strip
@@ -112,6 +113,9 @@ module VCloudSdk
         VDC_INDY_DISKS_LINK = "#{URL}/api/vdc/#{VDC_ID}/disk"
 
         STORAGE_PROFILE_NAME = "tenant-iscsi"
+
+        ORG_VDC_STORAGE_PROFILE_RESPONSE = (File.read(Test.spec_asset("vdc_storage_profile_response.xml")) %
+          [URL, URL, URL, OVDC, URL, STORAGE_PROFILE_NAME, URL]).strip
 
         VDC_RESPONSE = (File.read(Test.spec_asset("vdc_response.xml")) %
           [OVDC, VDC_ID, URL, VDC_ID, URL, URL, URL, VDC_ID, URL, VDC_ID,
