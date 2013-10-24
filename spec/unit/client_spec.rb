@@ -7,19 +7,14 @@ require "nokogiri/diff"
 describe VCloudSdk::Client, :min, :all do
 
   let(:logger) { VCloudSdk::Config.logger }
-  let(:url) { "https://10.147.0.0:8443" }
+  let(:url) { VCloudSdk::Test::Response::URL }
   let(:username) { "cfadmin" }
   let(:password) { "akimbi" }
   let(:response_mapping) { response_mapping }
   let(:conn) { double("Connection") }
 
   let!(:mock_connection) do
-    VCloudSdk::Config.configure(
-      logger: logger,
-      rest_throttle: VCloudSdk::Client.const_get(:REST_THROTTLE))
-
-    rest_client = VCloudSdk::Mocks::RestClient.new(url)
-    VCloudSdk::Connection::Connection.new(@url, nil, nil, rest_client)
+    VCloudSdk::Test.mock_connection(logger, url)
   end
 
   let(:session) do

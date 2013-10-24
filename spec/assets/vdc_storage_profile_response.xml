@@ -1,0 +1,15 @@
+<QueryResultRecords xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    total="1" pageSize="25" page="1" name="orgVdcStorageProfile"
+                    type="application/vnd.vmware.vcloud.query.records+xml"
+                    href="%s/api/query?type=orgVdcStorageProfile&amp;page=1&amp;pageSize=25&amp;format=records"
+                    xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.query.references+xml"
+        href="%s/api/query?type=orgVdcStorageProfile&amp;page=1&amp;pageSize=25&amp;format=references"/>
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.query.idrecords+xml"
+        href="%s/api/query?type=orgVdcStorageProfile&amp;page=1&amp;pageSize=25&amp;format=idrecords"/>
+  <OrgVdcStorageProfileRecord vdcName="%s"
+                              vdc="%s/api/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"
+                              storageUsedMB="214724" storageLimitMB="2097152" numberOfConditions="0" name="%s"
+                              isVdcBusy="false" isEnabled="true" isDefaultStorageProfile="true"
+                              href="%s/api/vdcStorageProfile/8ed8ce46-2029-4b20-8dc7-cf3b575d1ef9"/>
+</QueryResultRecords>
