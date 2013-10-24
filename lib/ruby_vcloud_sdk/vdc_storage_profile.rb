@@ -12,6 +12,13 @@ module VCloudSdk
       @vdc_name = storage_profile_xml_obj[:vdcName]
     end
 
+    # Return storageLimitMB - storageUsedMB
+    # Return -1 if 'storageLimitMB' is 0
+    def available_storage
+      return -1 if @storage_limit_mb == 0
+
+      @storage_limit_mb - @storage_used_mb
+    end
   end
 
 end
