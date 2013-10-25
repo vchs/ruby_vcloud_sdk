@@ -132,7 +132,6 @@ end
 
 RSpec.configure do |c|
   c.treat_symbols_as_metadata_keys_with_true_values = true  # for RSpec-3
-  c.filter_run :all
 
   c.after :all do
     FileUtils.rm_rf(File.dirname(VCloudSdk::Test::properties["log_file"]))
