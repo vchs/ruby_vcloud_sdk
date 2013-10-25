@@ -134,6 +134,20 @@ describe VCloudSdk::Client, :min, :all do
     its(:catalogs) { should have_at_least(1).items }
   end
 
+  describe "#find_catalog_by_name" do
+    subject { initialize_client }
+
+    it "return nil if targeted catalog does not exist" do
+      catalog = subject.find_catalog_by_name("xxxx")
+      catalog.should be_nil
+    end
+
+    it "find targeted catalog if it exists" do
+      catalog = subject.find_catalog_by_name(VCloudSdk::Test::Response::CATALOG_NAME)
+      catalog.should_not be_nil
+    end
+  end
+
   private
   def initialize_client
     VCloudSdk::Connection::Connection.stub(:new) { mock_connection }
