@@ -13,7 +13,7 @@
         href="%s/api/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
         href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4/controlAccess/"/>
-  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="cloudfoundry"
+  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="%s"
         href="%s/api/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
         href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1/controlAccess/"/>

@@ -8,6 +8,7 @@ module VCloudSdk
         OVDC = vcd["entities"]["virtual_datacenter"]
         VAPP_CATALOG_NAME = vcd["entities"]["vapp_catalog"]
         CATALOG_ID = "cfab326c-ab71-445c-bc0b-abf15239de8b"
+        CATALOG_NAME = "cloudfoundry"
         VDC_ID = "7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"
         URL = vcd["url"]
         URLN = URI.parse(vcd["url"]).normalize.to_s
@@ -86,8 +87,8 @@ module VCloudSdk
            URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,]).strip
 
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
-            [ORGANIZATION, URL, OVDC, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
-             URL, URL, URL, URL, URL, ORGANIZATION]).strip
+            [ORGANIZATION, URL, OVDC, URL, URL, URL, URL, CATALOG_NAME, URL, URL, URL,
+             URL, URL, URL, URL, URL, URL, URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
 
