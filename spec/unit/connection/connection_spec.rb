@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe VCloudSdk::Connection::Connection, :min, :all do
+describe VCloudSdk::Connection::Connection do
   let(:url) { "https://10.147.0.0:8443" }
 
   describe "#initialize" do
