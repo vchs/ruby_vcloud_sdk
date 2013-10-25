@@ -4,7 +4,7 @@ require_relative "mocks/response_mapping"
 require_relative "mocks/rest_client"
 require "nokogiri/diff"
 
-describe VCloudSdk::Client, :min, :all do
+describe VCloudSdk::Client do
 
   let(:logger) { VCloudSdk::Config.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
