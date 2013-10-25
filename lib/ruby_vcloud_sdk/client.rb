@@ -1,6 +1,7 @@
 require "rest_client" # Need this for the exception classes
 require "set"
 require_relative "vdc"
+require_relative "catalog"
 
 module VCloudSdk
 
@@ -57,6 +58,12 @@ module VCloudSdk
       vdc_link = @org.vdc_link(name)
       fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
       @vdc = VCloudSdk::VDC.new(@connection, @connection.get(vdc_link))
+    end
+
+    def catalogs
+      @org.catalogs.map do |catalog|
+        VCloudSdk::Catalog.new(catalog)
+      end
     end
 
     private

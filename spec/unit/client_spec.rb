@@ -115,8 +115,10 @@ describe VCloudSdk::Client, :min, :all do
     end
   end
 
+  subject { initialize_client }
+  its(:catalogs) { should have_at_least(1).items }
+
   describe "#find_vdc_by_name" do
-    subject { initialize_client }
 
     it "fail if targeted vdc does not exist" do
       expect { subject.find_vdc_by_name("xxxx") }.to raise_error
