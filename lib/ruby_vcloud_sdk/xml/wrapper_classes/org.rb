@@ -9,12 +9,19 @@ module VCloudSdk
                   true).first
       end
 
+      def catalogs
+        get_nodes("Link",
+                  { "type" => MEDIA_TYPE[:CATALOG] },
+                  true)
+      end
+
       def catalog_link(name)
         get_nodes("Link",
                   { "type" => MEDIA_TYPE[:CATALOG],
                     "name" => name },
                   true).first
       end
+
     end
 
   end

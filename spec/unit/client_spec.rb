@@ -128,6 +128,12 @@ describe VCloudSdk::Client, :min, :all do
     end
   end
 
+  describe "#catalogs" do
+    subject { initialize_client }
+
+    its(:catalogs) { should have_at_least(1).items }
+  end
+
   private
   def initialize_client
     VCloudSdk::Connection::Connection.stub(:new) { mock_connection }
