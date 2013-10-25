@@ -66,6 +66,14 @@ module VCloudSdk
       end
     end
 
+    def find_catalog_by_name(name)
+      @org.catalogs.each do |catalog|
+        return catalog if catalog.name == name
+      end
+
+      nil
+    end
+
     private
 
     def get_catalog_vapp(id)

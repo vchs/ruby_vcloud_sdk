@@ -25,7 +25,7 @@ describe VCloudSdk::VDC do
     it "return a storage profile given targeted name" do
       storage_profile = subject
         .find_storage_profile_by_name(VCloudSdk::Test::Response::STORAGE_PROFILE_NAME)
-      storage_profile.should_not be_nil
+      storage_profile.name.should eql VCloudSdk::Test::Response::STORAGE_PROFILE_NAME
     end
 
     it "return nil if targeted storage profile with given name does not exist" do
