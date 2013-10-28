@@ -12,6 +12,7 @@ describe VCloudSdk::Client, :min, :all do
   let(:password) { "akimbi" }
   let(:response_mapping) { response_mapping }
   let(:conn) { double("Connection") }
+  let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
 
   let!(:mock_connection) do
     VCloudSdk::Test.mock_connection(logger, url)
@@ -143,8 +144,21 @@ describe VCloudSdk::Client, :min, :all do
     end
 
     it "returns the catalog object if target catalog exists" do
-      catalog = subject.find_catalog_by_name(VCloudSdk::Test::Response::CATALOG_NAME)
+      catalog = subject.find_catalog_by_name(catalog_name)
       catalog.name.should eql VCloudSdk::Test::Response::CATALOG_NAME
+    end
+  end
+
+  describe "#create_catalog" do
+    subject { initialize_client }
+
+    it "creates target catalog successfully" do
+      response = subject.create_catalog(VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE)
+      response.name.should eql VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE
+    end
+
+    it "fails if targeted catalog with the same name already exists" do
+      expect { subject.create_catalog(catalog_name) }.to raise_error("400 Bad Request")
     end
   end
 
