@@ -54,4 +54,17 @@ describe VCloudSdk::Client do
       catalog.should_not be_nil
     end
   end
+
+  describe "#create_catalog" do
+    subject { described_class.new(url, username, password, {}, logger) }
+
+    it "creates target catalog successfully" do
+      response = subject.create_catalog(VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE)
+      response.name.should eql VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE
+    end
+
+    it "fails if targeted catalog with the same name already exists" do
+      expect { subject.create_catalog(catalog_name) }.to raise_error("400 Bad Request")
+    end
+  end
 end

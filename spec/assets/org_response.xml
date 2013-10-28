@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Org xmlns="http://www.vmware.com/vcloud/v1.5" name="%s"
-     id="urn:vcloud:org:82124610-59dc-4070-9181-bfca2c04cab0"
+     id="urn:vcloud:org:%s"
      type="application/vnd.vmware.vcloud.org+xml"
-     href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
+     href="%s/api/org/%s"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
   <Link rel="down" type="application/vnd.vmware.vcloud.vdc+xml" name="%s"

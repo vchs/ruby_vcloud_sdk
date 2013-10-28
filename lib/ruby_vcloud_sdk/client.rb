@@ -74,6 +74,15 @@ module VCloudSdk
       nil
     end
 
+    # Reference: http://pubs.vmware.com/vcd-51/index.jsp?topic=%2Fcom.vmware.vcloud.api.doc_51%2FGUID-AAFD7FC1-446D-41F7-8CC2-7715D05F2EA2.html
+    def create_catalog(name, description = "")
+      catalog = Xml::WrapperFactory.create_instance("AdminCatalog")
+      catalog.name, catalog.description = name, description
+      @connection.post("/api/admin/org/#{@org.id}/catalogs",
+                       catalog,
+                       Xml::ADMIN_MEDIA_TYPE[:CATALOG])
+    end
+
     private
 
     def get_catalog_vapp(id)
