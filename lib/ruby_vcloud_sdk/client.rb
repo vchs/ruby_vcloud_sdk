@@ -61,13 +61,16 @@ module VCloudSdk
     end
 
     def catalogs
+      # refresh catalogs
+      @org = @connection.get(@session.organization)
+
       @org.catalogs.map do |catalog|
         VCloudSdk::Catalog.new(catalog)
       end
     end
 
     def find_catalog_by_name(name)
-      @org.catalogs.each do |catalog|
+      catalogs.each do |catalog|
         return catalog if catalog.name == name
       end
 
@@ -78,9 +81,15 @@ module VCloudSdk
       catalog = Xml::WrapperFactory.create_instance("AdminCatalog")
       catalog.name = name
       catalog.description = description
-      @connection.post("/api/admin/org/#{@org.id}/catalogs",
+      @connection.post("/api/admin/org/#{@org.href_id}/catalogs",
                        catalog,
                        Xml::ADMIN_MEDIA_TYPE[:CATALOG])
+    end
+
+    def delete_catalog(name)
+      catalog = find_catalog_by_name(name)
+      fail ObjectNotFoundError, "Catalog #{name} not found" unless catalog
+      @connection.delete("/api/admin/catalog/#{catalog.id}")
     end
 
     private

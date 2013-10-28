@@ -92,6 +92,11 @@ module VCloudSdk
         @root["href"]
       end
 
+      def href_id
+        # Sample href: "https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"
+        URI.parse(href).path.split('/')[-1]
+      end
+
       def name
         @root["name"]
       end

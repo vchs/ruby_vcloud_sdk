@@ -165,6 +165,8 @@ module VCloudSdk
 
         CATALOG_CREATE_LINK = "#{URL}/api/admin/org/#{ORG_ID}/catalogs"
 
+        CATALOG_DELETE_LINK = "#{URL}/api/admin/catalog/#{CATALOG_ID}"
+
         CATALOG_ADD_ITEM_LINK = "#{URL}/api/catalog/#{CATALOG_ID}/catalogItems"
 
         EXISTING_MEDIA_LINK = "#{URL}/api/media/#{EXISTING_MEDIA_ID}"

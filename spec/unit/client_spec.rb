@@ -162,6 +162,26 @@ describe VCloudSdk::Client, :min, :all do
     end
   end
 
+  describe "#delete_catalog" do
+    subject { initialize_client }
+
+    it "deletes target catalog successfully" do
+      catalog = double("Catalog to delete")
+      subject.should_receive(:find_catalog_by_name)
+        .with(catalog_name).once.and_return(catalog)
+      catalog.should_receive(:id)
+        .once.and_return(VCloudSdk::Test::Response::CATALOG_ID)
+
+      response = subject.delete_catalog(catalog_name)
+      response.should be_nil
+    end
+
+    it "fails if targeted catalog does not exist" do
+      catalog_name_to_create = "XXXXXXX"
+      expect { subject.delete_catalog(catalog_name_to_create) }.to raise_error(VCloudSdk::ObjectNotFoundError, /Catalog \S+ not found/)
+    end
+  end
+
   private
   def initialize_client
     VCloudSdk::Connection::Connection.stub(:new) { mock_connection }

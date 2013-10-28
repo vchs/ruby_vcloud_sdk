@@ -60,19 +60,38 @@ describe VCloudSdk::Client do
     subject { described_class.new(url, username, password, {}, logger) }
 
     it "creates target catalog successfully" do
-      pending "Delete catalog after creation"
-
       catalog_name_to_create = SecureRandom.uuid
       response = subject.create_catalog(catalog_name_to_create)
       response.name.should eql catalog_name_to_create
+      subject.delete_catalog(catalog_name_to_create)
     end
 
     it "fails if targeted catalog with the same name already exists" do
-      pending "Delete catalog after creation"
-
       catalog_name_to_create = SecureRandom.uuid
       subject.create_catalog(catalog_name_to_create)
       expect { subject.create_catalog(catalog_name_to_create) }.to raise_error("400 Bad Request")
+      subject.delete_catalog(catalog_name_to_create)
     end
+
+    describe "#delete_catalog" do
+      subject { described_class.new(url, username, password, {}, logger) }
+
+      it "deletes target catalog successfully" do
+        catalog_name_to_create = SecureRandom.uuid
+        subject.create_catalog(catalog_name_to_create)
+        catalog = subject.find_catalog_by_name(catalog_name_to_create)
+        catalog.name.should eql catalog_name_to_create
+
+        subject.delete_catalog(catalog_name_to_create)
+        catalog = subject.find_catalog_by_name(catalog_name_to_create)
+        catalog.should be_nil
+      end
+
+      it "fails if targeted catalog does not exist" do
+        catalog_name_to_create = SecureRandom.uuid
+        expect { subject.delete_catalog(catalog_name_to_create) }.to raise_error(VCloudSdk::ObjectNotFoundError, /Catalog \S+ not found/)
+      end
+    end
+
   end
 end

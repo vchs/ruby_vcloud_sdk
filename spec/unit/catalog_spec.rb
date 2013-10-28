@@ -12,7 +12,7 @@ describe VCloudSdk::Catalog do
   end
 
   it "initialize successfully" do
-    subject.should_not be_nil
+    subject.id.should =~ /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/
   end
 
 end
