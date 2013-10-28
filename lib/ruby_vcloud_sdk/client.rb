@@ -74,6 +74,15 @@ module VCloudSdk
       nil
     end
 
+    def create_catalog(name, description = "")
+      catalog = Xml::WrapperFactory.create_instance("AdminCatalog")
+      catalog.name = name
+      catalog.description = description
+      @connection.post("/api/admin/org/#{@org.id}/catalogs",
+                       catalog,
+                       Xml::ADMIN_MEDIA_TYPE[:CATALOG])
+    end
+
     private
 
     def get_catalog_vapp(id)

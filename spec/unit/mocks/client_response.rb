@@ -5,6 +5,7 @@ module VCloudSdk
 
         USERNAME = vcd["user"]
         ORGANIZATION = vcd["entities"]["organization"]
+        ORG_ID = "82124610-59dc-4070-9181-bfca2c04cab0"
         OVDC = vcd["entities"]["virtual_datacenter"]
         VAPP_CATALOG_NAME = vcd["entities"]["vapp_catalog"]
         CATALOG_ID = "cfab326c-ab71-445c-bc0b-abf15239de8b"
@@ -87,8 +88,8 @@ module VCloudSdk
            URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,]).strip
 
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
-            [ORGANIZATION, URL, OVDC, URL, URL, URL, URL, CATALOG_NAME, URL, URL, URL,
-             URL, URL, URL, URL, URL, URL, URL, URL, ORGANIZATION]).strip
+            [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, URL, URL, CATALOG_NAME,
+             URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
 
@@ -162,6 +163,8 @@ module VCloudSdk
 
         CATALOG_LINK = "#{URL}/api/admin/catalog/#{CATALOG_ID}"
 
+        CATALOG_CREATE_LINK = "#{URL}/api/admin/org/#{ORG_ID}/catalogs"
+
         CATALOG_ADD_ITEM_LINK = "#{URL}/api/catalog/#{CATALOG_ID}/catalogItems"
 
         EXISTING_MEDIA_LINK = "#{URL}/api/media/#{EXISTING_MEDIA_ID}"
@@ -203,6 +206,9 @@ module VCloudSdk
           URL, CATALOG_ID, URL, CATALOG_ID, URL, EXISTING_VAPP_TEMPLATE_NAME,
           URL, EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID, EXISTING_MEDIA_NAME,
           EXISTING_MEDIA_CATALOG_ITEM_LINK]).strip
+
+        CATALOG_CREATE_RESPONSE = (File.read(Test.spec_asset("catalog_create_response.xml")) %
+          [DefaultSetting::CATALOG_NAME_TO_CREATE]).strip
 
         CATALOG_ADD_VAPP_REQUEST = (File.read(Test.spec_asset(
           "catalog_add_vapp_request.xml")) % [VAPP_TEMPLATE_NAME,

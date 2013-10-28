@@ -190,7 +190,7 @@ module VCloudSdk
       :ROLE => "application/vnd.vmware.admin.role+xml",
       :RIGHT => "application/vnd.vmware.admin.right+xml",
       :ADMIN_CATALOG => "application/vnd.vmware.admin.catalog+xml",
-      :CATALOG => "application/vnd.vmware.vcloud.catalog+xml",
+      :CATALOG => "application/vnd.vmware.admin.catalog+xml",
       :ADMIN_CATALOG_ITEM => "application/vnd.vmware.admin.catalogItem+xml",
       :CATALOG_ITEM => "application/vnd.vmware.vcloud.catalogItem+xml",
       :ADMIN_NETWORK => "application/vnd.vmware.admin.network+xml",
