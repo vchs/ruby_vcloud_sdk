@@ -1,5 +1,6 @@
 require "spec_helper"
 require "nokogiri/diff"
+require 'securerandom'
 
 describe VCloudSdk::Client do
 
@@ -52,6 +53,26 @@ describe VCloudSdk::Client do
     it "find targeted catalog if it exists" do
       catalog = subject.find_catalog_by_name(catalog_name)
       catalog.should_not be_nil
+    end
+  end
+
+  describe "#create_catalog" do
+    subject { described_class.new(url, username, password, {}, logger) }
+
+    it "creates target catalog successfully" do
+      pending "Delete catalog after creation"
+
+      catalog_name_to_create = SecureRandom.uuid
+      response = subject.create_catalog(catalog_name_to_create)
+      response.name.should eql catalog_name_to_create
+    end
+
+    it "fails if targeted catalog with the same name already exists" do
+      pending "Delete catalog after creation"
+
+      catalog_name_to_create = SecureRandom.uuid
+      subject.create_catalog(catalog_name_to_create)
+      expect { subject.create_catalog(catalog_name_to_create) }.to raise_error("400 Bad Request")
     end
   end
 end

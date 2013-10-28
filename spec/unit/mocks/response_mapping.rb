@@ -30,7 +30,13 @@ module VCloudSdk
                     end
 
                     session_object
-                  end
+                  end,
+              Test::Response::CATALOG_CREATE_LINK =>
+                lambda do |url, data, headers|
+                  fail "400 Bad Request" if data.include?("name=\"#{VCloudSdk::Test::Response::CATALOG_NAME}\"")
+
+                  Test::Response::CATALOG_CREATE_RESPONSE
+                end,
           }
       }
 
