@@ -85,6 +85,7 @@ module VCloudSdk
       VDC_NAME = "tempest"
       CATALOG_NAME = "cloudfoundry"
       STORAGE_PROFILE_NAME = "large"
+      CATALOG_NAME_TO_CREATE = "dev test catalog"
     end
   end
 

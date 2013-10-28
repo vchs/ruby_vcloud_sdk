@@ -1,0 +1,42 @@
+<AdminCatalog xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              name="%s" id="urn:vcloud:catalog:dd48bcf0-aac0-414b-bad8-1df0153f20de"
+              type="application/vnd.vmware.admin.catalog+xml"
+              href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de"
+              xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
+  <Link rel="up" type="application/vnd.vmware.admin.organization+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/org/82124610-59dc-4070-9181-bfca2c04cab0"/>
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.catalog+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de/owner"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de/metadata"/>
+  <Link rel="add" type="application/vnd.vmware.vcloud.catalogItem+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de/catalogItems"/>
+  <Link rel="edit" type="application/vnd.vmware.admin.catalog+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de"/>
+  <Link rel="remove"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de"/>
+  <Description/>
+  <Tasks>
+    <Task status="running" startTime="2013-10-28T17:09:35.881Z" serviceNamespace="com.vmware.vcloud"
+          operationName="catalogCreateCatalog"
+          operation="Creating Catalog dev test catalog(dd48bcf0-aac0-414b-bad8-1df0153f20de)"
+          expiryTime="2014-01-26T17:09:35.881Z" cancelRequested="false" name="task"
+          id="urn:vcloud:task:d215d1e5-b6a3-4363-866e-a83fb88ec5a0" type="application/vnd.vmware.vcloud.task+xml"
+          href="https://p2v1-vcd.vchs.vmware.com:443/api/task/d215d1e5-b6a3-4363-866e-a83fb88ec5a0">
+      <Link rel="task:cancel"
+            href="https://p2v1-vcd.vchs.vmware.com:443/api/task/d215d1e5-b6a3-4363-866e-a83fb88ec5a0/action/cancel"/>
+      <Owner type="application/vnd.vmware.vcloud.catalog+xml" name="dev test catalog"
+             href="https://p2v1-vcd.vchs.vmware.com:443/api/catalog/dd48bcf0-aac0-414b-bad8-1df0153f20de"/>
+      <User type="application/vnd.vmware.admin.user+xml" name="justiny@vmware.com"
+            href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/user/d7a9507f-e7cf-4845-84fa-4c6395bd7ab3"/>
+      <Organization type="application/vnd.vmware.vcloud.org+xml" name="164-935"
+                    href="https://p2v1-vcd.vchs.vmware.com:443/api/org/82124610-59dc-4070-9181-bfca2c04cab0"/>
+      <Progress>0</Progress>
+      <Details/>
+    </Task>
+  </Tasks>
+  <CatalogItems/>
+  <IsPublished>false</IsPublished>
+</AdminCatalog>
