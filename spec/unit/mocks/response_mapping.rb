@@ -1,6 +1,7 @@
 module VCloudSdk
   module Test
     class ResponseMapping
+
       LINK_TO_RESPONSE = {
           get: {
             Test::Response::SUPPORTED_VERSIONS_LINK =>
@@ -12,12 +13,29 @@ module VCloudSdk
                 Test::Response::ORG_RESPONSE
               end,
             Test::Response::VDC_LINK =>
-              lambda do
-              |url, headers| Test::Response::VDC_RESPONSE
+              lambda do |url, headers|
+                Test::Response::VDC_RESPONSE
               end,
             Test::Response::ORG_VDC_STORAGE_PROFILE_LINK =>
-              lambda do
-              |url, headers| Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
+              lambda do |url, headers|
+                Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
+              end,
+            Test::Response::CATALOG_LINK =>
+              lambda do |url, headers|
+                case (options[:catalog_state])
+                when :not_added
+                  Test::Response::CATALOG_RESPONSE
+                when :added
+                  Test::Response::CATALOG_ITEM_ADDED_RESPONSE
+                end
+              end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_LINK =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_RESPONSE
+              end,
+            Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_MEDIA_CATALOG_ITEM
               end,
           },
           post: {
@@ -43,21 +61,39 @@ module VCloudSdk
               lambda do |url, headers|
                 nil
               end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_LINK =>
+              lambda do |url, headers|
+                nil
+              end,
+            Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
+              lambda do |url, headers|
+                nil
+              end,
           },
       }
 
       private_constant :LINK_TO_RESPONSE
 
-      def self.get_mapping(http_method, url)
-        mapping = LINK_TO_RESPONSE[http_method][url]
-        if mapping.nil?
-          err_msg = "Response mapping not found for #{http_method} and #{url}"
-          Config.logger.error(err_msg)
-          fail err_msg
+      class << self
+        attr_accessor :options
+
+        def set_option(option)
+          @options = @options || {}
+          @options.merge!(option)
         end
 
-        mapping
+        def get_mapping(http_method, url)
+          mapping = LINK_TO_RESPONSE[http_method][url]
+          if mapping.nil?
+            err_msg = "Response mapping not found for #{http_method} and #{url}"
+            Config.logger.error(err_msg)
+            fail err_msg
+          end
+
+          mapping
+        end
       end
+
     end
   end
 end

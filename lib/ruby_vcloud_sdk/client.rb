@@ -67,7 +67,7 @@ module VCloudSdk
       @org = @connection.get(@session.organization)
 
       @org.catalogs.map do |catalog|
-        VCloudSdk::Catalog.new(catalog)
+        VCloudSdk::Catalog.new(@connection, catalog)
       end
     end
 
@@ -91,6 +91,7 @@ module VCloudSdk
     def delete_catalog(name)
       catalog = find_catalog_by_name(name)
       fail ObjectNotFoundError, "Catalog #{name} not found" unless catalog
+      catalog.delete_all_catalog_items
       @connection.delete("/api/admin/catalog/#{catalog.id}")
     end
 

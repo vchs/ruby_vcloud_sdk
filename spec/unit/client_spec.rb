@@ -173,20 +173,36 @@ describe VCloudSdk::Client, :min, :all do
   describe "#delete_catalog" do
     subject { initialize_client }
 
-    it "deletes target catalog successfully" do
-      catalog = double("Catalog to delete")
-      subject.should_receive(:find_catalog_by_name)
-        .with(catalog_name).once.and_return(catalog)
-      catalog.should_receive(:id)
-        .once.and_return(VCloudSdk::Test::Response::CATALOG_ID)
+    context "target catalog has no items" do
+      it "deletes target catalog successfully" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
+        delete_catalog
+      end
+    end
 
-      response = subject.delete_catalog(catalog_name)
-      response.should be_nil
+    context "target catalog has existing items" do
+      it "deletes target catalog successfully" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+        delete_catalog
+      end
     end
 
     it "fails if targeted catalog does not exist" do
       catalog_name_to_create = "XXXXXXX"
       expect { subject.delete_catalog(catalog_name_to_create) }.to raise_error(VCloudSdk::ObjectNotFoundError, /Catalog \S+ not found/)
+    end
+
+    private
+
+    def delete_catalog
+      org_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::ORG_RESPONSE)
+      catalog = VCloudSdk::Catalog.new(mock_connection, org_response.catalogs.first)
+      subject.should_receive(:find_catalog_by_name)
+        .with(catalog_name).once.and_return(catalog)
+
+      response = subject.delete_catalog(catalog_name)
+      response.should be_nil
     end
   end
 

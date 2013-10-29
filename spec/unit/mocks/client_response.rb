@@ -88,7 +88,7 @@ module VCloudSdk
            URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,]).strip
 
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
-            [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, URL, URL, CATALOG_NAME,
+            [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, URL, CATALOG_ID, URL, CATALOG_NAME,
              URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
@@ -203,11 +203,9 @@ module VCloudSdk
           URL]).strip
 
         CATALOG_RESPONSE = (File.read(Test.spec_asset("catalog_response.xml")) %
-          [VAPP_CATALOG_NAME, CATALOG_ID, URL, CATALOG_ID, URL, URL, URL,
+          [CATALOG_NAME, CATALOG_ID, URL, CATALOG_ID, URL, URL, URL,
           CATALOG_ID, URL, CATALOG_ID, CATALOG_ADD_ITEM_LINK, URL, CATALOG_ID,
-          URL, CATALOG_ID, URL, CATALOG_ID, URL, EXISTING_VAPP_TEMPLATE_NAME,
-          URL, EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID, EXISTING_MEDIA_NAME,
-          EXISTING_MEDIA_CATALOG_ITEM_LINK]).strip
+          URL, CATALOG_ID, URL, CATALOG_ID, URL]).strip
 
         CATALOG_CREATE_RESPONSE = (File.read(Test.spec_asset("catalog_create_response.xml")) %
           [DefaultSetting::CATALOG_NAME_TO_CREATE]).strip
@@ -220,12 +218,12 @@ module VCloudSdk
           "catalog_add_item_response.xml")) % [VAPP_TEMPLATE_NAME, URL, URL, URL,
           CATALOG_ID, URL, URL, URL, VAPP_TEMPLATE_NAME, URL, VAPP_ID]).strip
 
-        CATALOG_ITEM_ADDED_RESPONSE = (File.read(Test.spec_asset(
-          "catalog_item_added_response.xml")) % [VAPP_CATALOG_NAME, CATALOG_ID,
-          URL, CATALOG_ID, URL, URL, URL, CATALOG_ID, URL, CATALOG_ID, URL,
-          CATALOG_ID, URL, CATALOG_ID, URL, CATALOG_ID, URL, CATALOG_ID, URL,
-          EXISTING_VAPP_TEMPLATE_NAME, URL, EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID,
-          VAPP_TEMPLATE_NAME, URL]).strip
+        CATALOG_ITEM_ADDED_RESPONSE = (File.read(Test.spec_asset("catalog_item_added_response.xml")) %
+          [CATALOG_NAME, CATALOG_ID, URL, CATALOG_ID, URL, URL, URL,
+           CATALOG_ID, URL, CATALOG_ID, CATALOG_ADD_ITEM_LINK, URL, CATALOG_ID,
+           URL, CATALOG_ID, URL, CATALOG_ID, URL, EXISTING_VAPP_TEMPLATE_NAME,
+           URL, EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID, EXISTING_MEDIA_NAME,
+           EXISTING_MEDIA_CATALOG_ITEM_LINK]).strip
 
         CATALOG_ITEM_VAPP_LINK = "#{URL}/api/catalogItem/39a8f899-0f8e-40c4-ac68-66b2688833bc"
 
