@@ -10,7 +10,7 @@
   <Link rel="down" type="application/vnd.vmware.vcloud.tasksList+xml"
         href="%s/api/tasksList/82124610-59dc-4070-9181-bfca2c04cab0"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="Public Catalog"
-        href="%s/api/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4"/>
+        href="%s/api/catalog/%s"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
         href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4/controlAccess/"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="%s"
