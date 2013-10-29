@@ -9,7 +9,7 @@ describe VCloudSdk::VDC do
   let(:logger) { VCloudSdk::Config.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
 
-  let!(:mock_connection) do
+  let(:mock_connection) do
     VCloudSdk::Test.mock_connection(logger, url)
   end
 
@@ -19,7 +19,9 @@ describe VCloudSdk::VDC do
     described_class.new(mock_connection, vdc_response)
   end
 
-  its(:storage_profiles) { should have_at_least(1).items }
+  describe "#storage_profiles" do
+    its(:storage_profiles) { should have_at_least(1).item }
+  end
 
   describe "#find_storage_profile_by_name" do
     it "return a storage profile given targeted name" do
@@ -32,5 +34,9 @@ describe VCloudSdk::VDC do
       storage_profile = subject.find_storage_profile_by_name("xxxxxxx")
       storage_profile.should be_nil
     end
+  end
+
+  describe "#vapps" do
+    its(:vapps) { should have_at_least(1).item }
   end
 end

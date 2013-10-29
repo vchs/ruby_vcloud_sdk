@@ -15,7 +15,9 @@ describe VCloudSdk::VDC do
     client.find_vdc_by_name(vdc_name)
   end
 
-  its(:storage_profiles) { should have_at_least(1).items }
+  describe "#storage_profiles" do
+    its(:storage_profiles) { should have_at_least(1).item }
+  end
 
   describe "#find_storage_profile_by_name" do
     it "return a storage profile given targeted name" do
@@ -27,5 +29,9 @@ describe VCloudSdk::VDC do
       storage_profile = subject.find_storage_profile_by_name("xxxxxxx")
       storage_profile.should be_nil
     end
+  end
+
+  describe "#vapps" do
+    its(:vapps) { should have_at_least(1).item }
   end
 end

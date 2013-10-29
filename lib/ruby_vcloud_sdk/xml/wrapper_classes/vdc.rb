@@ -2,10 +2,6 @@ module VCloudSdk
   module Xml
 
     class Vdc < Wrapper
-      def name
-        @root["name"]
-      end
-
       def add_disk_link
          get_nodes("Link", {"type"=>MEDIA_TYPE[:DISK_CREATE_PARAMS]}).first
       end
@@ -33,6 +29,10 @@ module VCloudSdk
         get_nodes("Link", {"type"=>MEDIA_TYPE[:MEDIA]}).first
       end
 
+      def vapps
+        get_nodes(:ResourceEntity, type: MEDIA_TYPE[:VAPP])
+      end
+
       # vApp Template names are not unique so multiple ones can be returned.
       def get_vapp_templates(name)
         get_nodes("ResourceEntity",
@@ -49,8 +49,7 @@ module VCloudSdk
       end
 
       def storage_profiles
-        get_nodes("VdcStorageProfile",
-          {"type"=>MEDIA_TYPE[:VDC_STORAGE_PROFILE]})
+        get_nodes(:VdcStorageProfile, type: MEDIA_TYPE[:VDC_STORAGE_PROFILE])
       end
     end
 
