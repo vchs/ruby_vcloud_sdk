@@ -12,12 +12,24 @@ module VCloudSdk
                 Test::Response::ORG_RESPONSE
               end,
             Test::Response::VDC_LINK =>
-              lambda do
-              |url, headers| Test::Response::VDC_RESPONSE
+              lambda do |url, headers|
+                Test::Response::VDC_RESPONSE
               end,
             Test::Response::ORG_VDC_STORAGE_PROFILE_LINK =>
-              lambda do
-              |url, headers| Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
+              lambda do |url, headers|
+                Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
+              end,
+            Test::Response::CATALOG_LINK =>
+              lambda do |url, headers|
+                Test::Response::CATALOG_RESPONSE
+              end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_LINK =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_RESPONSE
+              end,
+            Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_MEDIA_CATALOG_ITEM
               end,
           },
           post: {
@@ -40,6 +52,14 @@ module VCloudSdk
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>
+              lambda do |url, headers|
+                nil
+              end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_LINK =>
+              lambda do |url, headers|
+                nil
+              end,
+            Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
               lambda do |url, headers|
                 nil
               end,

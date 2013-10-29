@@ -169,8 +169,10 @@ describe VCloudSdk::Client, :min, :all do
       catalog = double("Catalog to delete")
       subject.should_receive(:find_catalog_by_name)
         .with(catalog_name).once.and_return(catalog)
+      catalog.should_receive(:delete_all_catalog_items)
+        .once.ordered
       catalog.should_receive(:id)
-        .once.and_return(VCloudSdk::Test::Response::CATALOG_ID)
+        .once.ordered.and_return(VCloudSdk::Test::Response::CATALOG_ID)
 
       response = subject.delete_catalog(catalog_name)
       response.should be_nil

@@ -76,15 +76,23 @@ describe VCloudSdk::Client do
     describe "#delete_catalog" do
       subject { described_class.new(url, username, password, {}, logger) }
 
-      it "deletes target catalog successfully" do
-        catalog_name_to_create = SecureRandom.uuid
-        subject.create_catalog(catalog_name_to_create)
-        catalog = subject.find_catalog_by_name(catalog_name_to_create)
-        catalog.name.should eql catalog_name_to_create
+      context "target catalog has no items" do
+        it "deletes target catalog successfully" do
+          catalog_name_to_create = SecureRandom.uuid
+          subject.create_catalog(catalog_name_to_create)
+          catalog = subject.find_catalog_by_name(catalog_name_to_create)
+          catalog.name.should eql catalog_name_to_create
 
-        subject.delete_catalog(catalog_name_to_create)
-        catalog = subject.find_catalog_by_name(catalog_name_to_create)
-        catalog.should be_nil
+          subject.delete_catalog(catalog_name_to_create)
+          catalog = subject.find_catalog_by_name(catalog_name_to_create)
+          catalog.should be_nil
+        end
+      end
+
+      context "target catalog has existing items" do
+        it "deletes target catalog successfully" do
+          pending "upload vapp template to catalog before deletion"
+        end
       end
 
       it "fails if targeted catalog does not exist" do
