@@ -41,7 +41,9 @@ module VCloudSdk
       @url = url
       @retries = options[:retries] || RETRIES
       @time_limit = options[:time_limit_sec] || TIME_LIMIT_SEC
-      Config.configure(rest_throttle: options[:rest_throttle] || REST_THROTTLE)
+      Config.configure(
+          logger: @logger,
+          rest_throttle: options[:rest_throttle] || REST_THROTTLE)
 
       @connection = Connection::Connection.new(
           @url,

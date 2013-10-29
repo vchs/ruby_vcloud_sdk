@@ -29,6 +29,14 @@ describe VCloudSdk::Client, :min, :all do
   end
 
   describe "#initialize" do
+    it "initializes with no optional params" do
+      VCloudSdk::Connection::Connection
+        .should_receive(:new)
+        .once
+        .and_return(mock_connection)
+      described_class.new(url, username, password)
+    end
+
     it "set up connection successfully" do
       VCloudSdk::Connection::Connection
         .should_receive(:new)
