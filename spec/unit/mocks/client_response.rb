@@ -119,6 +119,9 @@ module VCloudSdk
         ORG_VDC_STORAGE_PROFILE_RESPONSE = (File.read(Test.spec_asset("vdc_storage_profile_response.xml")) %
           [URL, URL, URL, OVDC, URL, STORAGE_PROFILE_NAME, URL]).strip
 
+        EMPTY_ORG_VDC_STORAGE_PROFILE_RESPONSE = (File.read(Test.spec_asset("empty_vdc_storage_profile_response.xml")) %
+          [URL, URL, URL]).strip
+
         VDC_RESPONSE = (File.read(Test.spec_asset("vdc_response.xml")) %
           [OVDC, VDC_ID, URL, VDC_ID, URL, URL, URL, VDC_ID, URL, VDC_ID,
           MEDIA_UPLOAD_LINK, URL, VDC_ID, URL, VDC_ID, URL, VDC_ID, URL, VDC_ID,
@@ -126,6 +129,11 @@ module VCloudSdk
           URL, EXISTING_VAPP_ID, EXISTING_VAPP_TEMPLATE_NAME, URL,
           EXISTING_VAPP_TEMPLATE_ID, EXISTING_MEDIA_NAME, URL, EXISTING_MEDIA_ID,
           INDY_DISK_NAME, INDY_DISK_URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK, STORAGE_PROFILE_NAME, URL]).strip
+
+        EMPTY_VDC_RESPONSE = (File.read(Test.spec_asset("empty_vdc_response.xml")) %
+          [OVDC, VDC_ID, URL, VDC_ID, URL, URL, URL, VDC_ID, URL, VDC_ID,
+           MEDIA_UPLOAD_LINK, URL, VDC_ID, URL, VDC_ID, URL, VDC_ID, URL, VDC_ID,
+           URL, VDC_ID, URL, VDC_ID, VDC_INDY_DISKS_LINK, ORG_NETWORK_NAME, ORG_NETWORK_LINK]).strip
 
         VDC_VAPP_UPLOAD_LINK = "#{URL}/api/vdc/#{VDC_ID}/action/uploadVAppTemplate"
 
