@@ -1,4 +1,5 @@
 require_relative "vdc_storage_profile"
+require_relative "vapp"
 
 module VCloudSdk
 
@@ -24,5 +25,12 @@ module VCloudSdk
 
       nil
     end
+
+    def vapps
+      @vdc_xml_obj.vapps.map do |vapp|
+        VCloudSdk::VApp.new(@connection, vapp)
+      end
+    end
+
   end
 end
