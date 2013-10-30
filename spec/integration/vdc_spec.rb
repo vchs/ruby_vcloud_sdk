@@ -9,6 +9,7 @@ describe VCloudSdk::VDC do
   let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
   let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
   let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] ||  VCloudSdk::Test::DefaultSetting::STORAGE_PROFILE_NAME }
+  let(:vapp_name) { ENV['VAPP_NAME'] ||  VCloudSdk::Test::DefaultSetting::VAPP_NAME }
 
   subject do
     client = VCloudSdk::Client.new(url, username, password, {}, logger)
@@ -33,5 +34,17 @@ describe VCloudSdk::VDC do
 
   describe "#vapps" do
     its(:vapps) { should have_at_least(1).item }
+  end
+
+  describe "#find_vapp_by_name" do
+    it "returns a vapp given targeted name" do
+      vapp = subject.find_vapp_by_name(vapp_name)
+      vapp.name.should eql vapp_name
+    end
+
+    it "returns nil if targeted vapp with given name does not exist" do
+      vapp = subject.find_vapp_by_name("xxxxxxx")
+      vapp.should be_nil
+    end
   end
 end

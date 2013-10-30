@@ -86,6 +86,7 @@ module VCloudSdk
       CATALOG_NAME = "cloudfoundry"
       STORAGE_PROFILE_NAME = "large"
       CATALOG_NAME_TO_CREATE = "dev test catalog"
+      VAPP_NAME = "PCF vApp"
     end
   end
 
