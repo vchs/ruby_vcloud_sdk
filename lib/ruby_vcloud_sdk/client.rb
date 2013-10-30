@@ -37,12 +37,11 @@ module VCloudSdk
     private_constant :RETRIES, :TIME_LIMIT_SEC, :REST_THROTTLE
 
     def initialize(url, username, password, options = {}, logger = nil)
-      @logger = logger || Logger.new(STDOUT)
       @url = url
       @retries = options[:retries] || RETRIES
       @time_limit = options[:time_limit_sec] || TIME_LIMIT_SEC
       Config.configure(
-          logger: @logger,
+          logger: logger || Logger.new(STDOUT),
           rest_throttle: options[:rest_throttle] || REST_THROTTLE)
 
       @connection = Connection::Connection.new(
@@ -53,7 +52,7 @@ module VCloudSdk
       # We assume the organization does not change often so we can get it at
       # login and cache it
       @org = @connection.get(@session.organization)
-      @logger.info('Successfully connected.')
+      Config.logger.info('Successfully connected.')
     end
 
     def find_vdc_by_name(name)
