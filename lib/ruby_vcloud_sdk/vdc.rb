@@ -1,3 +1,4 @@
+require "uri"
 require_relative "vdc_storage_profile"
 require_relative "vapp"
 
@@ -12,7 +13,7 @@ module VCloudSdk
     end
 
     def storage_profiles
-      @connection.get("/api/query?type=orgVdcStorageProfile")
+      @connection.get("/api/query?type=orgVdcStorageProfile&filter=vdcName==#{URI.encode(@name)}")
         .org_vdc_storage_profile_records.map do |storage_profile|
           VCloudSdk::VdcStorageProfile.new(storage_profile)
         end

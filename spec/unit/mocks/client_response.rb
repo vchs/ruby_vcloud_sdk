@@ -7,6 +7,7 @@ module VCloudSdk
         ORGANIZATION = vcd["entities"]["organization"]
         ORG_ID = "82124610-59dc-4070-9181-bfca2c04cab0"
         OVDC = vcd["entities"]["virtual_datacenter"]
+        OVDC_NAME_WITH_SPACE = "XX XX XX"
         VAPP_CATALOG_NAME = vcd["entities"]["vapp_catalog"]
         CATALOG_ID = "cfab326c-ab71-445c-bc0b-abf15239de8b"
         CATALOG_NAME = "cloudfoundry"
@@ -53,7 +54,8 @@ module VCloudSdk
         SCSI_CONTROLLER_ID = "2"
         SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
         ORG_LINK = "#{URL}/api/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
-        ORG_VDC_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile"
+        ORG_VDC_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==#{OVDC}"
+        ORG_VDC_ENCODED_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==XX%20XX%20XX"
 
         SESSION = (File.read(Test.spec_asset("session.xml")) %
           [USERNAME, ORGANIZATION, URL, URL, ORGANIZATION, ORG_LINK, URL, URL, URL]).strip

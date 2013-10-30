@@ -28,7 +28,17 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
       end
 
-      its(:storage_profiles) { should have_at_least(1).item }
+      context "vdc name contains no space" do
+        its(:storage_profiles) { should have_at_least(1).item }
+      end
+
+      context "vdc name contains spaces" do
+        before do
+          subject.instance_variable_set(:@name, VCloudSdk::Test::Response::OVDC_NAME_WITH_SPACE)
+        end
+
+        its(:storage_profiles) { should have_at_least(1).item }
+      end
     end
 
     context "vdc has no storage profile" do

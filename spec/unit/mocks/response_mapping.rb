@@ -25,6 +25,10 @@ module VCloudSdk
                   Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
                 end
               end,
+            Test::Response::ORG_VDC_ENCODED_STORAGE_PROFILE_LINK =>
+              lambda do |url, headers|
+                Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
+              end,
             Test::Response::CATALOG_LINK =>
               lambda do |url, headers|
                 case (options[:catalog_state])
