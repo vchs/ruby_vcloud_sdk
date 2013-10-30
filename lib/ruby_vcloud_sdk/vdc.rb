@@ -32,5 +32,12 @@ module VCloudSdk
       end
     end
 
+    def find_vapp_by_name(name)
+      vapps.each do |vapp|
+        return vapp if vapp.name == name
+      end
+
+      nil
+    end
   end
 end
