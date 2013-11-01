@@ -3,8 +3,8 @@ module VCloudSdk
   class Catalog
     attr_reader :name
 
-    def initialize(connection, catalog_xml_obj)
-      @connection = connection
+    def initialize(session, catalog_xml_obj)
+      @connection = session.connection
       @catalog_xml_obj = catalog_xml_obj
       @name = catalog_xml_obj.name
     end

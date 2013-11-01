@@ -54,11 +54,6 @@ describe VCloudSdk::Client, :min, :all do
         .once
         .ordered
         .and_return(session)
-      conn.should_receive(:get)
-        .with(session.organization)
-        .once
-        .ordered
-        .and_return(org_response)
 
       client = described_class.new(nil, username, password, {}, logger)
       VCloudSdk::Test.verify_settings client,
@@ -79,11 +74,6 @@ describe VCloudSdk::Client, :min, :all do
         .once
         .ordered
         .and_return(session)
-      conn.should_receive(:get)
-        .with(session.organization)
-        .once
-        .ordered
-        .and_return(org_response)
 
       retries = {
         default: 5,
@@ -197,7 +187,9 @@ describe VCloudSdk::Client, :min, :all do
     def delete_catalog
       org_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
         VCloudSdk::Test::Response::ORG_RESPONSE)
-      catalog = VCloudSdk::Catalog.new(mock_connection, org_response.catalogs.first)
+      session = double("session")
+      session.stub(:connection).and_return(mock_connection)
+      catalog = VCloudSdk::Catalog.new(session, org_response.catalogs.first)
       subject.should_receive(:find_catalog_by_name)
         .with(catalog_name).once.and_return(catalog)
 

@@ -9,12 +9,15 @@ describe VCloudSdk::VDC do
   let(:logger) { VCloudSdk::Config.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
 
-  let(:mock_connection) do
-    VCloudSdk::Test.mock_connection(logger, url)
+  let(:mock_session) do
+    session = double("session")
+    connection = VCloudSdk::Test.mock_connection(logger, url)
+    session.stub(:connection).and_return(connection)
+    session
   end
 
   subject do
-    described_class.new(mock_connection, vdc_response)
+    described_class.new(mock_session, vdc_response)
   end
 
   describe "#storage_profiles" do
