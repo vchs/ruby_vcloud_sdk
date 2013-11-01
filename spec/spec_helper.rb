@@ -70,12 +70,17 @@ module VCloudSdk
       end
 
       def mock_connection(logger, url)
-        VCloudSdk::Config.configure(
-          logger: logger,
-          rest_throttle: VCloudSdk::Client.const_get(:REST_THROTTLE))
+        VCloudSdk::Config.configure(logger: logger)
 
         rest_client = VCloudSdk::Mocks::RestClient.new(url)
-        VCloudSdk::Connection::Connection.new(@url, nil, nil, rest_client)
+        VCloudSdk::Connection::Connection.new(url, nil, nil, rest_client)
+      end
+
+      def mock_session(logger, url)
+        # Note: need to run "mock_connection" first and then stub method "new"
+        conn = VCloudSdk::Test.mock_connection(logger, url)
+        VCloudSdk::Connection::Connection.stub(:new) { conn }
+        VCloudSdk::Session.new(url, nil, nil, {})
       end
     end
 
