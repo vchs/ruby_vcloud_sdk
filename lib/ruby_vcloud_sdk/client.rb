@@ -2,6 +2,7 @@ require "rest_client" # Need this for the exception classes
 require "set"
 require_relative "vdc"
 require_relative "catalog"
+require_relative "session"
 
 module VCloudSdk
 
@@ -47,26 +48,20 @@ module VCloudSdk
       @connection = Connection::Connection.new(
           @url,
           @time_limit[:http_request])
-      @session = @connection.connect(username, password)
-      @entity_resolver_link = @session.entity_resolver.href
-      # We assume the organization does not change often so we can get it at
-      # login and cache it
-      @org = @connection.get(@session.organization)
-      Config.logger.info('Successfully connected.')
+      session_xml_obj = @connection.connect(username, password)
+      @session = Session.new(session_xml_obj, @connection)
+      Config.logger.info("Successfully connected.")
     end
 
     def find_vdc_by_name(name)
-      vdc_link = @org.vdc_link(name)
+      vdc_link = @session.org.vdc_link(name)
       fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
-      @vdc = VCloudSdk::VDC.new(@connection, @connection.get(vdc_link))
+      VCloudSdk::VDC.new(@session, @connection.get(vdc_link))
     end
 
     def catalogs
-      # refresh catalogs
-      @org = @connection.get(@session.organization)
-
-      @org.catalogs.map do |catalog|
-        VCloudSdk::Catalog.new(@connection, catalog)
+      @session.org.catalogs.map do |catalog|
+        VCloudSdk::Catalog.new(@session, catalog)
       end
     end
 
@@ -82,7 +77,7 @@ module VCloudSdk
       catalog = Xml::WrapperFactory.create_instance("AdminCatalog")
       catalog.name = name
       catalog.description = description
-      @connection.post("/api/admin/org/#{@org.href_id}/catalogs",
+      @connection.post("/api/admin/org/#{@session.org.href_id}/catalogs",
                        catalog,
                        Xml::ADMIN_MEDIA_TYPE[:CATALOG])
     end
