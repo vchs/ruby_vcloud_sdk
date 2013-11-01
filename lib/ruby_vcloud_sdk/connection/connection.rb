@@ -7,11 +7,16 @@ module VCloudSdk
     class Connection
       ACCEPT = "application/*+xml;version=#{VCloudSdk::Client::VCLOUD_VERSION_NUMBER}"
 
-      private_constant :ACCEPT
+      REST_THROTTLE = {
+        min: 0,
+        max: 1,
+      }
+
+      private_constant :ACCEPT, :REST_THROTTLE
 
       def initialize(url, request_timeout = nil,
-          rest_client = nil, site = nil, file_uploader = nil)
-        @rest_throttle = Config.rest_throttle
+          rest_client = nil, site = nil, file_uploader = nil, rest_throttle = nil)
+        @rest_throttle = rest_throttle || REST_THROTTLE
 
         construct_rest_logger
         Config.configure(rest_logger: @rest_logger)
@@ -189,8 +194,8 @@ module VCloudSdk
             "#{uri.path}?#{uri.query}"
           end
         else
-          raise ApiError,
-            "href is not a string. href:#{href.inspect}, dst:#{destination}."
+          fail ApiError,
+               "href is not a string. href:#{href.inspect}, dst:#{destination}."
         end
       end
 

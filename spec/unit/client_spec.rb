@@ -10,11 +10,10 @@ describe VCloudSdk::Client, :min, :all do
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:username) { "cfadmin" }
   let(:password) { "akimbi" }
-  let(:response_mapping) { response_mapping }
   let(:conn) { double("Connection") }
   let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
 
-  let!(:mock_connection) do
+  let!(:mock_conn) do
     VCloudSdk::Test.mock_connection(logger, url)
   end
 
@@ -33,94 +32,8 @@ describe VCloudSdk::Client, :min, :all do
       VCloudSdk::Connection::Connection
         .should_receive(:new)
         .once
-        .and_return(mock_connection)
+        .and_return(mock_conn)
       described_class.new(url, username, password)
-    end
-
-    it "set up connection successfully" do
-      VCloudSdk::Connection::Connection
-        .should_receive(:new)
-        .once
-        .and_return(mock_connection)
-      described_class.new(url, username, password, {}, logger)
-    end
-
-    it "use default settings if not specified in input arguments" do
-      VCloudSdk::Connection::Connection
-        .should_receive(:new).once.and_return conn
-
-      conn.should_receive(:connect)
-        .with(username, password)
-        .once
-        .ordered
-        .and_return(session)
-      conn.should_receive(:get)
-        .with(session.organization)
-        .once
-        .ordered
-        .and_return(org_response)
-
-      client = described_class.new(nil, username, password, {}, logger)
-      VCloudSdk::Test.verify_settings client,
-                                      :@retries => VCloudSdk::Client
-                                      .const_get(:RETRIES),
-                                      :@time_limit => VCloudSdk::Client
-                                      .const_get(:TIME_LIMIT_SEC)
-
-      VCloudSdk::Config.rest_throttle.should eq VCloudSdk::Client.const_get(:REST_THROTTLE)
-    end
-
-    it "use settings in input arguments" do
-      VCloudSdk::Connection::Connection
-        .should_receive(:new).once.and_return conn
-
-      conn.should_receive(:connect)
-        .with(username, password)
-        .once
-        .ordered
-        .and_return(session)
-      conn.should_receive(:get)
-        .with(session.organization)
-        .once
-        .ordered
-        .and_return(org_response)
-
-      retries = {
-        default: 5,
-        upload_vapp_files: 7,
-        cpi: 1
-      }
-
-      time_limit_sec = {
-        default: 120,
-        delete_vapp_template: 120,
-        delete_vapp: 120,
-        delete_media: 120,
-        instantiate_vapp_template: 300,
-        power_on: 600,
-        power_off: 600,
-        undeploy: 720,
-        process_descriptor_vapp_template: 300,
-        http_request: 240
-      }
-
-      rest_throttle = {
-        min: 0,
-        max: 1,
-      }
-
-      options = {
-        retries: retries,
-        time_limit_sec: time_limit_sec,
-        rest_throttle: rest_throttle,
-      }
-
-      client = described_class.new(nil, username, password, options, logger)
-
-      VCloudSdk::Test.verify_settings client,
-                                      :@retries => retries,
-                                      :@time_limit => time_limit_sec
-      VCloudSdk::Config.rest_throttle.should eq rest_throttle
     end
   end
 
@@ -197,7 +110,8 @@ describe VCloudSdk::Client, :min, :all do
     def delete_catalog
       org_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
         VCloudSdk::Test::Response::ORG_RESPONSE)
-      catalog = VCloudSdk::Catalog.new(mock_connection, org_response.catalogs.first)
+      catalog = VCloudSdk::Catalog.new(VCloudSdk::Test.mock_session(logger, url),
+                                       org_response.catalogs.first)
       subject.should_receive(:find_catalog_by_name)
         .with(catalog_name).once.and_return(catalog)
 
@@ -208,7 +122,7 @@ describe VCloudSdk::Client, :min, :all do
 
   private
   def initialize_client
-    VCloudSdk::Connection::Connection.stub(:new) { mock_connection }
+    VCloudSdk::Connection::Connection.stub(:new) { mock_conn }
     described_class.new(url, username, password, {}, logger)
   end
 end
