@@ -5,12 +5,12 @@ require "nokogiri/diff"
 
 describe VCloudSdk::VApp do
 
-  let(:conn) { double("Connection") }
+  let(:session) { double("Session") }
 
   subject do
     vdc_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
       VCloudSdk::Test::Response::VDC_RESPONSE)
-    described_class.new(conn, vdc_response.vapps.first)
+    described_class.new(session, vdc_response.vapps.first)
   end
 
   describe "#initialize" do

@@ -70,12 +70,10 @@ module VCloudSdk
       end
 
       def mock_connection(logger, url)
-        VCloudSdk::Config.configure(
-          logger: logger,
-          rest_throttle: VCloudSdk::Client.const_get(:REST_THROTTLE))
+        VCloudSdk::Config.configure(logger: logger)
 
         rest_client = VCloudSdk::Mocks::RestClient.new(url)
-        VCloudSdk::Connection::Connection.new(@url, nil, nil, rest_client)
+        VCloudSdk::Connection::Connection.new(url, nil, nil, rest_client)
       end
     end
 

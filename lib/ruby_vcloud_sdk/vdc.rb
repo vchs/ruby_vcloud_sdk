@@ -1,19 +1,22 @@
 require "uri"
 require_relative "vdc_storage_profile"
 require_relative "vapp"
+require_relative "infrastructure"
 
 module VCloudSdk
 
   class VDC
+    include Infrastructure
     attr_reader :name
 
-    def initialize(connection, vdc_xml_obj)
-      @connection, @vdc_xml_obj = connection, vdc_xml_obj
+    def initialize(session, vdc_xml_obj)
+      @session = session
+      @vdc_xml_obj = vdc_xml_obj
       @name = vdc_xml_obj.name
     end
 
     def storage_profiles
-      @connection.get("/api/query?type=orgVdcStorageProfile&filter=vdcName==#{URI.encode(@name)}")
+      connection.get("/api/query?type=orgVdcStorageProfile&filter=vdcName==#{URI.encode(name)}")
         .org_vdc_storage_profile_records.map do |storage_profile|
           VCloudSdk::VdcStorageProfile.new(storage_profile)
         end
@@ -29,7 +32,7 @@ module VCloudSdk
 
     def vapps
       @vdc_xml_obj.vapps.map do |vapp|
-        VCloudSdk::VApp.new(@connection, vapp)
+        VCloudSdk::VApp.new(@session, vapp)
       end
     end
 
