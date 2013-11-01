@@ -7,8 +7,9 @@ module VCloudSdk
   class VDC
     attr_reader :name
 
-    def initialize(connection, vdc_xml_obj)
-      @connection, @vdc_xml_obj = connection, vdc_xml_obj
+    def initialize(session, vdc_xml_obj)
+      @vdc_xml_obj = vdc_xml_obj
+      @connection = session.connection
       @name = vdc_xml_obj.name
     end
 
