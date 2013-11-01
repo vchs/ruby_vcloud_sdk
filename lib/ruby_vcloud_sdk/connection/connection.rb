@@ -11,7 +11,6 @@ module VCloudSdk
 
       def initialize(url, request_timeout = nil,
           rest_client = nil, site = nil, file_uploader = nil)
-        @logger = Config.logger
         @rest_throttle = Config.rest_throttle
 
         construct_rest_logger
@@ -31,10 +30,10 @@ module VCloudSdk
         auth_header_value = "Basic #{Base64.encode64(login_password)}"
         response = @site[login_url].post(
             Authorization: auth_header_value, Accept: ACCEPT)
-        @logger.debug(response)
+        Config.logger.debug(response)
         @cookies = response.cookies
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
-          @logger.debug("@cookies: #{@cookies.inspect}.")
+          Config.logger.debug("@cookies: #{@cookies.inspect}.")
         end
         wrap_response(response)
       end
@@ -134,7 +133,7 @@ module VCloudSdk
         begin
           url_node = get("/api/versions")
           if url_node.nil?
-            @logger.warn "Unable to find version=#{VCLOUD_VERSION_NUMBER}. Default to #{default_login_url}"
+            Config.logger.warn "Unable to find version=#{VCLOUD_VERSION_NUMBER}. Default to #{default_login_url}"
             @login_url = default_login_url
           else
             # Typically url_content is the full URL such as "https://10.146.21.135/api/sessions"
@@ -142,7 +141,7 @@ module VCloudSdk
             @login_url = get_nested_resource(url_node.login_url.content)
           end
         rescue => ex
-          @logger.warn %Q{
+          Config.logger.warn %Q{
             Caught exception when retrieving login url:
             #{ex.to_s}"
 
@@ -154,24 +153,24 @@ module VCloudSdk
       end
 
       def construct_rest_logger
-        @logger.debug("constructing rest_logger")
+        Config.logger.debug("constructing rest_logger")
         rest_log_filename = File.join(
-            File.dirname(@logger.instance_eval { @logdev }.dev.path),
+            File.dirname(Config.logger.instance_eval { @logdev }.dev.path),
             "rest")
         log_file = File.open(rest_log_filename, "w")
         log_file.sync = true
 
         @rest_logger = Logger.new(log_file || STDOUT)
-        @rest_logger.level = @logger.level
-        @rest_logger.formatter = @logger.formatter
+        @rest_logger.level = Config.logger.level
+        @rest_logger.formatter = Config.logger.formatter
       end
 
       def log_exceptions(e)
         if e.is_a? RestClient::Exception
-          @logger.error("HTTP Code: #{e.http_code}")
-          @logger.error("HTTP Body: #{e.http_body}")
-          @logger.error("Message: #{e.message}")
-          @logger.error("Response: #{e.response}")
+          Config.logger.error("HTTP Code: #{e.http_code}")
+          Config.logger.error("HTTP Body: #{e.http_body}")
+          Config.logger.error("Message: #{e.message}")
+          Config.logger.error("Response: #{e.response}")
         end
       end
 

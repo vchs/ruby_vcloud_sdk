@@ -7,7 +7,6 @@ module VCloudSdk
       @connection = connection
       @catalog_xml_obj = catalog_xml_obj
       @name = catalog_xml_obj.name
-      @logger = Config.logger
     end
 
     def id
@@ -21,7 +20,7 @@ module VCloudSdk
     def delete_all_catalog_items
       catalog_items.each do |catalog_item_xml_obj|
         catalog_item = @connection.get("/api/catalogItem/#{catalog_item_xml_obj.href_id}")
-        @logger.info "Deleting catalog item \"#{catalog_item.name}\""
+        Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
         @connection.delete(catalog_item.remove_link)
       end
     end
