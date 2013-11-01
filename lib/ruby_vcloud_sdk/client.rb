@@ -1,13 +1,12 @@
-require "rest_client" # Need this for the exception classes
-require "set"
 require_relative "vdc"
 require_relative "catalog"
 require_relative "session"
+require_relative "infrastructure"
 
 module VCloudSdk
 
   class Client
-    attr_reader :vdc
+    include Infrastructure
 
     VCLOUD_VERSION_NUMBER = "5.1"
 
@@ -18,26 +17,6 @@ module VCloudSdk
       @session = Session.new(url, username, password, options)
       @connection = @session.connection
       Config.logger.info("Successfully connected.")
-    end
-
-    def find_vdc_by_name(name)
-      vdc_link = @session.org.vdc_link(name)
-      fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
-      VCloudSdk::VDC.new(@session, @connection.get(vdc_link))
-    end
-
-    def catalogs
-      @session.org.catalogs.map do |catalog|
-        VCloudSdk::Catalog.new(@session, catalog)
-      end
-    end
-
-    def find_catalog_by_name(name)
-      catalogs.each do |catalog|
-        return catalog if catalog.name == name
-      end
-
-      nil
     end
 
     def create_catalog(name, description = "")
