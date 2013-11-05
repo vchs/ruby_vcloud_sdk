@@ -28,6 +28,25 @@ describe VCloudSdk::Catalog do
     VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
   end
 
+  describe "#admin_catalog_xml" do
+    it "has correct name" do
+      subject.admin_catalog_xml.name.should eql VCloudSdk::Test::Response::CATALOG_NAME
+    end
+
+    it "throws exception if admin_catalog_xml is nil" do
+      VCloudSdk::Connection::Connection
+        .any_instance
+        .stub(:get)
+
+      VCloudSdk::Connection::Connection
+        .any_instance
+        .stub(:get)
+        .with(VCloudSdk::Test::Response::CATALOG_LINK)
+        .and_return nil
+      expect { subject.admin_catalog_xml }.to raise_error(VCloudSdk::ObjectNotFoundError)
+    end
+  end
+
   describe "#catalog_items" do
     its(:catalog_items) { should have_at_least(1).item }
   end
