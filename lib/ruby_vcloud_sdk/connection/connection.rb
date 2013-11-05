@@ -84,11 +84,11 @@ module VCloudSdk
         end
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
         response = @site[get_nested_resource(destination)].put(data.to_s, {
-            :Accept=>ACCEPT,
-            :cookies=>@cookies,
-            :content_type=>content_type
+            Accept: ACCEPT,
+            cookies: @cookies,
+            content_type: content_type
         })
-        raise ApiRequestError if http_error?(response)
+        fail ApiRequestError if http_error?(response)
         @rest_logger.debug((response && !response.strip.empty?) ?
           response : "Received empty response.")
         if response && !response.strip.empty?
@@ -102,10 +102,10 @@ module VCloudSdk
         @rest_logger.info "#{__method__.to_s.upcase} #{delay}\t " +
                            "#{self.class.get_href(destination)}"
         sleep(delay)
-        response = @site[get_nested_resource(destination)].delete({
-            :Accept=>ACCEPT,
-            :cookies=>@cookies
-        })
+        response = @site[get_nested_resource(destination)].delete(
+            Accept: ACCEPT,
+            cookies: @cookies
+        )
         @rest_logger.debug(response)
         if response && !response.strip.empty?
           wrap_response(response)
@@ -138,7 +138,9 @@ module VCloudSdk
         begin
           url_node = get("/api/versions")
           if url_node.nil?
-            Config.logger.warn "Unable to find version=#{VCLOUD_VERSION_NUMBER}. Default to #{default_login_url}"
+            Config.logger.warn %Q{
+              Unable to find version=#{VCLOUD_VERSION_NUMBER}. Default to #{default_login_url}
+            }
             @login_url = default_login_url
           else
             # Typically url_content is the full URL such as "https://10.146.21.135/api/sessions"
