@@ -213,6 +213,7 @@ module VCloudSdk
     }
 
     XML_TYPE = {
+      :ADD => "add",
       :ADMINALLOCATEDEXTIPRECORD => "AdminAllocatedExtIpRecord",
       :ADMINCATALOG => "AdminCatalog",
       :ADMINCATALOGITEMRECORD => "AdminCatalogItemRecord",
@@ -339,6 +340,7 @@ module VCloudSdk
       :REFERENCE => "Reference",
       :REFERENCES => "References",
       :RELOCATEPARAMS => "RelocateParams",
+      :REMOVE => "remove",
       :RESOURCEENTITY => "ResourceEntity",
       :RESOURCEPOOLRECORD => "ResourcePoolRecord",
       :RIGHT => "Right",

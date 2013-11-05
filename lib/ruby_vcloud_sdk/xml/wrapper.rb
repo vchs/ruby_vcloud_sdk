@@ -101,12 +101,21 @@ module VCloudSdk
         @root["name"]
       end
 
+      def name=(name)
+        @root["name"] = name
+      end
+
       def urn
         @root["id"]
       end
 
       def type
         @root["type"]
+      end
+
+      def remove_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: XML_TYPE[:REMOVE] }, true).first
       end
 
       def create_xpath_query(type_name, attrs = nil, only_immediate = false,
@@ -189,18 +198,18 @@ module VCloudSdk
           node = Nokogiri::XML::Node.new(child, parent)
           if (namespace_prefix.nil? ^ namespace_href.nil?)
             raise CpiError,
-              "Namespace prefix must both be nil or defined together."
+                  "Namespace prefix must both be nil or defined together."
           end
           # This is a little more cumbersome but Nokogiri has problems
           # figuring out the right namespace prefix otherwise
           if namespace_prefix
             ns = node.add_namespace_definition(namespace_prefix,
-              namespace_href)
+                                               namespace_href)
             node.namespace = ns
           end
           parent.add_child(node)
         else
-          raise CpiError, "Cannot add child.  Unknown object passed in."
+          fail CpiError, "Cannot add child.  Unknown object passed in."
         end
       end
 
