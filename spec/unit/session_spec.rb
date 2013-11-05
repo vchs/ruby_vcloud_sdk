@@ -95,5 +95,17 @@ describe VCloudSdk::Session do
     it "has correct name" do
       subject.org.name.should eql VCloudSdk::Test::Response::ORGANIZATION
     end
+
+    it "populates exception upon failure" do
+      error_msg = "400 Bad Request"
+      session_xml_obj = VCloudSdk::Xml::WrapperFactory
+        .wrap_document(VCloudSdk::Test::Response::SESSION)
+      VCloudSdk::Connection::Connection
+        .any_instance
+        .stub(:get)
+        .with(session_xml_obj.organization)
+        .and_raise(error_msg)
+      expect { subject.org }.to raise_error(error_msg)
+    end
   end
 end
