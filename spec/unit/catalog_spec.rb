@@ -3,17 +3,29 @@ require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
 require_relative "mocks/rest_client"
 require "nokogiri/diff"
+require "stringio"
 
 describe VCloudSdk::Catalog do
 
   let(:logger) { VCloudSdk::Config.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
-
-  let(:mock_session) do
-    session = double("session")
-    connection = VCloudSdk::Test.mock_connection(logger, url)
-    session.stub(:connection).and_return(connection)
-    session
+  let!(:vmdk_string_io) { StringIO.new("vmdk") }
+  let(:vdc_name) { VCloudSdk::Test::Response::OVDC }
+  let(:vapp_name) { VCloudSdk::Test::Response::VAPP_TEMPLATE_NAME }
+  let(:mock_ovf_directory) do
+    directory = double("Directory")
+    # Actual content of the OVF is irrelevant as long as the client gives
+    # back the same one given to it
+    directory.stub(:ovf_file_path) { "ovf_file" }
+    directory.stub(:ovf_file) { StringIO.new("ovf_string") }
+    directory.stub(:vmdk_file) { vmdk_string_io }
+    directory.stub(:vmdk_file_path) do |file_name|
+      file_name
+    end
+    directory
+  end
+  let(:file_uploader) do
+    subject.send(:connection).instance_variable_get(:@file_uploader)
   end
 
   subject do
@@ -26,6 +38,7 @@ describe VCloudSdk::Catalog do
 
   before do
     VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+    VCloudSdk::Test::ResponseMapping.set_option vapp_state: :nothing
   end
 
   describe "#admin_xml" do
@@ -56,6 +69,40 @@ describe VCloudSdk::Catalog do
       response = subject.delete_all_catalog_items
       response[0].name.should eql VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
       response[1].name.should eql VCloudSdk::Test::Response::EXISTING_MEDIA_NAME
+    end
+  end
+
+  describe "#upload_vapp_template" do
+    it "uploads an OVF to the VDC" do
+      file_uploader
+        .should_receive(:upload)
+        .with(
+          VCloudSdk::Test::Response::VAPP_TEMPLATE_DISK_UPLOAD_1,
+          vmdk_string_io,
+          anything) do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_state: :disks_uploaded
+      end
+
+      catalog_item = subject
+        .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+      catalog_item.name.should eql vapp_name
+    end
+
+    it "reports an exception upon error" do
+      file_uploader
+        .should_receive(:upload)
+        .with(
+          VCloudSdk::Test::Response::VAPP_TEMPLATE_DISK_UPLOAD_1,
+          vmdk_string_io,
+          anything) do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_state: :disks_upload_failed
+      end
+
+      expect do
+        subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+      end.to raise_exception("Error uploading vApp template")
     end
   end
 end

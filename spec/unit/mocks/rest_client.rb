@@ -27,6 +27,11 @@ module VCloudSdk
           .get_mapping(:delete, build_url).call(build_url, headers)
       end
 
+      def put(payload, headers = {})
+        VCloudSdk::Test::ResponseMapping
+          .get_mapping(:put, build_url).call(build_url, payload, headers)
+      end
+
       private
 
       def build_url
