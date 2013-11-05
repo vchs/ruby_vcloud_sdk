@@ -6,24 +6,21 @@ module VCloudSdk
         get_nodes("Description").first
       end
 
-      def name=(name)
-        @root["name"] = name
-      end
-
       def description=(desc)
         description.content = desc
       end
 
       def add_item_link
-        get_nodes("Link", {"type"=>ADMIN_MEDIA_TYPE[:CATALOG_ITEM],
-          "rel"=>"add"}).first
+        get_nodes(XML_TYPE[:LINK],
+                  { type: ADMIN_MEDIA_TYPE[:CATALOG_ITEM],
+                    rel: XML_TYPE[:ADD] }).first
       end
 
       def catalog_items(name = nil)
         if name
-          get_nodes("CatalogItem", {"name" => name})
+          get_nodes(XML_TYPE[:CATALOGITEM], { name: name })
         else
-          get_nodes("CatalogItem")
+          get_nodes(XML_TYPE[:CATALOGITEM])
         end
       end
     end

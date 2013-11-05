@@ -3,7 +3,7 @@ module VCloudSdk
 
     class Task < Wrapper
       def cancel_link
-        get_nodes("Link", {"rel" => "task:cancel"}).first
+        get_nodes(XML_TYPE[:LINK], { rel: "task:cancel" }).first
       end
 
       def status
