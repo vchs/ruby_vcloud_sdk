@@ -46,6 +46,21 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::EXISTING_MEDIA_CATALOG_ITEM
               end,
+            Test::Response::VAPP_TEMPLATE_LINK =>
+              lambda do |url, headers|
+                case (options[:vapp_state])
+                when :ovf_uploaded
+                  Test::Response::VAPP_TEMPLATE_NO_DISKS_RESPONSE
+                when :nothing
+                  Test::Response::VAPP_TEMPLATE_UPLOAD_OVF_WAITING_RESPONSE
+                when :disks_uploaded
+                  Test::Response::VAPP_TEMPLATE_UPLOAD_COMPLETE
+                when :disks_upload_failed
+                  Test::Response::VAPP_TEMPLATE_UPLOAD_FAILED
+                when :finalized
+                  Test::Response::VAPP_TEMPLATE_READY_RESPONSE
+                end
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -64,6 +79,28 @@ module VCloudSdk
 
                 Test::Response::CATALOG_CREATE_RESPONSE
               end,
+            Test::Response::VDC_VAPP_UPLOAD_LINK =>
+              lambda do |url, data, headers|
+                set_option vapp_state: :nothing
+                Test::Response::VAPP_TEMPLATE_UPLOAD_OVF_WAITING_RESPONSE
+              end,
+            Test::Response::CATALOG_ADD_ITEM_LINK =>
+              lambda do |url, data, headers|
+                case (Xml::WrapperFactory.wrap_document(data))
+                when Xml::WrapperFactory.wrap_document(
+                  Test::Response::CATALOG_ADD_VAPP_REQUEST)
+                  Test::Response::CATALOG_ADD_ITEM_RESPONSE
+                when Xml::WrapperFactory.wrap_document(
+                  Test::Response::MEDIA_ADD_TO_CATALOG_REQUEST)
+                  Test::Response::MEDIA_ADD_TO_CATALOG_RESPONSE
+                else
+                  Config.logger.error %Q{
+                    Response mapping not found for POST and #{url} and
+                    #{data}
+                  }
+                  fail "Response mapping not found."
+                end
+              end,
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>
@@ -79,6 +116,13 @@ module VCloudSdk
                 nil
               end,
           },
+          put: {
+            Test::Response::VAPP_TEMPLATE_UPLOAD_OVF_LINK =>
+              lambda do |url, data, headers|
+                set_option vapp_state: :ovf_uploaded
+                ""
+              end,
+          }
       }
 
       private_constant :LINK_TO_RESPONSE

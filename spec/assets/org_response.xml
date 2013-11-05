@@ -9,11 +9,11 @@
         href="%s/api/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.tasksList+xml"
         href="%s/api/tasksList/82124610-59dc-4070-9181-bfca2c04cab0"/>
-  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="Public Catalog"
+  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="%s"
         href="%s/api/catalog/%s"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
         href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/c2ee9e9b-105d-478f-a7e8-7e73517f74b4/controlAccess/"/>
-  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="%s"
+  <Link rel="down" type="application/vnd.vmware.vcloud.catalog+xml" name="Public Catalog"
         href="%s/api/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml"
         href="%s/api/org/82124610-59dc-4070-9181-bfca2c04cab0/catalog/b5a81bed-b2a8-4d62-95b7-dff19cee53d1/controlAccess/"/>

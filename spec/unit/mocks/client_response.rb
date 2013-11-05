@@ -53,7 +53,7 @@ module VCloudSdk
         INDY_DISK_SIZE = 200
         SCSI_CONTROLLER_ID = "2"
         SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
-        ORG_LINK = "#{URL}/api/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
+        ORG_LINK = "#{URL}/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
         ORG_VDC_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==#{OVDC}"
         ORG_VDC_ENCODED_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==XX%20XX%20XX"
 
@@ -90,7 +90,7 @@ module VCloudSdk
            URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,]).strip
 
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
-            [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, URL, CATALOG_ID, URL, CATALOG_NAME,
+            [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, CATALOG_NAME, URL, CATALOG_ID, URL,
              URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
@@ -147,7 +147,7 @@ module VCloudSdk
           "vapp_template_upload_response.xml")) % [VAPP_TEMPLATE_NAME, URL,
           URL, URL, VDC_ID, URL, URL, USERNAME, URL, URL, URL, URL]).strip
 
-        VAPP_TEMPLATE_LINK = "#{URL}/api/vAppTemplate/vappTemplate-c032c1a3-21a2-4ac2-8e98-0cc29229e10c"
+        VAPP_TEMPLATE_LINK = "#{URL}/api/vAppTemplate/vappTemplate-#{VAPP_ID}"
 
         VAPP_TEMPLATE_UPLOAD_OVF_LINK = "#{URL}/transfer/22467867-7ada-4a55-a9cb-e05aa30a4f96/descriptor.ovf"
 
