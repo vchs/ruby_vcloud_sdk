@@ -1,3 +1,4 @@
+require "forwardable"
 require "uri"
 require_relative "vdc_storage_profile"
 require_relative "vapp"
@@ -7,12 +8,13 @@ module VCloudSdk
 
   class VDC
     include Infrastructure
-    attr_reader :name
+
+    extend Forwardable
+    def_delegators :@vdc_xml_obj, :upload_link, :name
 
     def initialize(session, vdc_xml_obj)
       @session = session
       @vdc_xml_obj = vdc_xml_obj
-      @name = vdc_xml_obj.name
     end
 
     def storage_profiles

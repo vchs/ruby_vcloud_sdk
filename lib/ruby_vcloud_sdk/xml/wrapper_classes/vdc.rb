@@ -21,8 +21,8 @@ module VCloudSdk
       end
 
       def upload_link
-        get_nodes("Link",
-          {"type"=>MEDIA_TYPE[:UPLOAD_VAPP_TEMPLATE_PARAMS]}).first
+        get_nodes(XML_TYPE[:LINK],
+          { type: MEDIA_TYPE[:UPLOAD_VAPP_TEMPLATE_PARAMS] }).first
       end
 
       def upload_media_link
