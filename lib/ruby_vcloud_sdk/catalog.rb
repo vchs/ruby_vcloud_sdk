@@ -20,7 +20,7 @@ module VCloudSdk
     end
 
     def catalog_items
-      connection.get("/api/admin/catalog/#{id}").catalog_items
+      admin_xml.catalog_items
     end
 
     def delete_all_catalog_items
@@ -29,6 +29,20 @@ module VCloudSdk
         Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
         connection.delete(catalog_item.remove_link)
       end
+    end
+
+    private
+
+    def admin_xml
+      admin_catalog_link = "/api/admin/catalog/#{id}"
+      admin_catalog = connection.get(admin_catalog_link)
+
+      unless admin_catalog
+        fail ObjectNotFoundError,
+             "Catalog #{name} of link #{admin_catalog_link} not available."
+      end
+
+      admin_catalog
     end
   end
 end
