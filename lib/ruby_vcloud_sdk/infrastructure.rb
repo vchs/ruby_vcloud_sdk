@@ -7,6 +7,8 @@ module VCloudSdk
                       Xml::TASK_STATUS[:CANCELED]]
     SUCCESS_STATUS = [Xml::TASK_STATUS[:SUCCESS]]
 
+    private
+
     def find_vdc_by_name(name)
       vdc_link = @session.org.vdc_link(name)
       fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
@@ -27,14 +29,41 @@ module VCloudSdk
       nil
     end
 
-    private
+    def storage_profiles
+      connection.get("/api/query?type=orgVdcStorageProfile&filter=vdcName==#{URI.encode(name)}")
+        .org_vdc_storage_profile_records.map do |storage_profile|
+          VCloudSdk::VdcStorageProfile.new(storage_profile)
+        end
+    end
+
+    def find_storage_profile_by_name(name)
+      storage_profiles.each do |storage_profile|
+        return storage_profile if storage_profile.name == name
+      end
+
+      nil
+    end
+
+    def vapps
+      @vdc_xml_obj.vapps.map do |vapp|
+        VCloudSdk::VApp.new(@session, vapp)
+      end
+    end
+
+    def find_vapp_by_name(name)
+      vapps.each do |vapp|
+        return vapp if vapp.name == name
+      end
+
+      nil
+    end
 
     def connection
       @session.connection
     end
 
     def monitor_task(
-      task,
+        task,
         time_limit = @session.time_limit[:default],
         error_statuses = ERROR_STATUSES,
         success = SUCCESS_STATUS,
