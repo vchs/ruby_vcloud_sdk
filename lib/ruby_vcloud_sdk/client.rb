@@ -18,13 +18,15 @@ module VCloudSdk
       Config.logger.info("Successfully connected.")
     end
 
+    public :find_vdc_by_name, :catalogs, :find_catalog_by_name
+
     def create_catalog(name, description = "")
       catalog = Xml::WrapperFactory.create_instance("AdminCatalog")
       catalog.name = name
       catalog.description = description
       connection.post("/api/admin/org/#{@session.org.href_id}/catalogs",
-                       catalog,
-                       Xml::ADMIN_MEDIA_TYPE[:CATALOG])
+                      catalog,
+                      Xml::ADMIN_MEDIA_TYPE[:CATALOG])
     end
 
     def delete_catalog(name)
