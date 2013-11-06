@@ -10,6 +10,8 @@ module VCloudSdk
 
     VCLOUD_VERSION_NUMBER = "5.1"
 
+    public :find_vdc_by_name, :catalogs, :find_catalog_by_name
+
     def initialize(url, username, password, options = {}, logger = nil)
       @url = url
       Config.configure(logger: logger || Logger.new(STDOUT))
@@ -23,8 +25,8 @@ module VCloudSdk
       catalog.name = name
       catalog.description = description
       connection.post("/api/admin/org/#{@session.org.href_id}/catalogs",
-                       catalog,
-                       Xml::ADMIN_MEDIA_TYPE[:CATALOG])
+                      catalog,
+                      Xml::ADMIN_MEDIA_TYPE[:CATALOG])
     end
 
     def delete_catalog(name)

@@ -7,6 +7,8 @@ module VCloudSdk
                       Xml::TASK_STATUS[:CANCELED]]
     SUCCESS_STATUS = [Xml::TASK_STATUS[:SUCCESS]]
 
+    private
+
     def find_vdc_by_name(name)
       vdc_link = @session.org.vdc_link(name)
       fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
@@ -26,8 +28,6 @@ module VCloudSdk
 
       nil
     end
-
-    private
 
     def connection
       @session.connection
