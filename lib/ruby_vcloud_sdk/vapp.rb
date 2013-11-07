@@ -38,6 +38,27 @@ module VCloudSdk
            "Fail to delete vApp #{name}"
     end
 
+    def power_on
+      vapp = connection.get(@vapp_xml_obj)
+      Config.logger.debug "vApp status: #{vapp[:status]}"
+      if is_vapp_status?(vapp, :POWERED_ON)
+        Config.logger.info "vApp #{name} is already powered-on."
+        return
+      end
+
+      power_on_link = vapp.power_on_link
+      unless power_on_link
+        fail CloudError,
+             "vApp #{name} not in a state to be powered on."
+      end
+
+      Config.logger.info "Powering on vApp #{name}."
+      task = connection.post(power_on_link, nil)
+      task = monitor_task task, @session.time_limit[:power_on]
+      Config.logger.info "vApp #{name} is powered on."
+      task
+    end
+
     private
 
     def is_vapp_status?(vapp, status)
