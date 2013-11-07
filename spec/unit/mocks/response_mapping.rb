@@ -61,6 +61,20 @@ module VCloudSdk
                   Test::Response::VAPP_TEMPLATE_READY_RESPONSE
                 end
               end,
+            Test::Response::INSTANTIATED_VAPP_LINK =>
+              lambda do |url, headers|
+                  Test::Response::INSTANTIAED_VAPP_RESPONSE
+              end,
+            Test::Response::INSTANTIATED_VAPP_DELETE_TASK_LINK =>
+              lambda do |url, headers|
+                case (options[:delete_vapp_task_state])
+                when :running
+                  Test::ResponseMapping.set_option delete_vapp_task_state: :success
+                  Test::Response::INSTANTIATED_VAPP_DELETE_RUNNING_TASK
+                when :success
+                  Test::Response::INSTANTIATED_VAPP_DELETE_DONE_TASK
+                end
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -114,6 +128,10 @@ module VCloudSdk
             Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
               lambda do |url, headers|
                 nil
+              end,
+            Test::Response::INSTANTIATED_VAPP_LINK =>
+              lambda do |url, headers|
+                Test::Response::INSTANTIATED_VAPP_DELETE_RUNNING_TASK
               end,
           },
           put: {

@@ -100,8 +100,8 @@ describe VCloudSdk::VDC do
     end
 
     it "returns a vapp given targeted name" do
-      vapp = subject.find_vapp_by_name(VCloudSdk::Test::Response::EXISTING_VAPP_NAME)
-      vapp.name.should eql VCloudSdk::Test::Response::EXISTING_VAPP_NAME
+      vapp = subject.find_vapp_by_name(VCloudSdk::Test::Response::VAPP_NAME)
+      vapp.name.should eql VCloudSdk::Test::Response::VAPP_NAME
     end
 
     it "returns nil if targeted vapp with given name does not exist" do

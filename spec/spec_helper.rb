@@ -77,10 +77,25 @@ module VCloudSdk
       end
 
       def mock_session(logger, url)
+        time_limit_sec = {
+          default: 120,
+          delete_vapp_template: 120,
+          delete_vapp: 3,
+          delete_media: 120,
+          instantiate_vapp_template: 300,
+          power_on: 600,
+          power_off: 600,
+          undeploy: 720,
+          process_descriptor_vapp_template: 300,
+          http_request: 240,
+        }
+
+        options = {}
+        options[:time_limit_sec] = time_limit_sec
         # Note: need to run "mock_connection" first and then stub method "new"
         conn = VCloudSdk::Test.mock_connection(logger, url)
         VCloudSdk::Connection::Connection.stub(:new) { conn }
-        VCloudSdk::Session.new(url, nil, nil, {})
+        VCloudSdk::Session.new(url, nil, nil, options)
       end
     end
 

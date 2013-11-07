@@ -95,14 +95,14 @@ module VCloudSdk
     end
 
     def task_is_success(current_task, success = SUCCESS_STATUS)
-      success.map { |s| s.downcase }.find do
-        |s| s == current_task.status.downcase
+      success.find do |s|
+        s.downcase == current_task.status.downcase
       end
     end
 
     def task_has_error(current_task, error_statuses = ERROR_STATUSES)
-      error_statuses.map { |s| s.downcase }.find do
-        |s| s == current_task.status.downcase
+      error_statuses.find do |s|
+        s.downcase == current_task.status.downcase
       end
     end
   end
