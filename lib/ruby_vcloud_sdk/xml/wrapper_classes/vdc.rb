@@ -51,7 +51,41 @@ module VCloudSdk
       def storage_profiles
         get_nodes(:VdcStorageProfile, type: MEDIA_TYPE[:VDC_STORAGE_PROFILE])
       end
-    end
 
+      def available_cpu_cores
+        cpu_resource = get_nodes("ComputeCapacity").first.get_nodes("Cpu").first
+        available_cpu_clock_speed = get_available_resource(cpu_resource)
+
+        # clock units can only be MHz or GHz
+        units = cpu_resource.get_nodes("Units").first.content
+        if units == "MHz"
+          available_cpu_clock_speed = available_cpu_clock_speed / 1000
+        end
+
+        # We assume 1 GHz is converted to 1 vCpu core
+        return available_cpu_clock_speed
+      end
+
+      def available_memory_mb
+        memory_resource = get_nodes("ComputeCapacity").first.get_nodes("Memory").first
+        available_memory = get_available_resource(memory_resource)
+
+        # clock units can only be MB or GB
+        units = memory_resource.get_nodes("Units").first.content
+        if units == "GB"
+          available_memory = available_memory * 1024
+        end
+
+        return available_memory
+      end
+
+      private
+
+      def get_available_resource(resource_node)
+        limited_resource = resource_node.get_nodes("Limit").first.content.to_i
+        return -1 if limited_resource == 0
+        available_resource = limited_resource - resource_node.get_nodes("Used").first.content.to_i
+      end
+    end
   end
 end
