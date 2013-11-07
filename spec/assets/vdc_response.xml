@@ -27,17 +27,17 @@
   </StorageCapacity>
   <ComputeCapacity>
     <Cpu>
-      <Units>MHz</Units>
+      <Units>GHz</Units>
       <Allocated>0</Allocated>
-      <Limit>0</Limit>
-      <Used>0</Used>
+      <Limit>5</Limit>
+      <Used>1</Used>
       <Overhead>0</Overhead>
     </Cpu>
     <Memory>
-      <Units>MB</Units>
+      <Units>GB</Units>
       <Allocated>0</Allocated>
-      <Limit>0</Limit>
-      <Used>0</Used>
+      <Limit>5</Limit>
+      <Used>1</Used>
       <Overhead>0</Overhead>
     </Memory>
   </ComputeCapacity>
