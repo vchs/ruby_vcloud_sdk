@@ -110,7 +110,7 @@ describe VCloudSdk::VDC do
     end
   end
 
-  describe "#get_resource" do
+  describe "#resources" do
     context "Cpu clock speed limit is greater than 0" do
       let(:vdc_response) do
         VCloudSdk::Xml::WrapperFactory.wrap_document(
@@ -118,7 +118,7 @@ describe VCloudSdk::VDC do
       end
 
       it "return limit - used" do
-        subject.get_resource.cpu.available_cores.should eq 4
+        subject.resources.cpu.available_cores.should eq 4
       end
     end
 
@@ -129,7 +129,7 @@ describe VCloudSdk::VDC do
       end
 
       it "return -1" do
-        subject.get_resource.cpu.available_cores.should eq -1
+        subject.resources.cpu.available_cores.should eq -1
       end
     end
 
@@ -140,7 +140,7 @@ describe VCloudSdk::VDC do
       end
 
       it "return limit - used" do
-        subject.get_resource.memory.available_mb.should eq 4096
+        subject.resources.memory.available_mb.should eq 4096
       end
     end
 
@@ -151,7 +151,7 @@ describe VCloudSdk::VDC do
       end
 
       it "return -1" do
-        subject.get_resource.memory.available_mb.should eq -1
+        subject.resources.memory.available_mb.should eq -1
       end
     end
   end

@@ -1,6 +1,6 @@
 module VCloudSdk
 
-  class Resource
+  class Resources
     attr_reader :cpu
     attr_reader :memory
 
