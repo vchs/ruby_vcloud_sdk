@@ -3,7 +3,7 @@ require "uri"
 require_relative "vdc_storage_profile"
 require_relative "vapp"
 require_relative "infrastructure"
-require_relative "resource"
+require_relative "resources"
 require_relative "cpu"
 require_relative "memory"
 
@@ -49,10 +49,10 @@ module VCloudSdk
       nil
     end
 
-    def get_resource
+    def get_resources
       cpu = VCloudSdk::CPU.new(@vdc_xml_obj.available_cpu_cores)
       memory = VCloudSdk::Memory.new(@vdc_xml_obj.available_memory_mb)
-      resource = VCloudSdk::Resource.new(cpu, memory)
+      VCloudSdk::Resources.new(cpu, memory)
     end
   end
 end
