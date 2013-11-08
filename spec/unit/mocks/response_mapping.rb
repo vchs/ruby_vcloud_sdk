@@ -75,6 +75,10 @@ module VCloudSdk
                   Test::Response::INSTANTIATED_VAPP_DELETE_DONE_TASK
                 end
               end,
+            Test::Response::INSTANTIATED_VAPP_POWER_ON_TASK_LINK =>
+              lambda do |url, headers|
+                Test::Response::INSTANTED_VAPP_POWER_TASK_SUCCESS
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -114,6 +118,10 @@ module VCloudSdk
                   }
                   fail "Response mapping not found."
                 end
+              end,
+            Test::Response::INSTANTIATED_VAPP_POWER_ON_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
               end,
           },
           delete: {
