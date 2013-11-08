@@ -31,7 +31,12 @@ describe VCloudSdk::VApp do
         .set_option delete_vapp_task_state: :running
     end
 
-    context "vApp is powered off" do
+    context "vApp is stopped" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :off
+      end
+
       context "vApp has no running_tasks" do
         it "deletes target vApp successfully" do
           deletion_task = subject.delete
@@ -71,13 +76,12 @@ describe VCloudSdk::VApp do
     end
 
     context "vApp is powered on" do
-      it "fails to delete target vApp" do
-        subject
-          .should_receive(:is_vapp_status?)
-          .with(anything, :POWERED_ON)
-          .once
-          .and_return(true)
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
 
+      it "fails to delete target vApp" do
         expect do
           subject.delete
         end.to raise_exception VCloudSdk::CloudError,
@@ -88,6 +92,11 @@ describe VCloudSdk::VApp do
 
   describe "#power_on" do
     context "vApp is powered off" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :powered_off
+      end
+
       it "powers on target vApp successfully" do
         power_on_task = subject.power_on
         subject.send(:task_is_success, power_on_task)
@@ -102,23 +111,80 @@ describe VCloudSdk::VApp do
 
         expect { subject.power_on }
           .to raise_exception VCloudSdk::ApiTimeoutError,
-                            "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
+                              "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
                               " did not complete within limit of 3 seconds."
       end
     end
 
     context "vApp is powered on" do
-      it "does not power on vApp" do
-        subject
-          .should_receive(:is_vapp_status?)
-          .with(anything, :POWERED_ON)
-          .once
-          .and_return(true)
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
 
+      it "does not power on vApp" do
         subject.send(:connection)
           .should_not_receive(:post)
 
         subject.power_on
+      end
+    end
+  end
+
+  describe "#power_off" do
+
+    context "vApp is powered on" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
+
+      it "powers off target vApp successfully" do
+        power_off_task = subject.power_off
+        subject.send(:task_is_success, power_off_task)
+          .should be_true
+      end
+
+      it "fails to power off vApp" do
+        subject
+          .should_receive(:task_is_success)
+          .at_least(3)
+          .and_return(false)
+
+        expect { subject.power_off }
+          .to raise_exception VCloudSdk::ApiTimeoutError,
+                              "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
+                              " did not complete within limit of 3 seconds."
+      end
+    end
+
+    context "vApp is powered off" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :powered_off
+      end
+
+      it "does not power off vApp" do
+        subject.send(:connection)
+          .should_not_receive(:post)
+
+        subject.power_off
+      end
+    end
+
+    context "vApp is suspended" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :suspended
+      end
+
+      it "raises error" do
+        subject.send(:connection)
+          .should_not_receive(:post)
+
+        expect { subject.power_off }
+          .to raise_exception VCloudSdk::VappSuspendedError,
+                              "discard state first"
       end
     end
   end
