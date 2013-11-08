@@ -48,14 +48,14 @@ describe VCloudSdk::VDC do
     end
   end
 
-  describe "#get_resource" do
-    it "returns the resource object having the cpu instance with a valid number" do
-      cpu = subject.get_resource.cpu
+  describe "#resources" do
+    it "returns the Resources object having the cpu instance with a valid number" do
+      cpu = subject.resources.cpu
       cpu.available_cores.should_not be_nil
     end
 
-    it "returns the resource object having the memory instance with a valid number" do
-      memory = subject.get_resource.memory
+    it "returns the Resources object having the memory instance with a valid number" do
+      memory = subject.resources.memory
       memory.available_mb.should_not be_nil
     end
   end
