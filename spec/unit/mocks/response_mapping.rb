@@ -63,7 +63,16 @@ module VCloudSdk
               end,
             Test::Response::INSTANTIATED_VAPP_LINK =>
               lambda do |url, headers|
+                case (options[:vapp_power_state])
+                when :off
                   Test::Response::INSTANTIAED_VAPP_RESPONSE
+                when :on
+                  Test::Response::INSTANTIAED_VAPP_ON_RESPONSE
+                when :powered_off
+                  Test::Response::INSTANTIAED_VAPP_POWERED_OFF_RESPONSE
+                when :suspended
+                  Test::Response::INSTANTIATED_SUSPENDED_VAPP_RESPONSE
+                end
               end,
             Test::Response::INSTANTIATED_VAPP_DELETE_TASK_LINK =>
               lambda do |url, headers|
@@ -121,6 +130,17 @@ module VCloudSdk
               end,
             Test::Response::INSTANTIATED_VAPP_POWER_ON_LINK =>
               lambda do |url, data, headers|
+                set_option vapp_power_state: :on
+                Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
+              end,
+            Test::Response::INSTANTIATED_VAPP_POWER_OFF_LINK =>
+              lambda do |url, data, headers|
+                set_option vapp_power_state: :powered_off
+                Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
+              end,
+            Test::Response::INSTANTIATED_VAPP_UNDEPLOY_LINK =>
+              lambda do |url, data, headers|
+                set_option vapp_power_state: :off
                 Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
               end,
           },

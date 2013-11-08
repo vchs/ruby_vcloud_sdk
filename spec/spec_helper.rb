@@ -84,8 +84,8 @@ module VCloudSdk
           delete_media: 120,
           instantiate_vapp_template: 300,
           power_on: 3,
-          power_off: 600,
-          undeploy: 720,
+          power_off: 3,
+          undeploy: 3,
           process_descriptor_vapp_template: 300,
           http_request: 240,
         }

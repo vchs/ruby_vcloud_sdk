@@ -59,7 +59,40 @@ module VCloudSdk
       task
     end
 
+    def power_off
+      vapp = connection.get(@vapp_xml_obj)
+      Config.logger.debug "vApp status: #{vapp[:status]}"
+      if is_vapp_status?(vapp, :SUSPENDED)
+        Config.logger.info "vApp #{name} suspended, discard state before powering off."
+        fail VappSuspendedError, "discard state first"
+      end
+
+      if is_vapp_status?(vapp, :POWERED_OFF)
+        Config.logger.info "vApp #{name} is already powered off."
+        return
+      end
+
+      power_off_link = vapp.power_off_link
+      unless vapp.power_off_link
+        fail CloudError, "vApp #{name} is not in a state that could be powered off."
+      end
+
+      task = connection.post(power_off_link, nil)
+      monitor_task task, @session.time_limit[:power_off]
+      Config.logger.info "vApp #{name} is in powered off state. Need to be undeployed."
+
+      undeploy_vapp(vapp)
+    end
+
     private
+
+    def undeploy_vapp(vapp)
+      params = Xml::WrapperFactory.create_instance("UndeployVAppParams")
+      task = connection.post(vapp.undeploy_link, params)
+      task = monitor_task(task, @session.time_limit[:undeploy])
+      Config.logger.info "vApp #{name} is undeployed."
+      task
+    end
 
     def is_vapp_status?(vapp, status)
       vapp[:status] == Xml::RESOURCE_ENTITY_STATUS[status].to_s
