@@ -10,6 +10,7 @@ describe VCloudSdk::VDC do
   let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
   let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] ||  VCloudSdk::Test::DefaultSetting::STORAGE_PROFILE_NAME }
   let(:vapp_name) { ENV['VAPP_NAME'] ||  VCloudSdk::Test::DefaultSetting::VAPP_NAME }
+  let(:network_name) { ENV['NETWORK_NAME'] ||  VCloudSdk::Test::DefaultSetting::NETWORK_NAME }
 
   subject do
     client = VCloudSdk::Client.new(url, username, password, {}, logger)
@@ -57,6 +58,17 @@ describe VCloudSdk::VDC do
     it "returns the Resources object having the memory instance with a valid number" do
       memory = subject.resources.memory
       memory.available_mb.should_not be_nil
+    end
+  end
+
+  describe "#networks" do
+    its(:networks) { should have_at_least(1).item }
+  end
+
+  describe "#find_network_by_name" do
+    it "returns a network given targeted name" do
+      network = subject.find_network_by_name(network_name)
+      network.name.should eql network_name
     end
   end
 end
