@@ -6,6 +6,7 @@ require_relative "infrastructure"
 require_relative "resources"
 require_relative "cpu"
 require_relative "memory"
+require_relative "network"
 
 module VCloudSdk
 
@@ -53,6 +54,20 @@ module VCloudSdk
       cpu = VCloudSdk::CPU.new(@vdc_xml_obj.available_cpu_cores)
       memory = VCloudSdk::Memory.new(@vdc_xml_obj.available_memory_mb)
       VCloudSdk::Resources.new(cpu, memory)
+    end
+
+    def networks
+      @session.org.networks.map do |network|
+        VCloudSdk::Network.new(@session, network)
+      end
+    end
+
+    def find_network_by_name(name)
+      networks.each do |network|
+        return network if network.name == name
+      end
+
+      nil
     end
   end
 end
