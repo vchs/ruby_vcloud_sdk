@@ -15,6 +15,22 @@ module VCloudSdk
       end
     end
 
+    def add(ip_range)
+      fail "Unable to parse object that is not IpRange" \
+        unless ip_range.is_a? IpRange
+      @value += ip_range.value
+    end
+
+    def include?(ip_range)
+      @value.each do |v|
+        ip_range.value.each do |o|
+          return false if v.first > o.first || o.last > v.last
+        end
+      end
+
+      true
+    end
+
     private
 
     def parse_ip_range(ip_range_value)

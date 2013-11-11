@@ -109,5 +109,59 @@ describe VCloudSdk::IpRange do
         end
       end
     end
+
+    describe "#add" do
+      subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+
+      let(:ip_range) { described_class.new("10.142.1.0 - 10.142.1.4") }
+      it "adds other IpRange correctly" do
+        subject.value.should have(1).item
+        subject.add(ip_range)
+        subject.value.should have(2).items
+        subject.value.each do |i|
+          i.should be_an_instance_of Range
+        end
+      end
+
+      context "Not an IpRange type to add" do
+        it "raises error" do
+          expect { subject.add("10.142.1.0") }
+            .to raise_exception "Unable to parse object that is not IpRange"
+        end
+      end
+    end
+
+    describe "#include?" do
+      subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+
+      context "target range is included" do
+        it "returns true" do
+          ip_range = described_class.new("10.142.15.11")
+          subject.include?(ip_range).should be_true
+
+          ip_range = described_class.new("10.142.15.11, 10.142.15.12")
+          subject.include?(ip_range).should be_true
+
+          ip_range = described_class.new("10.142.15.19 - 10.142.15.22")
+          subject.include?(ip_range).should be_true
+
+          ip_range = described_class.new("10.142.15.19/31")
+          subject.include?(ip_range).should be_true
+        end
+      end
+
+      context "target range is not included" do
+        it "returns false" do
+          ip_range = described_class.new("10.142.15.09, 10.142.15.12")
+          subject.include?(ip_range).should be_false
+
+          ip_range = described_class.new("10.142.15.19 - 10.142.15.25")
+          subject.include?(ip_range).should be_false
+
+          ip_range = described_class.new("10.142.15.19/25")
+          subject.include?(ip_range).should be_false
+        end
+      end
+    end
   end
 end
