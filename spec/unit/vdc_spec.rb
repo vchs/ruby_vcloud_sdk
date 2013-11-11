@@ -129,7 +129,7 @@ describe VCloudSdk::VDC do
       end
 
       it "returns -1" do
-        subject.resources.cpu.available_cores.should eq -1
+        subject.resources.cpu.available_cores.should eq(-1)
       end
     end
 
@@ -151,7 +151,35 @@ describe VCloudSdk::VDC do
       end
 
       it "returns -1" do
-        subject.resources.memory.available_mb.should eq -1
+        subject.resources.memory.available_mb.should eq(-1)
+      end
+    end
+
+    describe "#networks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      its(:networks) { should have_at_least(1).item }
+    end
+
+    describe "#find_network_by_name" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a network given targeted name" do
+        network = subject
+                    .find_network_by_name(
+                      VCloudSdk::Test::Response::ORG_NETWORK_NAME)
+        network.name.should eql VCloudSdk::Test::Response::ORG_NETWORK_NAME
+      end
+
+      it "returns nil if targeted network with given name does not exist" do
+        network = subject.find_network_by_name("xxxxxxx")
+        network.should be_nil
       end
     end
   end
