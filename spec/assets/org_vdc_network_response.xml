@@ -11,7 +11,7 @@
   <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml"
         href="%s/api/network/%s/metadata"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.allocatedNetworkAddress+xml"
-        href="%s/api/network/%s/allocatedAddresses/"/>
+        href="%s"/>
   <Description/>
   <Configuration>
     <IpScopes>

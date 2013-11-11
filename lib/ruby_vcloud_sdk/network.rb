@@ -28,5 +28,13 @@ module VCloudSdk
         end
       ip_range
     end
+
+    def allocated_ips
+      network = connection.get(@network_link)
+      allocated_addresses = connection.get(network.allocated_addresses_link)
+      allocated_addresses.ip_addresses.map do |i|
+        i.ip_address
+      end
+    end
   end
 end
