@@ -1,0 +1,161 @@
+<AllocatedIpAddresses xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      type="application/vnd.vmware.vcloud.allocatedNetworkAddress+xml"
+                      href="%s"
+                      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+  <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="%s"
+        href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bosh_small"
+          href="https://10.146.21.135/api/vApp/vapp-29eecb3e-2738-4391-a499-7bf4365d0a52"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="8cdbaa2a-2e78-46cb-93b1-0ea01857976b"
+          href="https://10.146.21.135/api/vApp/vm-15c87a93-5aeb-45c5-b9eb-d89f7392b7f6"/>
+    <IpAddress>10.146.21.151</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bosh_small"
+          href="https://10.146.21.135/api/vApp/vapp-29eecb3e-2738-4391-a499-7bf4365d0a52"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="d930df94-a478-427f-8831-b91bc09bec1a"
+          href="https://10.146.21.135/api/vApp/vm-6deb9a03-0f95-457b-8c97-78273f0b9a6a"/>
+    <IpAddress>10.146.21.152</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bosh_director"
+          href="https://10.146.21.135/api/vApp/vapp-26de2c50-dcb2-4323-a20a-f7fc805d93de"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="6272c83f-36a3-48b2-ba18-c83b1056b254"
+          href="https://10.146.21.135/api/vApp/vm-5075cdf9-97d4-4460-9170-8009072456eb"/>
+    <IpAddress>10.146.21.153</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bosh_small"
+          href="https://10.146.21.135/api/vApp/vapp-29eecb3e-2738-4391-a499-7bf4365d0a52"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="295a5841-2cea-4572-b1a2-a2f5ddc45f08"
+          href="https://10.146.21.135/api/vApp/vm-cbe12719-2989-43c7-9e74-3fcec895243d"/>
+    <IpAddress>10.146.21.154</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bosh_small"
+          href="https://10.146.21.135/api/vApp/vapp-29eecb3e-2738-4391-a499-7bf4365d0a52"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="d4c0db78-10a0-4f88-93c7-30c25e6c5bdc"
+          href="https://10.146.21.135/api/vApp/vm-eac07a3f-b127-4291-93c0-d0afa3d3829c"/>
+    <IpAddress>10.146.21.155</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bosh_small"
+          href="https://10.146.21.135/api/vApp/vapp-29eecb3e-2738-4391-a499-7bf4365d0a52"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="12ed14ff-ce6d-40bb-af78-3cc871bb00a5"
+          href="https://10.146.21.135/api/vApp/vm-3b76e998-7e14-48d5-be9a-aa16bc81148e"/>
+    <IpAddress>10.146.21.157</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="true" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="PCF vApp"
+          href="https://10.146.21.135/api/vApp/vapp-125e2e7c-21e6-4276-8b2f-c74f905f47b7"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="PivotalCFInstaller"
+          href="https://10.146.21.135/api/vApp/vm-12efaa6e-b02a-412b-95a5-a5cd2d793a31"/>
+    <IpAddress>10.146.21.158</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="Pivotal CF vApp"
+          href="https://10.146.21.135/api/vApp/vapp-f52a4655-9e3f-46b7-98fd-a4a8f1e292c6"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="PivotalCFInstaller"
+          href="https://10.146.21.135/api/vApp/vm-edb72c42-1bab-4db1-ad5b-71ae72245f50"/>
+    <IpAddress>10.146.21.159</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bm-de0f25c4-bc97-4f6d-af66-515cb08d6152"
+          href="https://10.146.21.135/api/vApp/vapp-40605cf1-32f7-4aeb-8e5d-6a26e2a153c2"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="bm-de0f25c4-bc97-4f6d-af66-515cb08d6152"
+          href="https://10.146.21.135/api/vApp/vm-3049e1d4-5c99-49bd-9fee-2bd279545e34"/>
+    <IpAddress>10.146.21.160</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="c6c9493b-c7db-4fec-a8f1-c0ca5a5e81bc"
+          href="https://10.146.21.135/api/vApp/vapp-764d12d7-99f1-45b5-bd48-16e478474cb4"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="c6c9493b-c7db-4fec-a8f1-c0ca5a5e81bc"
+          href="https://10.146.21.135/api/vApp/vm-e8fc1008-d244-49cc-bf25-f0e337237c6e"/>
+    <IpAddress>10.146.21.171</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="1ef2eeb1-a3ce-409c-bbf9-6e852028b175"
+          href="https://10.146.21.135/api/vApp/vapp-5098205c-e663-48e4-b984-97b377919ea5"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="1ef2eeb1-a3ce-409c-bbf9-6e852028b175"
+          href="https://10.146.21.135/api/vApp/vm-80c7e8d6-4a43-43fd-90d6-d67640651e90"/>
+    <IpAddress>10.146.21.174</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="f64b5ecc-cfda-4181-bdb3-95478a47b8a0"
+          href="https://10.146.21.135/api/vApp/vapp-4cdca2fd-e6bb-439f-b7d9-15231a071b29"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="f64b5ecc-cfda-4181-bdb3-95478a47b8a0"
+          href="https://10.146.21.135/api/vApp/vm-744aeda9-ef46-43b2-8dc6-09a3a60497fd"/>
+    <IpAddress>10.146.21.177</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="false" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="bm-31a99b59-4ac7-4dcb-bd56-d4fded1a7053"
+          href="https://10.146.21.135/api/vApp/vapp-d7043acf-ac10-4591-8c04-5aca3747e971"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="bm-31a99b59-4ac7-4dcb-bd56-d4fded1a7053"
+          href="https://10.146.21.135/api/vApp/vm-7238068b-803a-46b1-8556-4b8f771943f9"/>
+    <IpAddress>10.146.21.220</IpAddress>
+  </IpAddress>
+  <IpAddress isDeployed="true" allocationType="vmAllocated">
+    <Link rel="up" type="application/vnd.vmware.vcloud.orgVdcNetwork+xml" name="tempest_vdc_network"
+          href="https://10.146.21.135/api/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.org+xml"
+          href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vApp+xml" name="ci-test-vapp-local"
+          href="https://10.146.21.135/api/vApp/vapp-c13746f4-cced-499c-b165-31c33137e631"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vm+xml" name="ci-test-vm2"
+          href="https://10.146.21.135/api/vApp/vm-cab7fa23-77c5-40b8-9dc4-06cbbeb0b97e"/>
+    <IpAddress>10.146.21.232</IpAddress>
+  </IpAddress>
+</AllocatedIpAddresses>

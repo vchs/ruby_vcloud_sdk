@@ -92,6 +92,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::ORG_VDC_NETWORK_RESPONSE
               end,
+            Test::Response::ALLOCATED_NETWORK_ADDRESS_LINK =>
+              lambda do |url, headers|
+                Test::Response::ALLOCATED_NETWORK_ADDRESS_RESPONSE
+              end
           },
           post: {
             Test::Response::LOGIN_LINK =>
