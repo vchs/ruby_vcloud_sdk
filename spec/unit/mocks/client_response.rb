@@ -91,6 +91,8 @@ module VCloudSdk
 
         ORG_NETWORK_LINK = "#{URL}/api/network/#{ORG_NETWORK_ID}"
 
+        ALLOCATED_NETWORK_ADDRESS_LINK = "#{URL}/api/network/#{ORG_NETWORK_ID}/allocatedAddresses/"
+
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
             [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, CATALOG_NAME, URL, CATALOG_ID, URL,
              URL, URL, URL, URL, URL, URL, URL, URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK,
@@ -608,7 +610,11 @@ module VCloudSdk
 
         ORG_VDC_NETWORK_RESPONSE = (File.read(Test.spec_asset(
           "org_vdc_network_response.xml")) % [ORG_NETWORK_NAME, ORG_NETWORK_ID,
-          ORG_NETWORK_LINK, URL, ORG_NETWORK_ID, URL, ORG_NETWORK_ID]).strip
+          ORG_NETWORK_LINK, URL, ORG_NETWORK_ID, ALLOCATED_NETWORK_ADDRESS_LINK]).strip
+
+        ALLOCATED_NETWORK_ADDRESS_RESPONSE = (File.read(Test.spec_asset(
+          "allocated_ip_addresses_response.xml")) % [ALLOCATED_NETWORK_ADDRESS_LINK,
+          ORG_NETWORK_NAME]).strip
 
         INSTANTIATED_VAPP_NETWORK_CONFIG_SECTION_RESPONSE = (File.read(Test.spec_asset(
           "instantiated_vapp_network_config_section_response.xml")) %
