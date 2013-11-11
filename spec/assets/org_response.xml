@@ -29,8 +29,8 @@
         href="%s/api/admin/org/82124610-59dc-4070-9181-bfca2c04cab0/catalogs"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.orgNetwork+xml" name="164-935-default-isolated"
         href="%s/api/network/4a3e486d-be33-4480-a6cb-7c43462376e3"/>
-  <Link rel="down" type="application/vnd.vmware.vcloud.orgNetwork+xml" name="164-935-default-routed"
-        href="%s/api/network/b00a5e85-34aa-459f-a129-ac722c7b630f"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.orgNetwork+xml" name="%s"
+        href="%s"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.supportedSystemsInfo+xml"
         href="%s/api/supportedSystemsInfo/"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml"

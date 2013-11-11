@@ -88,6 +88,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::INSTANTED_VAPP_POWER_TASK_SUCCESS
               end,
+            Test::Response::ORG_NETWORK_LINK =>
+              lambda do |url, headers|
+                Test::Response::ORG_VDC_NETWORK_RESPONSE
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
