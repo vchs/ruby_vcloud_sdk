@@ -89,9 +89,12 @@ module VCloudSdk
            URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
            URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,]).strip
 
+        ORG_NETWORK_LINK = "#{URL}/api/network/#{ORG_NETWORK_ID}"
+
         ORG_RESPONSE = (File.read(Test.spec_asset("org_response.xml")) %
             [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, CATALOG_NAME, URL, CATALOG_ID, URL,
-             URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, ORGANIZATION]).strip
+             URL, URL, URL, URL, URL, URL, URL, URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK,
+             URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
 
@@ -107,8 +110,6 @@ module VCloudSdk
           ORGANIZATION, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL,
           URL, URL, URL, URL, URL, URL, URL, URL, URL, VAPP_CATALOG_NAME, URL,
           CATALOG_ID, OVDC, URL, VDC_ID]).strip
-
-        ORG_NETWORK_LINK = "#{URL}/api/network/#{ORG_NETWORK_ID}"
 
         VDC_LINK = "#{URL}/api/vdc/#{VDC_ID}"
 
@@ -604,6 +605,10 @@ module VCloudSdk
         ORG_NETWORK_RESPONSE = (File.read(Test.spec_asset(
           "org_network_response.xml")) % [ORG_NETWORK_NAME, ORG_NETWORK_ID,
           ORG_NETWORK_LINK, ORG_NETWORK_ID]).strip
+
+        ORG_VDC_NETWORK_RESPONSE = (File.read(Test.spec_asset(
+          "org_vdc_network_response.xml")) % [ORG_NETWORK_NAME, ORG_NETWORK_ID,
+          ORG_NETWORK_LINK, URL, ORG_NETWORK_ID, URL, ORG_NETWORK_ID]).strip
 
         INSTANTIATED_VAPP_NETWORK_CONFIG_SECTION_RESPONSE = (File.read(Test.spec_asset(
           "instantiated_vapp_network_config_section_response.xml")) %
