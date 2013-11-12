@@ -3,7 +3,6 @@ require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
 require_relative "mocks/rest_client"
 require "nokogiri/diff"
-require "resolv"
 
 describe VCloudSdk::Network do
 
@@ -35,6 +34,28 @@ describe VCloudSdk::Network do
           .should be_true
         (ip_range_start > ip_range_end).should be_false
       end
+    end
+  end
+
+  describe "#allocated_addresses" do
+    it "has correct allocated addresses" do
+      allocated_ips = subject.allocated_ips
+
+      ips = ["10.146.21.151",
+             "10.146.21.152",
+             "10.146.21.153",
+             "10.146.21.154",
+             "10.146.21.155",
+             "10.146.21.157",
+             "10.146.21.158",
+             "10.146.21.159",
+             "10.146.21.160",
+             "10.146.21.171",
+             "10.146.21.174",
+             "10.146.21.177",
+             "10.146.21.220",
+             "10.146.21.232"]
+      allocated_ips.should eql ips
     end
   end
 end
