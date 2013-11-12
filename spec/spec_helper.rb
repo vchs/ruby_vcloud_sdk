@@ -108,6 +108,7 @@ module VCloudSdk
       STORAGE_PROFILE_NAME = "large"
       CATALOG_NAME_TO_CREATE = "dev test catalog"
       VAPP_NAME = "PCF vApp"
+      NETWORK_NAME = "tempest_vdc_network"
     end
   end
 
