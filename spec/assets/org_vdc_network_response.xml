@@ -1,0 +1,37 @@
+<OrgVdcNetwork xmlns="http://www.vmware.com/vcloud/v1.5"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               status="1"
+               name="%s"
+               id="urn:vcloud:network:%s"
+               type="application/vnd.vmware.vcloud.orgVdcNetwork+xml"
+               href="%s"
+               xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+  <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml"
+        href="https://10.146.21.135/api/vdc/fe7f554e-16f6-4724-b75d-9bfb04c72427"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml"
+        href="%s/api/network/%s/metadata"/>
+  <Link rel="down" type="application/vnd.vmware.vcloud.allocatedNetworkAddress+xml"
+        href="%s/api/network/%s/allocatedAddresses/"/>
+  <Description/>
+  <Configuration>
+    <IpScopes>
+      <IpScope>
+        <IsInherited>true</IsInherited>
+        <Gateway>10.146.21.253</Gateway>
+        <Netmask>255.255.255.128</Netmask>
+        <Dns1>10.132.71.1</Dns1>
+        <Dns2>10.132.71.2</Dns2>
+        <IsEnabled>true</IsEnabled>
+        <IpRanges>
+          <IpRange>
+            <StartAddress>10.146.21.150</StartAddress>
+            <EndAddress>10.146.21.189</EndAddress>
+          </IpRange>
+        </IpRanges>
+      </IpScope>
+    </IpScopes>
+    <FenceMode>bridged</FenceMode>
+    <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+  </Configuration>
+  <IsShared>false</IsShared>
+</OrgVdcNetwork>
