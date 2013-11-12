@@ -28,4 +28,26 @@ describe VCloudSdk::Network do
       ranges[0].last.ip.should eql "10.146.21.189"
     end
   end
+
+  describe "#allocated_addresses" do
+    it "has correct allocated addresses" do
+      allocated_ips = subject.allocated_ips
+
+      ips = ["10.146.21.151",
+             "10.146.21.152",
+             "10.146.21.153",
+             "10.146.21.154",
+             "10.146.21.155",
+             "10.146.21.157",
+             "10.146.21.158",
+             "10.146.21.159",
+             "10.146.21.160",
+             "10.146.21.171",
+             "10.146.21.174",
+             "10.146.21.177",
+             "10.146.21.220",
+             "10.146.21.232"]
+      allocated_ips.should eql ips
+    end
+  end
 end
