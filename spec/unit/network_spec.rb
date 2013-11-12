@@ -37,4 +37,15 @@ describe VCloudSdk::Network do
       end
     end
   end
+
+  describe "#allocated_addresses" do
+    it "has correct allocated addresses" do
+      allocated_ips = subject.allocated_ips
+      allocated_ips.should have_at_least(1).item
+      allocated_ips.each do |ip|
+        ip.should be_an_instance_of String
+        ip.should match Resolv::IPv4::Regex
+      end
+    end
+  end
 end
