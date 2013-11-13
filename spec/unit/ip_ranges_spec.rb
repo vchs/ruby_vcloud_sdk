@@ -109,57 +109,184 @@ describe VCloudSdk::IpRanges do
         end
       end
     end
+  end
 
-    describe "#add" do
-      subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+  describe "#add" do
+    subject { described_class.new("10.142.15.11 - 10.142.15.22") }
 
-      let(:ip_range) { described_class.new("10.142.1.0 - 10.142.1.4") }
-      it "adds other IpRange correctly" do
-        subject.ranges.should have(1).item
-        subject.add(ip_range)
-        subject.ranges.should have(2).items
-        subject.ranges.each do |i|
-          i.should be_an_instance_of Range
-        end
-      end
-
-      context "Not an IpRange type to add" do
-        it "raises an error" do
-          expect { subject.add("10.142.1.0") }
-            .to raise_exception "Unable to parse object that is not IpRange"
-        end
+    let(:ip_range) { described_class.new("10.142.1.0 - 10.142.1.4") }
+    it "adds other IpRange correctly" do
+      subject.ranges.should have(1).item
+      subject.add(ip_range)
+      subject.ranges.should have(2).items
+      subject.each do |i|
+        i.should be_an_instance_of Range
       end
     end
 
-    describe "#include?" do
-      subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+    context "Not an IpRange type to add" do
+      it "raises an error" do
+        expect { subject.add("10.142.1.0") }
+        .to raise_exception "Unable to parse object that is not IpRange"
+      end
+    end
+  end
 
-      context "target range is included" do
-        it "returns true" do
-          ip_range = described_class.new("10.142.15.11")
-          subject.include?(ip_range).should be_true
+  describe "#include?" do
+    subject { described_class.new("10.142.15.11 - 10.142.15.22") }
 
-          ip_range = described_class.new("10.142.15.11, 10.142.15.12")
-          subject.include?(ip_range).should be_true
+    context "target range is included" do
+      it "returns true" do
+        ip_range = described_class.new("10.142.15.11")
+        subject.include?(ip_range).should be_true
 
-          ip_range = described_class.new("10.142.15.19 - 10.142.15.22")
-          subject.include?(ip_range).should be_true
+        ip_range = described_class.new("10.142.15.11, 10.142.15.12")
+        subject.include?(ip_range).should be_true
 
-          ip_range = described_class.new("10.142.15.19/31")
-          subject.include?(ip_range).should be_true
-        end
+        ip_range = described_class.new("10.142.15.19 - 10.142.15.22")
+        subject.include?(ip_range).should be_true
+
+        ip_range = described_class.new("10.142.15.19/31")
+        subject.include?(ip_range).should be_true
+      end
+    end
+
+    context "target range is not included" do
+      it "returns false" do
+        ip_range = described_class.new("10.142.15.09, 10.142.15.12")
+        subject.include?(ip_range).should be_false
+
+        ip_range = described_class.new("10.142.15.19 - 10.142.15.25")
+        subject.include?(ip_range).should be_false
+
+        ip_range = described_class.new("10.142.15.19/25")
+        subject.include?(ip_range).should be_false
+      end
+    end
+  end
+
+  describe "#[]" do
+    subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+
+    it "return the ith element of ranges" do
+      [subject[0].first.ip, subject[0].last.ip].should
+        eql ["10.142.15.11", "10.142.15.22"]
+      subject[1].should be_nil
+    end
+  end
+
+  describe "#each" do
+    subject do
+      ip_ranges = described_class.new("10.142.15.11")
+      ip_ranges.add described_class.new("10.142.15.22")
+    end
+
+    it "return elements of ranges" do
+      subject.each.should have(2).items
+      ranges = []
+      subject.each do |range|
+        ranges << range.first.ip
+        ranges << range.last.ip
       end
 
-      context "target range is not included" do
-        it "returns false" do
-          ip_range = described_class.new("10.142.15.09, 10.142.15.12")
-          subject.include?(ip_range).should be_false
+      result = ["10.142.15.11",
+                "10.142.15.11",
+                "10.142.15.22",
+                "10.142.15.22"]
+      ranges.should eql result
 
-          ip_range = described_class.new("10.142.15.19 - 10.142.15.25")
-          subject.include?(ip_range).should be_false
+    end
+  end
 
-          ip_range = described_class.new("10.142.15.19/25")
-          subject.include?(ip_range).should be_false
+  describe "#merge" do
+    it "merges overlapped ranges" do
+      ip_ranges = described_class.new("10.142.15.13-10.142.15.25")
+      ip_ranges.add described_class.new("10.142.15.11-10.142.15.22")
+      ip_ranges.add described_class.new("10.142.15.20")
+      ip_ranges.add described_class.new("10.142.15.33")
+      ip_ranges.merge
+      ip_ranges.ranges.should have(2).items
+      [ip_ranges[0].first.ip, ip_ranges[0].last.ip].should
+        eql ["10.142.15.11", "10.142.15.25"]
+      [ip_ranges[1].first.ip, ip_ranges[1].last.ip].should
+        eql ["10.142.15.33", "10.142.15.33"]
+
+      ip_ranges = described_class.new("10.142.15.20")
+      ip_ranges.add described_class.new("10.142.15.12")
+      ip_ranges.add described_class.new("10.142.15.15-10.142.15.16")
+      ip_ranges.add described_class.new("10.142.15.10 - 10.142.15.25")
+      ip_ranges.merge
+      ip_ranges.ranges.should have(1).item
+      [ip_ranges[0].first.ip, ip_ranges[0].last.ip].should
+        eql ["10.142.15.10", "10.142.15.25"]
+    end
+  end
+
+  describe "#-" do
+
+    context "no overlap" do
+      it "subtracts the overlapped ranges" do
+        minuend = described_class.new("10.142.15.11 - 10.142.15.21")
+        subtrahend = described_class.new("10.142.15.22 - 10.142.15.25")
+        difference = minuend - subtrahend
+        difference.should have(1).item
+        [difference[0].first.ip, difference[0].last.ip].should
+          eql ["10.142.15.11", "10.142.15.21"]
+      end
+    end
+
+    context "there is overlap" do
+      it "subtracts the overlapped ranges" do
+        minuend = described_class.new("10.142.15.11 - 10.142.15.22")
+        minuend.add described_class.new("10.142.15.30 - 10.142.15.39")
+        subtrahend = described_class.new("10.142.15.20 - 10.142.15.25")
+        subtrahend.add described_class.new("10.142.15.12")
+        subtrahend.add described_class.new("10.142.15.15")
+        subtrahend.add described_class.new("10.142.15.30-10.142.15.38")
+        difference = minuend - subtrahend
+        difference.should have(4).items
+        [difference[0].first.ip, difference[0].last.ip].should
+          eql ["10.142.15.11", "10.142.15.11"]
+        [difference[1].first.ip, difference[1].last.ip].should
+          eql ["10.142.15.13", "10.142.15.14"]
+        [difference[2].first.ip, difference[2].last.ip].should
+          eql ["10.142.15.16", "10.142.15.22"]
+        [difference[3].first.ip, difference[3].last.ip].should
+          eql ["10.142.15.39", "10.142.15.39"]
+      end
+
+      context "input minuend or subtrahend alters afterwards" do
+        it "does not change subtraction difference" do
+          minuend = described_class.new("10.142.15.11 - 10.142.15.22")
+          subtrahend = described_class.new("10.142.15.20")
+          subtrahend.add described_class.new("10.142.15.12")
+          subtrahend.add described_class.new("10.142.15.15-10.142.15.16")
+          difference = minuend - subtrahend
+          minuend[0].first.resize!(24)
+          minuend[0].first.size.should eql 256
+          minuend[0].first.ip.should eql "10.142.15.11"
+          minuend[0].first.first.should eql "10.142.15.0"
+          minuend[0].first.last.should eql "10.142.15.255"
+          minuend[0].last.resize!(24)
+          minuend[0].last.size.should eql 256
+          minuend[0].last.ip.should eql "10.142.15.22"
+          minuend[0].last.first.should eql "10.142.15.0"
+          minuend[0].last.last.should eql "10.142.15.255"
+
+          [difference[0].first.ip, difference[0].last.ip].should
+            eql ["10.142.15.11", "10.142.15.11"]
+          difference[0].first.size.should eql 1
+          difference[0].first.first.should eql "10.142.15.11"
+          difference[0].first.last.should eql "10.142.15.11"
+          [difference[1].first.ip, difference[1].last.ip].should
+            eql ["10.142.15.13", "10.142.15.14"]
+          [difference[2].first.ip, difference[2].last.ip].should
+            eql ["10.142.15.17", "10.142.15.19"]
+          [difference[3].first.ip, difference[3].last.ip].should
+            eql ["10.142.15.21", "10.142.15.22"]
+          difference[3].last.size.should eql 1
+          difference[3].last.first.should eql "10.142.15.22"
+          difference[3].last.last.should eql "10.142.15.22"
         end
       end
     end
