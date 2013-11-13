@@ -3,6 +3,7 @@ require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
 require_relative "mocks/rest_client"
 require "nokogiri/diff"
+require "set"
 
 describe VCloudSdk::Network do
 
@@ -22,10 +23,12 @@ describe VCloudSdk::Network do
       ip_ranges.should be_an_instance_of VCloudSdk::IpRanges
 
       ranges = ip_ranges.ranges
-      ranges.should be_an_instance_of Array
-      ranges.should have(1).item
-      ranges[0].first.ip.should eql "10.146.21.150"
-      ranges[0].last.ip.should eql "10.146.21.189"
+      ranges.should be_an_instance_of Set
+      ranges.should have(46).item
+      result = VCloudSdk::IpRanges
+                 .new("10.146.21.150-10.146.21.189,10.146.21.250-10.146.21.255")
+                 .ranges
+      ranges.should eql result
     end
   end
 

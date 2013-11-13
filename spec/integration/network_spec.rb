@@ -22,17 +22,10 @@ describe VCloudSdk::Network do
       ip_ranges.should be_an_instance_of VCloudSdk::IpRanges
 
       ranges = ip_ranges.ranges
-      ranges.should be_an_instance_of Array
       ranges.should have_at_least(1).item
       ranges.each do |i|
-        i.should be_an_instance_of Range
-        ip_range_start = i.first
-        ip_range_end = i.last
-        (ip_range_start.is_a?(NetAddr::CIDRv4) || ip_range_start.is_a?(NetAddr::CIDRv6))
-          .should be_true
-        (ip_range_end.is_a?(NetAddr::CIDRv4) || ip_range_end.is_a?(NetAddr::CIDRv6))
-          .should be_true
-        (ip_range_start > ip_range_end).should be_false
+        i.should be_an_instance_of String
+        i.should match Resolv::IPv4::Regex
       end
     end
   end
