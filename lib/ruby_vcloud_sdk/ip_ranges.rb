@@ -1,7 +1,6 @@
 require "netaddr"
 
 module VCloudSdk
-
   class IpRanges
     attr_reader :ranges
 
@@ -22,13 +21,70 @@ module VCloudSdk
     end
 
     def include?(ip_ranges)
-      @ranges.each do |v|
-        ip_ranges.ranges.each do |o|
+      each do |v|
+        ip_ranges.each do |o|
           return false if v.first > o.first || o.last > v.last
         end
       end
 
       true
+    end
+
+    def [](index)
+      @ranges[index]
+    end
+
+    def each(&block)
+      @ranges.each(&block)
+    end
+
+    def merge
+      return if @ranges.length <= 0
+
+      @ranges.sort! { |a, b| a.first <=> b.first }
+      new_ranges = [@ranges[0]]
+      @ranges[1..-1].each do |range|
+        if new_ranges[-1].last > range.first
+          # merge
+          new_ranges[-1] = new_ranges[-1].first..range.last
+        else
+          new_ranges << range
+        end
+      end
+
+      @ranges = new_ranges
+    end
+
+    def -(other)
+      merge
+      other.merge
+      difference = []
+      each do |m|
+        overlapped = false
+        other.each do |s|
+          unless m.first > s.last || s.first > m.last
+            overlapped = true
+            if m.first < s.first
+              m_addr = m.first
+              # find previous ip of s.first
+              while (m_addr_next = m_addr.next_ip(Objectify: true)) != s.first
+                m_addr = m_addr_next
+              end
+
+              difference << (m.first.clone..m_addr.clone)
+            end
+
+            m = s.last.next_ip(Objectify: true)..m.last
+            break unless m.first < m.last
+          end
+        end
+
+        unless (!overlapped || m.first > m.last) && overlapped
+          difference << (m.first.clone..m.last.clone)
+        end
+      end
+
+      difference
     end
 
     private
@@ -57,5 +113,4 @@ module VCloudSdk
       end
     end
   end
-
 end
