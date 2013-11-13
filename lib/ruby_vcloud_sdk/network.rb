@@ -21,7 +21,7 @@ module VCloudSdk
         .each do |i|
           new_range = IpRanges.new "#{i.start_address}-#{i.end_address}"
           if ip_ranges
-            ip_ranges.add! new_range
+            ip_ranges += new_range
           else
             ip_ranges = new_range
           end

@@ -1,21 +1,15 @@
 require "ruby_vcloud_sdk/ip_ranges"
+require "set"
 
 describe VCloudSdk::IpRanges do
 
   share_examples_for "VCloudSdk::IpRanges" do |ip_range_string, n|
-    it "parses input string correctly" do
+    it "parses input string[#{ip_range_string}] correctly" do
       ip_range = described_class.new(ip_range_string).ranges
-      ip_range.should be_an_instance_of Array
+      ip_range.should be_an_instance_of Set
       ip_range.should have(n).item
       ip_range.each do |i|
-        i.should be_an_instance_of Range
-        ip_range_start = i.first
-        ip_range_end = i.last
-        (ip_range_start.is_a?(NetAddr::CIDRv4) || ip_range_start.is_a?(NetAddr::CIDRv6))
-          .should be_true
-        (ip_range_end.is_a?(NetAddr::CIDRv4) || ip_range_end.is_a?(NetAddr::CIDRv6))
-          .should be_true
-        (ip_range_start > ip_range_end).should be_false
+        i.should be_an_instance_of String
       end
     end
   end
@@ -24,29 +18,27 @@ describe VCloudSdk::IpRanges do
     context "valid input string" do
       context "a single IP address" do
         it_should_behave_like "VCloudSdk::IpRanges", "10.142.15.11", 1
-        it_should_behave_like "VCloudSdk::IpRanges", "2001::", 1
       end
 
       context "input string uses '-' separator" do
-        it_should_behave_like "VCloudSdk::IpRanges", "10.142.15.11 - 10.142.15.22", 1
         it_should_behave_like "VCloudSdk::IpRanges",
-                              "2001:0db8:85a3:0000:0000:8a2e:0370:7334-2001:0db8:85a3:0000:0000:8a2e:0370:7339",
-                              1
+                              "10.142.15.11-10.142.15.22",
+                              12
       end
 
       context "input string uses subnet mask" do
-        it_should_behave_like "VCloudSdk::IpRanges", "10.142.15.0/24", 1
-        it_should_behave_like "VCloudSdk::IpRanges", "fec0::/24", 1
-        it_should_behave_like "VCloudSdk::IpRanges", "2001:0db8:85a3:0000:0000:8a2e:0370:7334/24", 1
+        it_should_behave_like "VCloudSdk::IpRanges",
+                              "10.142.15.0/24",
+                              256
       end
 
       context "input string uses comma separated IPs" do
-        it_should_behave_like "VCloudSdk::IpRanges", "10.142.15.0, 10.142.15.4, 10.142.16.4", 3
         it_should_behave_like "VCloudSdk::IpRanges",
-                              "fec0::, 2001:0db8:85a3:0000:0000:8a2e:0370:7334",
-                              2
-        it_should_behave_like "VCloudSdk::IpRanges", "fec0::/24, 10.142.15.4/23", 2
-        it_should_behave_like "VCloudSdk::IpRanges", "10.142.15.11-10.142.15.22, 10.142.2.4, 10.142.16.4/23", 3
+                              "10.142.15.0,10.142.15.4,10.142.16.4",
+                              3
+        it_should_behave_like "VCloudSdk::IpRanges",
+                              "10.142.15.11-10.142.15.22,10.142.2.4,10.142.16.4/23",
+                              525
       end
     end
 
@@ -54,14 +46,15 @@ describe VCloudSdk::IpRanges do
       context "not a string" do
         it "raises an error" do
           expect { described_class.new(["XX"]) }
-            .to raise_exception "Unable to parse a non-string object"
+            .to raise_exception "Parameter is not a string"
         end
       end
 
       context "invalid string" do
         it "raises an error" do
           expect { described_class.new("XX") }
-            .to raise_exception NetAddr::ValidationError, "Could not auto-detect IP version for 'XX'."
+            .to raise_exception NetAddr::ValidationError,
+                                "Could not auto-detect IP version for 'XX'."
         end
       end
 
@@ -108,58 +101,214 @@ describe VCloudSdk::IpRanges do
                             "Netmask, 33, is out of bounds for IPv4."
         end
       end
-    end
 
-    describe "#add" do
-      subject { described_class.new("10.142.15.11 - 10.142.15.22") }
-
-      let(:ip_range) { described_class.new("10.142.1.0 - 10.142.1.4") }
-      it "adds other IpRange correctly" do
-        subject.ranges.should have(1).item
-        subject.add(ip_range)
-        subject.ranges.should have(2).items
-        subject.ranges.each do |i|
-          i.should be_an_instance_of Range
-        end
-      end
-
-      context "Not an IpRange type to add" do
+      context "IPv6 is used" do
         it "raises an error" do
-          expect { subject.add("10.142.1.0") }
-            .to raise_exception "Unable to parse object that is not IpRange"
+          expect { described_class.new("fec0::/64") }
+            .to raise_error "IPv6 is not supported"
+        end
+      end
+    end
+  end
+
+  describe "#include?" do
+    subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+
+    context "target range is included" do
+      it "returns true" do
+        ip_range = "10.142.15.11"
+        subject.include?(ip_range).should be_true
+
+        ip_range = "10.142.15.11, 10.142.15.12"
+        subject.include?(ip_range).should be_true
+
+        ip_range = "10.142.15.19 - 10.142.15.22"
+        subject.include?(ip_range).should be_true
+
+        ip_range = "10.142.15.19/31"
+        subject.include?(ip_range).should be_true
+      end
+    end
+
+    context "target range is not included" do
+      it "returns false" do
+        ip_range = "10.142.15.09, 10.142.15.12"
+        subject.include?(ip_range).should be_false
+
+        ip_range = "10.142.15.19 - 10.142.15.25"
+        subject.include?(ip_range).should be_false
+
+        ip_range = "10.142.15.19/25"
+        subject.include?(ip_range).should be_false
+      end
+    end
+  end
+
+  describe "#add" do
+    subject { described_class.new }
+
+    context "when target object is empty" do
+      it "adds new range" do
+        result = described_class.new("10.0.0.1-10.0.0.10").ranges
+        (subject + "10.0.0.1-10.0.0.10").ranges.should eql result
+      end
+    end
+
+    context "when target object is not empty" do
+      let(:ranges) do
+        ["10.0.0.1-10.0.0.10",
+         "10.0.0.30-10.0.0.40",
+         "10.0.0.50-10.0.0.55"]
+      end
+
+      subject { described_class.new(ranges[0..1].join(",")) }
+      it "adds new range" do
+        result = described_class.new(ranges[0..2].join(",")).ranges
+        (subject + "10.0.0.50-10.0.0.55").ranges.should eql result
+      end
+
+      it "merges new range with existing range" do
+        result =
+          described_class.new("10.0.0.1-10.0.0.10,10.0.0.30-10.0.0.55").ranges
+        (subject + "10.0.0.35-10.0.0.55").ranges.should eql result
+      end
+    end
+
+    context "Not an IpRange or string type to add" do
+      it "raises an error" do
+        expect { subject.add([]) }
+        .to raise_exception "Unable to parse object that is not IpRange or string"
+      end
+    end
+  end
+
+  describe "#subtract" do
+    context "when there is no overlap" do
+      let(:minuend_one) { described_class.new("10.0.0.11-10.0.0.21") }
+      let(:subtrahend_one) { "10.0.0.22-10.0.0.25" }
+      let(:minuend_multi) do
+        described_class.new("10.0.0.11-10.0.0.21,10.0.0.31-10.0.0.41")
+      end
+      let(:subtrahend_multi) do
+        "10.0.0.22-10.0.0.25,10.0.0.42-10.0.0.45"
+      end
+
+      context "with minuend 1 range and subtrahend 1 range" do
+        it "returns range equivalent to the minuend" do
+          (minuend_one - subtrahend_one).ranges.should eql minuend_one.ranges
+        end
+      end
+
+      context "with minuend multiple ranges and subtrahend 1 range" do
+        it "returns range equivalent to the minuend" do
+          (minuend_multi - subtrahend_one)
+            .ranges.should eql minuend_multi.ranges
+        end
+      end
+
+      context "with minuend 1 range and subtrahend multiple ranges" do
+        it "returns range equivalent to the minuend" do
+          (minuend_one - subtrahend_multi)
+            .ranges.should eql minuend_one.ranges
+        end
+      end
+
+      context "with minuend multiple ranges and subtrahend multiple ranges" do
+        it "returns range equivalent to the minuend" do
+          (minuend_multi - subtrahend_multi)
+            .ranges.should eql minuend_multi.ranges
         end
       end
     end
 
-    describe "#include?" do
-      subject { described_class.new("10.142.15.11 - 10.142.15.22") }
+    context "when there is overlap" do
+      context "when minuend fully contained in subtrahend" do
+        let(:minuend_data) do
+          ["10.0.0.1-10.0.0.5",
+           "10.0.0.7-10.0.0.9",
+           "10.0.0.22-10.0.0.25",
+           "10.0.0.40-10.0.0.50"]
+        end
 
-      context "target range is included" do
-        it "returns true" do
-          ip_range = described_class.new("10.142.15.11")
-          subject.include?(ip_range).should be_true
+        let(:subtrahend_data) do
+          ["10.0.0.1-10.0.0.10",
+           "10.0.0.20-10.0.0.30",
+           "10.0.0.35-10.0.0.45",
+           "10.0.0.46-10.0.0.55"]
+        end
 
-          ip_range = described_class.new("10.142.15.11, 10.142.15.12")
-          subject.include?(ip_range).should be_true
+        let(:minuend_one) { described_class.new(minuend_data[0]) }
+        let(:subtrahend_one) { subtrahend_data[0] }
+        let(:minuend_multi) { described_class.new(minuend_data.join(",")) }
+        let(:subtrahend_multi) { subtrahend_data.join(",") }
+        let(:empty_set) { Set.new }
 
-          ip_range = described_class.new("10.142.15.19 - 10.142.15.22")
-          subject.include?(ip_range).should be_true
+        context "with minuend 1 range and subtrahend 1 range" do
+          it "returns empty range object" do
+            (minuend_one - subtrahend_one)
+              .ranges.should eql empty_set
+          end
+        end
 
-          ip_range = described_class.new("10.142.15.19/31")
-          subject.include?(ip_range).should be_true
+        context "with minuend 1 range and subtrahend multiple ranges" do
+          it "returns empty range object" do
+            (minuend_one - subtrahend_multi)
+              .ranges.should eql empty_set
+          end
+        end
+
+        context "with minuend multiple ranges and subtrahend 1 range" do
+          let(:minuend_multi) { described_class.new(minuend_data[0..1].join(",")) }
+          it "returns empty range object" do
+            (minuend_multi - subtrahend_one)
+              .ranges.should eql empty_set
+          end
+        end
+
+        context "with minuend multiple ranges and subtrahend multiple ranges" do
+          it "returns empty range object" do
+            (minuend_one - subtrahend_one)
+              .ranges.should eql empty_set
+          end
         end
       end
 
-      context "target range is not included" do
-        it "returns false" do
-          ip_range = described_class.new("10.142.15.09, 10.142.15.12")
-          subject.include?(ip_range).should be_false
+      context "when minuend is partially contained in subtrahend" do
+        let(:minuend_data) do
+          ["10.0.0.1-10.0.0.10",
+           "10.0.0.30-10.0.0.40"]
+        end
 
-          ip_range = described_class.new("10.142.15.19 - 10.142.15.25")
-          subject.include?(ip_range).should be_false
+        let(:subtrahend_data) do
+          ["10.0.0.5-10.0.0.7",
+           "10.0.0.9-10.0.0.12",
+           "10.0.0.25-10.0.0.35"]
+        end
 
-          ip_range = described_class.new("10.142.15.19/25")
-          subject.include?(ip_range).should be_false
+        context "with minuend and subtrahend single ranges" do
+          let(:minuend) { described_class.new(minuend_data[0]) }
+          let(:subtrahend) { described_class.new(subtrahend_data[0]) }
+          it "returns the difference" do
+            result = described_class
+                       .new("10.0.0.1-10.0.0.4,10.0.0.8-10.0.0.10")
+            (minuend - subtrahend)
+              .ranges.should eql result.ranges
+          end
+        end
+
+        context "with minuend and subtrahend multiple ranges" do
+          let(:minuend) { described_class.new(minuend_data.join(",")) }
+          let(:subtrahend) { described_class.new(subtrahend_data.join(",")) }
+          it "returns the difference" do
+            result_data = [
+              "10.0.0.1-10.0.0.4",
+              "10.0.0.8-10.0.0.8",
+              "10.0.0.36-10.0.0.40",
+            ]
+            result = described_class.new(result_data.join(","))
+            (minuend - subtrahend)
+              .ranges.should eql result.ranges
+          end
         end
       end
     end

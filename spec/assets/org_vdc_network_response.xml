@@ -27,6 +27,10 @@
             <StartAddress>10.146.21.150</StartAddress>
             <EndAddress>10.146.21.189</EndAddress>
           </IpRange>
+          <IpRange>
+            <StartAddress>10.146.21.250</StartAddress>
+            <EndAddress>10.146.21.255</EndAddress>
+          </IpRange>
         </IpRanges>
       </IpScope>
     </IpScopes>
