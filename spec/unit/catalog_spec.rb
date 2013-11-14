@@ -128,4 +128,21 @@ describe VCloudSdk::Catalog do
       end
     end
   end
+
+  describe "#find_vapp_template_by_name" do
+    it "fail if the given vapp template name is nil" do
+      expect { subject.find_vapp_template_by_name(nil) }.to raise_error
+    end
+
+    it "fali if the targeted vapp template doesn't exist" do
+      vapp_template = subject.find_vapp_template_by_name("not existing")
+      vapp_template.should be_nil
+    end
+
+    it "find targeted vapp template if it exists" do
+      vapp_template = subject.find_vapp_template_by_name(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME)
+      vapp_template.should_not be_nil
+      vapp_template.name.should eq VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+    end
+  end
 end

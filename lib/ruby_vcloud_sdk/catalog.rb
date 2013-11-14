@@ -65,6 +65,10 @@ module VCloudSdk
       catalog_item
     end
 
+    def find_vapp_template_by_name(name)
+      find_catalog_item(name, Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
+    end
+
     private
 
     def item_exists?(name)
@@ -186,6 +190,21 @@ module VCloudSdk
              current_vapp_template.files:
              #{current_vapp_template.files}
            }
+    end
+
+    # Find catalog item from catalog by name and type.
+    # Raises an exception if catalog is not found.
+    # Returns nil if an item matching the name and type is not found.
+    # Otherwise, returns the catalog item.
+    def find_catalog_item(name, item_type)
+      raise ObjectNotFoundError, "Catalog item name cannot be nil" unless name
+
+      items.each do |catalog_item_xml_obj|
+        catalog_item = connection.get("/api/catalogItem/#{catalog_item_xml_obj.href_id}")
+        return catalog_item if catalog_item.name == name && catalog_item.entity["type"] == item_type
+      end
+
+      nil
     end
   end
 end

@@ -57,6 +57,30 @@ describe VCloudSdk::Client do
     end
   end
 
+  describe "#find_vapp_template_by_name" do
+    subject { described_class.new(url, username, password, {}, logger) }
+
+    it "find that targeted vapp template if it exists" do
+      catalog = subject.find_catalog_by_name(catalog_name)
+
+      # TODO: This template already exists in WDC intergation test enviroment.
+      #       We should have a story to add all the intergation test setup code like this.
+      vapp_template_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
+
+      vapp_template = catalog.find_vapp_template_by_name(vapp_template_name)
+      vapp_template.name.should eq vapp_template_name
+      vapp_template.should_not be_nil
+    end
+
+    it "return nil if the targeted vapp template does not exist" do
+      catalog = subject.find_catalog_by_name(catalog_name)
+      vapp_template_name = SecureRandom.uuid
+      vapp_template = catalog.find_vapp_template_by_name(vapp_template_name)
+      vapp_template.should be_nil
+    end
+  end
+
+
   describe "#create_catalog" do
     subject { described_class.new(url, username, password, {}, logger) }
 
