@@ -1,0 +1,7 @@
+Verified+1: CI Master <cf-ci@rbcon.com>
+Code-Review+2: Mihnea Olteanu <molteanu@vmware.com>
+Submitted-by: Mihnea Olteanu <molteanu@vmware.com>
+Submitted-at: Fri, 15 Nov 2013 16:59:21 +0000
+Reviewed-on: http://tempest-reviews.eng.vmware.com/1465
+Project: ruby_vcloud_sdk
+Branch: refs/heads/master
