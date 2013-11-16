@@ -69,6 +69,44 @@ module VCloudSdk
       find_catalog_item(name, Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
     end
 
+    def instantiate_vapp_template(template_name, vdc_name, vapp_name,
+        description = nil, disk_locality = nil)
+      vapp_template = find_vapp_template_by_name(template_name)
+      unless vapp_template
+        raise ObjectNotFoundError, "vapp_template #{template_name}" +
+            "cannot be found in catalog #{@name}."
+      end
+
+      source_vapp_template = connection.get(vapp_template.entity)
+      instantiate_vapp_params = Xml::WrapperFactory.create_instance(
+          "InstantiateVAppTemplateParams")
+      instantiate_vapp_params.name = vapp_name
+      instantiate_vapp_params.description = description
+      instantiate_vapp_params.source = source_vapp_template
+      instantiate_vapp_params.all_eulas_accepted = true
+      instantiate_vapp_params.linked_clone = false
+      instantiate_vapp_params.set_locality = locality_spec(source_vapp_template,
+                                                           disk_locality)
+      vdc = find_vdc_by_name vdc_name
+      unless vdc
+        raise ObjectNotFoundError, "VDC #{vdc_name} cannot be found."
+      end
+
+      vapp = connection.post(vdc.instantiate_vapp_template_link,
+                             instantiate_vapp_params)
+      vapp.running_tasks.each do |task|
+        begin
+          monitor_task(task, @session.time_limit[:instantiate_vapp_template])
+        rescue ApiError => e
+          Config.logger.error(e, "Instantiate vApp template #{vapp_name} failed." +
+              "  Task #{task.operation} did not complete successfully.")
+          raise e
+        end
+      end
+
+      connection.get(vapp)
+    end
+
     private
 
     def item_exists?(name)
@@ -205,6 +243,22 @@ module VCloudSdk
       end
 
       nil
+    end
+
+    def locality_spec(vapp_template, disk_locality)
+      disk_locality ||= []
+      locality = {}
+      disk_locality.each do |disk|
+        current_disk = connection.get(disk)
+        unless current_disk
+          @logger.warn("Disk #{disk.name} no longer exists.")
+          next
+        end
+        vapp_template.vms.each do |vm|
+          locality[vm] = current_disk
+        end
+      end
+      locality
     end
   end
 end
