@@ -42,6 +42,35 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_RESPONSE
               end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_LINK =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_VAPP_TEMPLATE_READY_RESPONSE
+              end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_INSTANTIATE_TASK_LINK =>
+              lambda do |url, headers|
+                case (options[:template_instantiate_state])
+                  when :running
+                    options[:template_instantiate_state] = :success
+                    Test::Response::
+                        EXISTING_VAPP_TEMPLATE_INSTANTIATE_TASK_START_RESPONSE
+                  when :success
+                    Test::Response::
+                        EXISTING_VAPP_TEMPLATE_INSTANTIATE_TASK_SUCCESS_RESPONSE
+                end
+              end,
+            Test::Response::INSTANTIATED_VAPP_LINK =>
+              lambda do |url, headers|
+                case(options[:vapp_power_state])
+                  when :off
+                    Test::Response::INSTANTIAED_VAPP_RESPONSE
+                  when :on
+                    Test::Response::INSTANTIAED_VAPP_ON_RESPONSE
+                  when :powered-off
+                    Test::Response::INSTANTIAED_VAPP_POWERED_OFF_RESPONSE
+                  when :suspended
+                    Test::Response::INSTANTIATED_SUSPENDED_VAPP_RESPONSE
+                end
+              end,
             Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
               lambda do |url, headers|
                 Test::Response::EXISTING_MEDIA_CATALOG_ITEM
@@ -95,7 +124,11 @@ module VCloudSdk
             Test::Response::ALLOCATED_NETWORK_ADDRESS_LINK =>
               lambda do |url, headers|
                 Test::Response::ALLOCATED_NETWORK_ADDRESS_RESPONSE
-              end
+              end,
+            Test::Response::INDY_DISK_URL =>
+              lambda do |url, headers|
+                Test::Response::INDY_DISK_RESPONSE
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -150,6 +183,10 @@ module VCloudSdk
               lambda do |url, data, headers|
                 set_option vapp_power_state: :off
                 Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
+              end,
+            Test::Response::VAPP_TEMPLATE_INSTANTIATE_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::EXISTING_VAPP_TEMPLATE_INSTANTIATE_RESPONSE
               end,
           },
           delete: {
