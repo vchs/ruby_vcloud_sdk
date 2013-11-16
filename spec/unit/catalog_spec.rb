@@ -145,4 +145,63 @@ describe VCloudSdk::Catalog do
       vapp_template.name.should eq VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
     end
   end
+
+  describe "#instantiate_vapp_template" do
+    let!(:vapp_name) { String.new("test_vapp15_1") }
+    it "instantiates a vApp from the vapp template without disk locality" do
+      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+
+      vapp = subject.instantiate_vapp_template(
+          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+          VCloudSdk::Test::Response::OVDC,
+          vapp_name,
+      )
+
+      vapp.should_not be_nil
+      vapp.name.should eq vapp_name
+    end
+
+    it "instantiates a vApp from the vapp template with disk locality" do
+      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+
+      vapp = subject.instantiate_vapp_template(
+          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+          VCloudSdk::Test::Response::OVDC,
+          VCloudSdk::Test::Response::VAPP_NAME,
+          "desc",
+          [VCloudSdk::Test::Response::INDY_DISK_URL]
+      )
+
+      vapp.should_not be_nil
+      vapp.name.should eq vapp_name
+    end
+
+    it "raises an exception when vapp template cannot be found" do
+      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+
+      expect {
+        vapp = subject.instantiate_vapp_template(
+          "not_existing_vapp_template",
+          VCloudSdk::Test::Response::OVDC,
+          vapp_name,
+        )
+      }.to raise_error (VCloudSdk::ObjectNotFoundError)
+    end
+
+    it "raises an exception when VDC cannot be found" do
+      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+
+      expect {
+        vapp = subject.instantiate_vapp_template(
+            VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+            "not_existing_vdc",
+            vapp_name,
+        )
+      }.to raise_error (VCloudSdk::ObjectNotFoundError)
+    end
+  end
 end

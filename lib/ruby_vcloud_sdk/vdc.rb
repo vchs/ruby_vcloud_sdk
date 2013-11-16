@@ -14,7 +14,7 @@ module VCloudSdk
     include Infrastructure
 
     extend Forwardable
-    def_delegators :@vdc_xml_obj, :upload_link, :name
+    def_delegators :@vdc_xml_obj, :upload_link, :name, :instantiate_vapp_template_link
 
     def initialize(session, vdc_xml_obj)
       @session = session
