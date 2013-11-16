@@ -34,4 +34,28 @@ describe VCloudSdk::Catalog do
       vapp_template.should be_nil
     end
   end
+
+  describe "#instantiate_vapp_template" do
+
+    it "start vapp that targeted vapp template without disk locality" do
+      vapp_template_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
+      vapp_name = SecureRandom.uuid
+      vapp = subject.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
+      vapp.should_not be_nil
+      vapp.name.should eq vapp_name
+
+    end
+
+    xit "start vapp that targeted vapp template with disk locality" do
+      vapp_template_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
+      vapp_name = SecureRandom.uuid
+      #TODO: instantiate_vapp_template with disk locality intergration test will be added after
+      #      Create Disk story is finished.
+      disk_locality = nil
+      vapp = subject.instantiate_vapp_template(vapp_template_name, vdc_name,
+                                               vapp_name, "with_disk_locality", disk_locality)
+      vapp.should_not be_nil
+      vapp.name.should eq vapp_name
+    end
+  end
 end
