@@ -8,7 +8,6 @@ require "ruby_vcloud_sdk/xml/wrapper_classes"
 
 require "ruby_vcloud_sdk/config"
 require "ruby_vcloud_sdk/errors"
-require "ruby_vcloud_sdk/util"
 require "ruby_vcloud_sdk/client"
 require "ruby_vcloud_sdk/ovf_directory"
 
