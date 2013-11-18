@@ -6,14 +6,25 @@ Copyright (c) VMware, Inc.
   Client
   
     find_vdc_by_name
-    
+      success: returns VDC object
+      failure: If VDC does not exist, it throws 'ObjectNotFoundError' exception
+
     catalogs
-    
+      success: returns array of Catalog objects
+      failure: If no catalog, it returns empty array
+
     find_catalog_by_name
+      success: returns Catalog object
+      failure: If catalog does not exist, it returns nil object
 
     create_catalog
-    
+      success: returns XML response from post rest call
+      failure: Upon error, it throws 400 RestClient::BadRequest exception
+
     delete_catalog
+     success: returns XML response from delete rest call
+     failure: If catalog does not not exist, it throws 'ObjectNotFoundError' exception
+              Upon error, it throws 400 RestClient::BadRequest exception
     
   VDC
     
