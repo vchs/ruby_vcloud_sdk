@@ -7,7 +7,7 @@ require "stringio"
 
 describe VCloudSdk::Catalog do
 
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let!(:vmdk_string_io) { StringIO.new("vmdk") }
   let(:vdc_name) { VCloudSdk::Test::Response::OVDC }
