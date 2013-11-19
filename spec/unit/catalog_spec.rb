@@ -204,4 +204,38 @@ describe VCloudSdk::Catalog do
       }.to raise_error (VCloudSdk::ObjectNotFoundError)
     end
   end
+
+  describe "#find_catalog_item" do
+    it "raises exception if the given catalog item name is nil" do
+      expect { subject.find_catalog_item(nil) }.to raise_error
+    end
+
+    it "returns nil if the targeted catalog item doesn't exist" do
+      catalog_item = subject.find_catalog_item("not existing")
+      catalog_item.should be_nil
+    end
+
+    it "finds the targeted catalog item via name if it exists" do
+      catalog_item = subject.find_catalog_item(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME)
+      catalog_item.should_not be_nil
+      catalog_item.name.should eq VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+    end
+
+    it "finds the targeted catalog item via name and type if it exists" do
+      catalog_item = subject.find_catalog_item(
+          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+          VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE]
+      )
+      catalog_item.should_not be_nil
+      catalog_item.name.should eq VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+    end
+
+    it "returns nil when the targeted catalog item type doesnot match" do
+      catalog_item = subject.find_catalog_item(
+          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
+      )
+      catalog_item.should be_nil
+    end
+  end
 end

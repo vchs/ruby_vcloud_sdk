@@ -56,4 +56,29 @@ describe VCloudSdk::Catalog do
       vapp.name.should eq vapp_name
     end
   end
+
+  describe "#find_catalog_item" do
+    it "find that targeted catalog item via name and type if it exists" do
+      catalog_item_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
+      catalog_item_type = VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE]
+      catalog_item = subject.find_catalog_item(
+          catalog_item_name, catalog_item_type
+      )
+      catalog_item.name.should eq catalog_item_name
+      catalog_item.should_not be_nil
+    end
+
+    it "find that targeted catalog item via name if it exists" do
+      catalog_item_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
+      catalog_item = subject.find_catalog_item catalog_item_name
+      catalog_item.name.should eq catalog_item_name
+      catalog_item.should_not be_nil
+    end
+
+    it "return nil if the targeted catalog item does not exist" do
+      catalog_item_name = SecureRandom.uuid
+      catalog_item = subject.find_catalog_item(catalog_item_name)
+      catalog_item.should be_nil
+    end
+  end
 end

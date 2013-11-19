@@ -93,6 +93,23 @@ module VCloudSdk
       connection.get(vapp)
     end
 
+    # Find catalog item from catalog by name and type.
+    # If item_type is set to nil, returns catalog item as long as its name match.
+    # Raises an exception if catalog is not found.
+    # Returns nil if an item matching the name and type is not found.
+    # Otherwise, returns the catalog item.
+    def find_catalog_item(name, item_type = nil)
+      fail ObjectNotFoundError, "Catalog item name cannot be nil" unless name
+
+      items.each do |item|
+        catalog_item = connection.get("/api/catalogItem/#{item.href_id}")
+        return catalog_item if catalog_item.name == name &&
+            (!item_type || catalog_item.entity["type"] == item_type)
+      end
+
+      nil
+    end
+
     private
 
     def item_exists?(name)
@@ -214,21 +231,6 @@ module VCloudSdk
              current_vapp_template.files:
              #{current_vapp_template.files}
            }
-    end
-
-    # Find catalog item from catalog by name and type.
-    # Raises an exception if catalog is not found.
-    # Returns nil if an item matching the name and type is not found.
-    # Otherwise, returns the catalog item.
-    def find_catalog_item(name, item_type)
-      raise ObjectNotFoundError, "Catalog item name cannot be nil" unless name
-
-      items.each do |catalog_item_xml_obj|
-        catalog_item = connection.get("/api/catalogItem/#{catalog_item_xml_obj.href_id}")
-        return catalog_item if catalog_item.name == name && catalog_item.entity["type"] == item_type
-      end
-
-      nil
     end
 
     def retrieve_vapp_template_entity(template_name)
