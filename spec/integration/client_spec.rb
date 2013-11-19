@@ -62,8 +62,9 @@ describe VCloudSdk::Client do
 
     it "creates target catalog successfully" do
       catalog_name_to_create = SecureRandom.uuid
-      response = subject.create_catalog(catalog_name_to_create)
-      response.name.should eql catalog_name_to_create
+      catalog = subject.create_catalog(catalog_name_to_create)
+      catalog.should be_an_instance_of VCloudSdk::Catalog
+      catalog.name.should eql catalog_name_to_create
       subject.delete_catalog(catalog_name_to_create)
     end
 
@@ -84,7 +85,8 @@ describe VCloudSdk::Client do
           catalog = subject.find_catalog_by_name(catalog_name_to_create)
           catalog.name.should eql catalog_name_to_create
 
-          subject.delete_catalog(catalog_name_to_create)
+          result = subject.delete_catalog(catalog_name_to_create)
+          result.should be_nil
           catalog = subject.find_catalog_by_name(catalog_name_to_create)
           catalog.should be_nil
         end

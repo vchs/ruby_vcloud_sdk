@@ -9,14 +9,14 @@ module VCloudSdk
 
     attr_reader :name
 
-    def initialize(session, catalog_xml_obj)
+    def initialize(session, catalog_link)
       @session = session
-      @catalog_xml_obj = catalog_xml_obj
-      @name = catalog_xml_obj.name
+      @catalog_link = catalog_link
+      @name = @catalog_link.name
     end
 
     def id
-      @catalog_xml_obj.href_id
+      @catalog_link.href_id
     end
 
     def items
