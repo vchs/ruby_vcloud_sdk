@@ -7,7 +7,7 @@ require "ruby_vcloud_sdk/xml/wrapper_classes/vapp"
 
 describe VCloudSdk::VApp do
 
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
 

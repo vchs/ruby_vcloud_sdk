@@ -4,7 +4,7 @@ require "resolv"
 
 describe VCloudSdk::Network do
 
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
   let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
   let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }

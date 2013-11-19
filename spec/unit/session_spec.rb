@@ -5,7 +5,7 @@ require_relative "mocks/rest_client"
 require "nokogiri/diff"
 
 describe VCloudSdk::Session do
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:username) { "cfadmin" }
   let(:password) { "akimbi" }

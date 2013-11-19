@@ -6,7 +6,7 @@ require "nokogiri/diff"
 
 describe VCloudSdk::VDC do
 
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
 
   subject do

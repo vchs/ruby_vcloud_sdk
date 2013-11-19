@@ -7,7 +7,7 @@ require "set"
 
 describe VCloudSdk::Network do
 
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:network_name) { VCloudSdk::Test::Response::ORG_NETWORK_NAME }
 
