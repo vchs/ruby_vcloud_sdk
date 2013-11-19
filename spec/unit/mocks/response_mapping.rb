@@ -10,7 +10,11 @@ module VCloudSdk
               end,
             Test::Response::ORG_LINK =>
               lambda do |url, headers|
-                Test::Response::ORG_RESPONSE
+                if options && options[:catalog_created]
+                  Test::Response::ORG_NEW_CATALOG_CREATED_RESPONSE
+                else
+                  Test::Response::ORG_RESPONSE
+                end
               end,
             Test::Response::VDC_LINK =>
               lambda do |url, headers|
