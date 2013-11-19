@@ -74,8 +74,10 @@ describe VCloudSdk::Client, :min, :all do
     subject { initialize_client }
 
     it "creates target catalog successfully" do
-      response = subject.create_catalog(VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE)
-      response.name.should eql VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE
+      VCloudSdk::Test::ResponseMapping.set_option catalog_created: true
+      catalog = subject.create_catalog(VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE)
+      catalog.should be_an_instance_of VCloudSdk::Catalog
+      catalog.name.should eql VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE
     end
 
     it "fails if targeted catalog with the same name already exists" do

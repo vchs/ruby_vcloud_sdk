@@ -98,6 +98,11 @@ module VCloudSdk
              URL, URL, URL, URL, URL, URL, URL, URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK,
              URL, URL, ORGANIZATION]).strip
 
+        ORG_NEW_CATALOG_CREATED_RESPONSE = (File.read(Test.spec_asset("org_new_catalog_created_response.xml")) %
+          [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, CATALOG_NAME, URL, CATALOG_ID,
+           DefaultSetting::CATALOG_NAME_TO_CREATE, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK, URL, URL, ORGANIZATION]).strip
+
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
 
         VCLOUD_RESPONSE = (File.read(Test.spec_asset("vcloud_response.xml")) %

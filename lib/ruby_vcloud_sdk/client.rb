@@ -27,6 +27,7 @@ module VCloudSdk
       connection.post("/api/admin/org/#{@session.org.href_id}/catalogs",
                       catalog,
                       Xml::ADMIN_MEDIA_TYPE[:CATALOG])
+      VCloudSdk::Catalog.new(@session, @session.org.catalog_link(name))
     end
 
     def delete_catalog(name)
@@ -34,6 +35,7 @@ module VCloudSdk
       fail ObjectNotFoundError, "Catalog #{name} not found" unless catalog
       catalog.delete_all_catalog_items
       connection.delete("/api/admin/catalog/#{catalog.id}")
+      nil
     end
   end
 
