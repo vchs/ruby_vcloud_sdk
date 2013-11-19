@@ -6,7 +6,7 @@ require "nokogiri/diff"
 
 describe VCloudSdk::Client, :min, :all do
 
-  let(:logger) { VCloudSdk::Config.logger }
+  let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:username) { "cfadmin" }
   let(:password) { "akimbi" }
