@@ -3,7 +3,6 @@ require "rest_client"
 
 module VCloudSdk
   module Connection
-
     class Connection
       ACCEPT = "application/*+xml;version=#{VCloudSdk::Client::VCLOUD_VERSION_NUMBER}"
 
@@ -83,11 +82,11 @@ module VCloudSdk
             "Warning: content type not specified.  Default to '*/*'")
         end
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
-        response = @site[get_nested_resource(destination)].put(data.to_s, {
+        response = @site[get_nested_resource(destination)].put(data.to_s,
             Accept: ACCEPT,
             cookies: @cookies,
             content_type: content_type
-        })
+        )
         fail ApiRequestError if http_error?(response)
         @rest_logger.debug((response && !response.strip.empty?) ?
           response : "Received empty response.")
@@ -161,13 +160,19 @@ module VCloudSdk
 
       def construct_rest_logger
         Config.logger.debug("constructing rest_logger")
-        rest_log_filename = File.join(
-            File.dirname(Config.logger.instance_eval { @logdev }.dev.path),
-            "rest")
-        log_file = File.open(rest_log_filename, "w")
-        log_file.sync = true
 
-        @rest_logger = Logger.new(log_file || STDOUT)
+        config_logger_dev = Config.logger.instance_eval { @logdev }.dev
+        if config_logger_dev.respond_to?(:path)
+          rest_log_filename = File.join(
+            File.dirname(config_logger_dev.path),
+            "rest")
+          log_file = File.open(rest_log_filename, "w")
+          log_file.sync = true
+          @rest_logger = Logger.new(log_file)
+        else
+          @rest_logger = Config.logger
+        end
+
         @rest_logger.level = Config.logger.level
         @rest_logger.formatter = Config.logger.formatter
       end
@@ -215,6 +220,5 @@ module VCloudSdk
         end
       end
     end
-
   end
 end
