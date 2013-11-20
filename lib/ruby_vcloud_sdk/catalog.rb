@@ -3,7 +3,6 @@ require_relative "session"
 require_relative "infrastructure"
 
 module VCloudSdk
-
   class Catalog
     include Infrastructure
 
@@ -50,6 +49,36 @@ module VCloudSdk
         Template #{template_name} uploaded, adding to catalog #{name}.
       }
       add_item(vapp_template)
+    end
+
+    def upload_media(
+        vdc_name,
+        media_name,
+        file,
+        storage_profile_name,
+        image_type = "iso")
+
+      if item_exists?(media_name)
+        fail "Catalog Item '#{media_name}' already exists in catalog #{name}"
+      end
+
+      Config.logger.info %Q{
+         Uploading file #{file}
+         as media #{media_name} of type #{image_type}
+         to catalog #{name}, storage profile #{storage_profile_name}, vdc #{vdc_name}
+      }
+
+      media_file = file.is_a?(String) ? File.new(file, "rb") : file
+
+      vdc = find_vdc_by_name vdc_name
+
+      storage_profile = vdc.storage_profile_xml_node storage_profile_name
+
+      media = upload_media_params media_name, vdc, media_file, image_type, storage_profile
+
+      media = upload_media_file media, media_file
+
+      add_item(media)
     end
 
     def add_item(item)
@@ -114,9 +143,7 @@ module VCloudSdk
 
     def item_exists?(name)
       items.each do |item|
-        if item.name == name
-          return true
-        end
+        return true if item.name == name
       end
 
       false
@@ -126,7 +153,7 @@ module VCloudSdk
       upload_params = Xml::WrapperFactory.create_instance(
         "UploadVAppTemplateParams")
       upload_params.name = template_name
-      vapp_template = connection.post(vdc.upload_link, upload_params)
+      connection.post(vdc.upload_link, upload_params)
     end
 
     def ovf_directory(directory)
@@ -236,7 +263,7 @@ module VCloudSdk
     def retrieve_vapp_template_entity(template_name)
       vapp_template = find_vapp_template_by_name(template_name)
       unless vapp_template
-        raise ObjectNotFoundError, "vapp_template #{template_name}" +
+        fail ObjectNotFoundError, "vapp_template #{template_name}" +
             "cannot be found in catalog #{@name}."
       end
 
@@ -275,6 +302,22 @@ module VCloudSdk
         end
       end
       locality
+    end
+
+    def upload_media_params(media_name, vdc, media_file, image_type, storage_profile)
+      upload_params = Xml::WrapperFactory.create_instance("Media")
+      upload_params.name = media_name
+      upload_params.size = media_file.stat.size
+      upload_params.image_type = image_type
+      upload_params.storage_profile = storage_profile
+
+      connection.post(vdc.upload_media_link, upload_params)
+    end
+
+    def upload_media_file(media, media_file)
+      incomplete_file = media.incomplete_files.pop
+      connection.put_file(incomplete_file.upload_link, media_file)
+      connection.get(media)
     end
   end
 end

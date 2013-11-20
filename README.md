@@ -29,8 +29,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     delete_catalog
-     returns: nil
-     throws:
+      returns: nil
+      throws:
         'ObjectNotFoundError' when catalog with the name does not exist
         'RestClient::BadRequest' for un-expected errors
     
@@ -61,6 +61,12 @@ Copyright (c) VMware, Inc.
      add_item
      
      find_vapp_template_by_name
+
+     upload_media
+        returns: catalog item uploaded
+        throws:
+          'RuntimeError' when strorage profile with the name does not exist or media file matching name already exists
+          'RestClient::BadRequest' for un-expected errors
      
   Network
   

@@ -133,6 +133,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::INDY_DISK_RESPONSE
               end,
+            Test::Response::MEDIA_LINK =>
+              lambda do |url, headers|
+                Test::Response::MEDIA_UPLOAD_PENDING_RESPONSE
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -191,6 +195,10 @@ module VCloudSdk
             Test::Response::VAPP_TEMPLATE_INSTANTIATE_LINK =>
               lambda do |url, data, headers|
                 Test::Response::EXISTING_VAPP_TEMPLATE_INSTANTIATE_RESPONSE
+              end,
+            Test::Response::MEDIA_UPLOAD_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::MEDIA_UPLOAD_PENDING_RESPONSE
               end,
           },
           delete: {

@@ -10,7 +10,9 @@ describe VCloudSdk::Client do
   let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
   let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
+  let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] ||  VCloudSdk::Test::DefaultSetting::STORAGE_PROFILE_NAME }
   let(:vapp_template_dir) { ENV['VAPP_TEMPLATE_DIR'] }
+  let(:media_file) { ENV['MEDIA_FILE'] }
 
   describe "#initialize" do
     it "set up connection successfully" do
@@ -99,10 +101,17 @@ describe VCloudSdk::Client do
           catalog = subject.find_catalog_by_name(catalog_name_to_create)
           catalog.name.should eql catalog_name_to_create
 
-          vapp_name = "new vapp"
-          catalog_item = catalog.upload_vapp_template vdc_name, vapp_name, vapp_template_dir
-          catalog_item.name.should eql vapp_name
-          subject.delete_catalog(catalog_name_to_create)
+          begin
+            vapp_name = "new vapp"
+            catalog_item = catalog.upload_vapp_template vdc_name, vapp_name, vapp_template_dir
+            catalog_item.name.should eql vapp_name
+
+            media_name = "new media"
+            media = catalog.upload_media vdc_name, media_name, media_file, storage_profile_name
+          ensure
+            subject.delete_catalog(catalog_name_to_create)
+          end
+
           catalog = subject.find_catalog_by_name(catalog_name_to_create)
           catalog.should be_nil
         end

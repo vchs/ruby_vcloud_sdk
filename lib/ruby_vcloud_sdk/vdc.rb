@@ -9,12 +9,13 @@ require_relative "memory"
 require_relative "network"
 
 module VCloudSdk
-
   class VDC
     include Infrastructure
 
     extend Forwardable
-    def_delegators :@vdc_xml_obj, :upload_link, :name, :instantiate_vapp_template_link
+    def_delegators :@vdc_xml_obj,
+                   :name, :upload_link, :upload_media_link,
+                   :instantiate_vapp_template_link
 
     def initialize(session, vdc_xml_obj)
       @session = session
@@ -68,6 +69,15 @@ module VCloudSdk
       end
 
       nil
+    end
+
+    def storage_profile_xml_node(name)
+      storage_profile = @vdc_xml_obj.storage_profile(name)
+      unless storage_profile
+        fail "Storage profile '#{name}' does not exist"
+      end
+
+      storage_profile
     end
   end
 end
