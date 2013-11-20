@@ -9,12 +9,12 @@ require_relative "memory"
 require_relative "network"
 
 module VCloudSdk
-
   class VDC
     include Infrastructure
 
     extend Forwardable
-    def_delegators :@vdc_xml_obj, :upload_link, :name, :instantiate_vapp_template_link
+    def_delegators :@vdc_xml_obj, :upload_link, :upload_media_link,
+                   :name, :instantiate_vapp_template_link
 
     def initialize(session, vdc_xml_obj)
       @session = session
@@ -68,6 +68,10 @@ module VCloudSdk
       end
 
       nil
+    end
+
+    def storage_profile_xml_node(name)
+      @vdc_xml_obj.storage_profile(name)
     end
   end
 end

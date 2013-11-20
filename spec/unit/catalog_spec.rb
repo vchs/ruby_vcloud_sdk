@@ -12,6 +12,8 @@ describe VCloudSdk::Catalog do
   let!(:vmdk_string_io) { StringIO.new("vmdk") }
   let(:vdc_name) { VCloudSdk::Test::Response::OVDC }
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_TEMPLATE_NAME }
+  let(:media_name) { VCloudSdk::Test::Response::MEDIA_NAME }
+  let(:storage_profile_name) { VCloudSdk::Test::Response::STORAGE_PROFILE_NAME }
   let(:mock_ovf_directory) do
     directory = double("Directory")
     # Actual content of the OVF is irrelevant as long as the client gives
@@ -23,6 +25,17 @@ describe VCloudSdk::Catalog do
       file_name
     end
     directory
+  end
+  let(:mock_media_file) do
+    media_string = VCloudSdk::Test::Response::MEDIA_CONTENT
+    string_io = StringIO.new(media_string)
+    string_io.stub(:path) { "bogus/bogus.iso" }
+    string_io.stub(:stat) do
+      o = Object.new
+      o.stub(:size) { media_string.length }
+      o
+    end
+    string_io
   end
   let(:file_uploader) do
     subject.send(:connection).instance_variable_get(:@file_uploader)
@@ -75,11 +88,42 @@ describe VCloudSdk::Catalog do
   describe "#upload_vapp_template" do
 
     context "OVF directory is not provided" do
-      it "raises error" do
+      it "raises an error" do
         expect do
           subject
             .upload_vapp_template vdc_name, vapp_name, nil
         end.to raise_error "OVF directory is nil"
+      end
+    end
+
+    context "A template with the same name already exists" do
+      it "raises an error" do
+        subject
+        .should_receive(:item_exists?)
+        .and_return(true)
+
+        expect do
+          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+        end.to raise_exception("vApp template '#{vapp_name}' already exists" +
+                                 " in catalog #{VCloudSdk::Test::Response::CATALOG_NAME}")
+      end
+    end
+
+    context "uploading failed" do
+      it "reports the exception" do
+        file_uploader
+          .should_receive(:upload)
+          .with(
+            VCloudSdk::Test::Response::VAPP_TEMPLATE_DISK_UPLOAD_1,
+            vmdk_string_io,
+            anything) do
+          VCloudSdk::Test::ResponseMapping
+          .set_option vapp_state: :disks_upload_failed
+        end
+
+        expect do
+          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+        end.to raise_exception("Error uploading vApp template")
       end
     end
 
@@ -99,33 +143,76 @@ describe VCloudSdk::Catalog do
       catalog_item.name.should eql vapp_name
     end
 
-    it "reports an exception upon error" do
-      file_uploader
-        .should_receive(:upload)
-        .with(
-          VCloudSdk::Test::Response::VAPP_TEMPLATE_DISK_UPLOAD_1,
-          vmdk_string_io,
-          anything) do
-        VCloudSdk::Test::ResponseMapping
-          .set_option vapp_state: :disks_upload_failed
-      end
+  end
 
-      expect do
-        subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
-      end.to raise_exception("Error uploading vApp template")
+  describe "#upload_media" do
+
+    context "Media file is not provided" do
+      it "raises an error" do
+        expect do
+          subject
+            .upload_media vdc_name,
+                          media_name,
+                          nil,
+                          storage_profile_name
+        end.to raise_error "Media file is nil"
+      end
     end
 
-    context "A template with the same name already exists" do
-      it "raises error" do
-         subject
-          .should_receive(:item_exists?)
-          .and_return(true)
+    context "An media with the same name already exists" do
+      it "raises an error" do
+        subject
+         .should_receive(:item_exists?)
+         .and_return(true)
 
-         expect do
-           subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
-         end.to raise_exception("vApp template '#{vapp_name}' already exists" +
-                                " in catalog #{VCloudSdk::Test::Response::CATALOG_NAME}")
+        expect do
+          subject.upload_media vdc_name,
+                               media_name,
+                               mock_media_file,
+                               storage_profile_name
+        end.to raise_exception("Catalog Item '#{media_name}' already exists" +
+                               " in catalog #{VCloudSdk::Test::Response::CATALOG_NAME}")
       end
+    end
+
+    context "storage profile with given name does not exist" do
+      it "raises an error" do
+        expect do
+          subject.upload_media vdc_name,
+                               media_name,
+                               mock_media_file,
+                               "XXXX"
+        end.to raise_exception("Storage profile 'XXXX' does not exist on VDC '#{vdc_name}'")
+      end
+    end
+
+    context "uploading failed" do
+      it "reports the exception" do
+        file_uploader
+          .should_receive(:upload)
+          .and_raise "Uploading failed"
+
+        expect do
+          subject.upload_media vdc_name,
+                               media_name,
+                               mock_media_file,
+                               storage_profile_name
+        end.to raise_exception "Uploading failed"
+      end
+    end
+
+    it "uploads media file to the VDC" do
+      file_uploader
+        .should_receive(:upload) do |href, data, headers|
+        href.should eql VCloudSdk::Test::Response::MEDIA_ISO_LINK
+        data.read.should eql VCloudSdk::Test::Response::MEDIA_CONTENT
+      end
+
+      catalog_item = subject.upload_media vdc_name,
+                                          media_name,
+                                          mock_media_file,
+                                          storage_profile_name
+      catalog_item.name.should eql media_name
     end
   end
 
@@ -182,26 +269,26 @@ describe VCloudSdk::Catalog do
       VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
 
-      expect {
-        vapp = subject.instantiate_vapp_template(
+      expect do
+        subject.instantiate_vapp_template(
           "not_existing_vapp_template",
           VCloudSdk::Test::Response::OVDC,
           vapp_name,
         )
-      }.to raise_error (VCloudSdk::ObjectNotFoundError)
+      end.to raise_error VCloudSdk::ObjectNotFoundError
     end
 
     it "raises an exception when VDC cannot be found" do
       VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
 
-      expect {
-        vapp = subject.instantiate_vapp_template(
+      expect do
+        subject.instantiate_vapp_template(
             VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
             "not_existing_vdc",
             vapp_name,
         )
-      }.to raise_error (VCloudSdk::ObjectNotFoundError)
+      end.to raise_error VCloudSdk::ObjectNotFoundError
     end
   end
 end
