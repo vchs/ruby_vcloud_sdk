@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class Vdc < Wrapper
       def add_disk_link
          get_nodes("Link", {"type"=>MEDIA_TYPE[:DISK_CREATE_PARAMS]}).first
@@ -16,17 +15,17 @@ module VCloudSdk
       end
 
       def instantiate_vapp_template_link
-        get_nodes("Link",
-          {"type"=>MEDIA_TYPE[:INSTANTIATE_VAPP_TEMPLATE_PARAMS]}).first
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:INSTANTIATE_VAPP_TEMPLATE_PARAMS] }).first
       end
 
       def upload_link
         get_nodes(XML_TYPE[:LINK],
-          { type: MEDIA_TYPE[:UPLOAD_VAPP_TEMPLATE_PARAMS] }).first
+                  { type: MEDIA_TYPE[:UPLOAD_VAPP_TEMPLATE_PARAMS] }).first
       end
 
       def upload_media_link
-        get_nodes("Link", {"type"=>MEDIA_TYPE[:MEDIA]}).first
+        get_nodes(XML_TYPE[:LINK], { type: MEDIA_TYPE[:MEDIA] }).first
       end
 
       def vapps
@@ -36,20 +35,25 @@ module VCloudSdk
       # vApp Template names are not unique so multiple ones can be returned.
       def get_vapp_templates(name)
         get_nodes("ResourceEntity",
-          {"type"=>MEDIA_TYPE[:VAPP_TEMPLATE], "name"=>name})
+                  { type: MEDIA_TYPE[:VAPP_TEMPLATE], name: name })
       end
 
       def available_networks
-        get_nodes("Network", {"type"=>MEDIA_TYPE[:NETWORK]})
+        get_nodes("Network", { type: MEDIA_TYPE[:NETWORK] })
       end
 
       def available_network(name)
         get_nodes("Network",
-          {"type"=>MEDIA_TYPE[:NETWORK], "name"=>name}).first
+                  type: MEDIA_TYPE[:NETWORK], name: name ).first
       end
 
       def storage_profiles
         get_nodes(:VdcStorageProfile, type: MEDIA_TYPE[:VDC_STORAGE_PROFILE])
+      end
+
+      def storage_profile(name)
+        get_nodes(:VdcStorageProfile,
+                  { type: MEDIA_TYPE[:VDC_STORAGE_PROFILE], name: name }).first
       end
 
       def available_cpu_cores
@@ -63,7 +67,7 @@ module VCloudSdk
         end
 
         # We assume 1 GHz is converted to 1 vCpu core
-        return available_cpu_clock_speed
+        available_cpu_clock_speed
       end
 
       def available_memory_mb
@@ -76,7 +80,7 @@ module VCloudSdk
           available_memory = available_memory * 1024
         end
 
-        return available_memory
+        available_memory
       end
 
       private
@@ -84,7 +88,7 @@ module VCloudSdk
       def get_available_resource(resource_node)
         limited_resource = resource_node.get_nodes("Limit").first.content.to_i
         return -1 if limited_resource == 0
-        available_resource = limited_resource - resource_node.get_nodes("Used").first.content.to_i
+        limited_resource - resource_node.get_nodes("Used").first.content.to_i
       end
     end
   end
