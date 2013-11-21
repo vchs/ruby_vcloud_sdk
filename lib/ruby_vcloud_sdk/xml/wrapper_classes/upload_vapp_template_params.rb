@@ -1,11 +1,9 @@
 module VCloudSdk
   module Xml
-
     class UploadVAppTemplateParams < Wrapper
-      def name=(name)
-        @root["name"] = name
+      def storage_profile=(storage_profile)
+        add_child(storage_profile) unless storage_profile.nil?
       end
     end
-
   end
 end

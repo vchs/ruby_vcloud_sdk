@@ -87,15 +87,6 @@ describe VCloudSdk::Catalog do
 
   describe "#upload_vapp_template" do
 
-    context "OVF directory is not provided" do
-      it "raises an error" do
-        expect do
-          subject
-            .upload_vapp_template vdc_name, vapp_name, nil
-        end.to raise_error "OVF directory is nil"
-      end
-    end
-
     context "A template with the same name already exists" do
       it "raises an error" do
         subject
@@ -103,7 +94,7 @@ describe VCloudSdk::Catalog do
         .and_return(true)
 
         expect do
-          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
         end.to raise_exception("vApp template '#{vapp_name}' already exists" +
                                  " in catalog #{VCloudSdk::Test::Response::CATALOG_NAME}")
       end
@@ -118,12 +109,30 @@ describe VCloudSdk::Catalog do
             vmdk_string_io,
             anything) do
           VCloudSdk::Test::ResponseMapping
-          .set_option vapp_state: :disks_upload_failed
+            .set_option vapp_state: :disks_upload_failed
         end
 
         expect do
-          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
         end.to raise_exception("Error uploading vApp template")
+      end
+    end
+
+    context "storage profile name is not provided" do
+      it "uploads an OVF to the VDC" do
+        file_uploader
+          .should_receive(:upload)
+          .with(
+            VCloudSdk::Test::Response::VAPP_TEMPLATE_DISK_UPLOAD_1,
+            vmdk_string_io,
+            anything) do
+          VCloudSdk::Test::ResponseMapping
+            .set_option vapp_state: :disks_uploaded
+        end
+
+        catalog_item = subject
+          .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+        catalog_item.name.should eql vapp_name
       end
     end
 
@@ -139,7 +148,7 @@ describe VCloudSdk::Catalog do
       end
 
       catalog_item = subject
-        .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
+        .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
       catalog_item.name.should eql vapp_name
     end
 
@@ -186,6 +195,22 @@ describe VCloudSdk::Catalog do
                                mock_media_file,
                                storage_profile_name
         end.to raise_exception "Uploading failed"
+      end
+    end
+
+    context "storage profile name is not provided" do
+      it "uploads media file to the VDC" do
+        file_uploader
+          .should_receive(:upload) do |href, data, headers|
+          href.should eql VCloudSdk::Test::Response::MEDIA_ISO_LINK
+          data.read.should eql VCloudSdk::Test::Response::MEDIA_CONTENT
+        end
+
+        catalog_item = subject.upload_media vdc_name,
+                                            media_name,
+                                            mock_media_file,
+                                            storage_profile_name
+        catalog_item.name.should eql media_name
       end
     end
 
