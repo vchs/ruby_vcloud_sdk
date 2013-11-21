@@ -87,15 +87,6 @@ describe VCloudSdk::Catalog do
 
   describe "#upload_vapp_template" do
 
-    context "OVF directory is not provided" do
-      it "raises an error" do
-        expect do
-          subject
-            .upload_vapp_template vdc_name, vapp_name, nil
-        end.to raise_error "OVF directory is nil"
-      end
-    end
-
     context "A template with the same name already exists" do
       it "raises an error" do
         subject
