@@ -30,16 +30,21 @@ module VCloudSdk
       end
     end
 
-    def upload_vapp_template(vdc_name, template_name, directory)
-      fail "OVF directory is nil" if directory.nil?
+    def upload_vapp_template(
+        vdc_name,
+        template_name,
+        directory,
+        storage_profile_name = nil)
       if item_exists?(template_name)
         fail "vApp template '#{template_name}' already exists in catalog #{name}"
       end
 
       vdc = find_vdc_by_name vdc_name
 
+      storage_profile = vdc.storage_profile_xml_node storage_profile_name
+
       Config.logger.info "Uploading vApp #{template_name} to #{vdc.name}"
-      vapp_template = upload_vapp_template_params(template_name, vdc)
+      vapp_template = upload_vapp_template_params(template_name, vdc, storage_profile)
 
       vapp_template = upload_vapp_files(vapp_template, ovf_directory(directory))
 
@@ -55,7 +60,7 @@ module VCloudSdk
         vdc_name,
         media_name,
         file,
-        storage_profile_name,
+        storage_profile_name = nil,
         image_type = "iso")
 
       if item_exists?(media_name)
@@ -149,10 +154,11 @@ module VCloudSdk
       false
     end
 
-    def upload_vapp_template_params(template_name, vdc)
+    def upload_vapp_template_params(template_name, vdc, storage_profile)
       upload_params = Xml::WrapperFactory.create_instance(
         "UploadVAppTemplateParams")
       upload_params.name = template_name
+      upload_params.storage_profile = storage_profile
       connection.post(vdc.upload_link, upload_params)
     end
 

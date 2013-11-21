@@ -1,15 +1,6 @@
 module VCloudSdk
   module Xml
-
     class Media < Wrapper
-      def name
-        @root["name"]
-      end
-
-      def name=(name)
-        @root["name"] = name.to_s
-      end
-
       def size
         @root["size"]
       end
@@ -36,18 +27,19 @@ module VCloudSdk
 
       # Files that haven"t finished transferring
       def incomplete_files
-        files.find_all { |f| f["size"].to_i < 0 ||
-          (f["size"].to_i > f["bytesTransferred"].to_i) }
+        files.select do |f|
+          f["size"].to_i < 0 ||
+          (f["size"].to_i > f["bytesTransferred"].to_i)
+        end
       end
 
       def delete_link
-        get_nodes("Link", {"rel" => "remove"}, true).first
+        get_nodes(XML_TYPE[:LINK], { rel: XML_TYPE[:REMOVE] }, true).first
       end
 
       def running_tasks
-        get_nodes("Task", {"status" => "running"})
+        get_nodes("Task", status: TASK_STATUS[:RUNNING])
       end
     end
-
   end
 end

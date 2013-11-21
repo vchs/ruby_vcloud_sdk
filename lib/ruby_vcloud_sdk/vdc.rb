@@ -72,6 +72,8 @@ module VCloudSdk
     end
 
     def storage_profile_xml_node(name)
+      return nil if name.nil?
+
       storage_profile = @vdc_xml_obj.storage_profile(name)
       unless storage_profile
         fail "Storage profile '#{name}' does not exist"
