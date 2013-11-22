@@ -14,6 +14,7 @@ describe VCloudSdk::Catalog do
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_TEMPLATE_NAME }
   let(:media_name) { VCloudSdk::Test::Response::MEDIA_NAME }
   let(:storage_profile_name) { VCloudSdk::Test::Response::STORAGE_PROFILE_NAME }
+  let(:new_vapp) { double("new vapp") }
   let(:mock_ovf_directory) do
     directory = double("Directory")
     # Actual content of the OVF is irrelevant as long as the client gives
@@ -250,6 +251,10 @@ describe VCloudSdk::Catalog do
     it "instantiates a vApp from the vapp template without disk locality" do
       VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+      VCloudSdk::VDC.any_instance
+        .stub(:find_vapp_by_name)
+        .with(vapp_name)
+        .and_return new_vapp
 
       vapp = subject.instantiate_vapp_template(
           VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
@@ -257,24 +262,26 @@ describe VCloudSdk::Catalog do
           vapp_name,
       )
 
-      vapp.should_not be_nil
-      vapp.name.should eq vapp_name
+      vapp.should eq new_vapp
     end
 
     it "instantiates a vApp from the vapp template with disk locality" do
       VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+      VCloudSdk::VDC.any_instance
+        .stub(:find_vapp_by_name)
+        .with(vapp_name)
+        .and_return new_vapp
 
       vapp = subject.instantiate_vapp_template(
           VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
           VCloudSdk::Test::Response::OVDC,
-          VCloudSdk::Test::Response::VAPP_NAME,
+          vapp_name,
           "desc",
           [VCloudSdk::Test::Response::INDY_DISK_URL]
       )
 
-      vapp.should_not be_nil
-      vapp.name.should eq vapp_name
+      vapp.should eq new_vapp
     end
 
     it "raises an exception when vapp template cannot be found" do

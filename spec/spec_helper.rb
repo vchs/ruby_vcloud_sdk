@@ -90,6 +90,7 @@ module VCloudSdk
       CATALOG_NAME_TO_CREATE = "dev test catalog"
       VAPP_NAME = "PCF vApp"
       NETWORK_NAME = "tempest_vdc_network"
+      EXISTING_VAPP_TEMPLATE_NAME = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
     end
   end
 

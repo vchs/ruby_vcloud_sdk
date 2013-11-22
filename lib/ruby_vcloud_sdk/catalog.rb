@@ -124,7 +124,7 @@ module VCloudSdk
         end
       end
 
-      connection.get(vapp)
+      vdc.find_vapp_by_name vapp_name
     end
 
     # Find catalog item from catalog by name and type.
