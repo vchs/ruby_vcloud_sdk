@@ -18,9 +18,9 @@ Copyright (c) VMware, Inc.
 
     find_catalog_by_name
       returns:
-        catalog object matching name if found
-        nil if catalog does not exist
+        catalog object matching name
       throws:
+        'RuntimeError' when catalog with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
     create_catalog

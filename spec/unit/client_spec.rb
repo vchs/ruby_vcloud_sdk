@@ -59,9 +59,11 @@ describe VCloudSdk::Client, :min, :all do
   describe "#find_catalog_by_name" do
     subject { initialize_client }
 
-    it "returns nil if target catalog does not exist" do
-      catalog = subject.find_catalog_by_name("xxxx")
-      catalog.should be_nil
+    context "target catalog does not exist" do
+      it "raises an error" do
+        expect { subject.find_catalog_by_name("xxxx") }
+          .to raise_exception "Catalog 'xxxx' is not found"
+      end
     end
 
     it "returns the catalog object if target catalog exists" do
@@ -102,9 +104,12 @@ describe VCloudSdk::Client, :min, :all do
       end
     end
 
-    it "fails if targeted catalog does not exist" do
-      catalog_name_to_create = "XXXXXXX"
-      expect { subject.delete_catalog(catalog_name_to_create) }.to raise_error(VCloudSdk::ObjectNotFoundError, /Catalog \S+ not found/)
+    context "targeted catalog does not exist" do
+      it "raises an error" do
+        catalog_name_to_create = "XXXX"
+        expect { subject.delete_catalog(catalog_name_to_create) }
+          .to raise_error "Catalog 'XXXX' is not found"
+      end
     end
 
     private

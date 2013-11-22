@@ -26,7 +26,7 @@ module VCloudSdk
         return catalog if catalog.name == name
       end
 
-      nil
+      fail "Catalog '#{name}' is not found"
     end
 
     def connection

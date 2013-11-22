@@ -32,7 +32,6 @@ module VCloudSdk
 
     def delete_catalog(name)
       catalog = find_catalog_by_name(name)
-      fail ObjectNotFoundError, "Catalog #{name} not found" unless catalog
       catalog.delete_all_catalog_items
       connection.delete("/api/admin/catalog/#{catalog.id}")
       nil
