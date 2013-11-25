@@ -56,6 +56,22 @@ describe VCloudSdk::Client, :min, :all do
     its(:catalogs) { should have_at_least(1).items }
   end
 
+  describe "#catalog_exists?" do
+    subject { initialize_client }
+
+    context "catalog with matching name exists" do
+      it "returns true" do
+        subject.catalog_exists? catalog_name
+      end
+    end
+
+    context "catalog with matching name does not exist" do
+      it "returns false" do
+        subject.catalog_exists? "xxx"
+      end
+    end
+  end
+
   describe "#find_catalog_by_name" do
     subject { initialize_client }
 
@@ -128,6 +144,7 @@ describe VCloudSdk::Client, :min, :all do
   end
 
   private
+
   def initialize_client
     VCloudSdk::Connection::Connection.stub(:new) { mock_conn }
     described_class.new(url, username, password, {}, logger)

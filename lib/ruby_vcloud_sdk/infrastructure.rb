@@ -2,7 +2,6 @@ module VCloudSdk
   # Shared functions by classes such as Client, Catalog and VDC
   # Make sure instance variable @session is available
   module Infrastructure
-
     ERROR_STATUSES = [Xml::TASK_STATUS[:ABORTED], Xml::TASK_STATUS[:ERROR],
                       Xml::TASK_STATUS[:CANCELED]]
     SUCCESS_STATUS = [Xml::TASK_STATUS[:SUCCESS]]
@@ -18,6 +17,12 @@ module VCloudSdk
     def catalogs
       @session.org.catalogs.map do |catalog|
         VCloudSdk::Catalog.new(@session, catalog)
+      end
+    end
+
+    def catalog_exists?(name)
+      catalogs.any? do |catalog|
+        catalog.name == name
       end
     end
 
