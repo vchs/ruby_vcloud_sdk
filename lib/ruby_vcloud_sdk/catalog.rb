@@ -1,6 +1,7 @@
 require_relative "vdc"
 require_relative "session"
 require_relative "infrastructure"
+require_relative "catalog_item"
 
 module VCloudSdk
   class Catalog
@@ -136,9 +137,9 @@ module VCloudSdk
       fail ObjectNotFoundError, "Catalog item name cannot be nil" unless name
 
       items.each do |item|
-        catalog_item = connection.get("/api/catalogItem/#{item.href_id}")
+        catalog_item = VCloudSdk::CatalogItem.new(@session, item)
         return catalog_item if catalog_item.name == name &&
-            (!item_type || catalog_item.entity["type"] == item_type)
+            (!item_type || catalog_item.type == item_type)
       end
 
       nil
@@ -266,20 +267,20 @@ module VCloudSdk
            }
     end
 
-    def retrieve_vapp_template_entity(template_name)
+    def retrieve_vapp_template_xml_node(template_name)
       vapp_template = find_vapp_template_by_name(template_name)
       unless vapp_template
         fail ObjectNotFoundError, "vapp_template #{template_name}" +
             "cannot be found in catalog #{@name}."
       end
 
-      connection.get(vapp_template.entity)
+      connection.get(vapp_template.href)
     end
 
     def create_instantiate_vapp_params(template_name,
         vapp_name, description, disk_locality)
 
-      source_vapp_template = retrieve_vapp_template_entity(template_name)
+      source_vapp_template = retrieve_vapp_template_xml_node(template_name)
 
       instantiate_vapp_params = Xml::WrapperFactory.create_instance(
           "InstantiateVAppTemplateParams")
