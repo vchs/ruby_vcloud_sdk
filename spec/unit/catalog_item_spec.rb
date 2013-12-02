@@ -23,7 +23,7 @@ describe VCloudSdk::CatalogItem do
   end
 
   subject do
-    described_class.new(session, catalog.items[0])
+    catalog.items[0]
   end
 
   describe "#name" do
@@ -40,7 +40,20 @@ describe VCloudSdk::CatalogItem do
 
   describe "#href" do
     it "returns the entity" do
-      subject.href.end_with?(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_ID).should be true
+      subject
+        .href
+        .end_with?(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_ID)
+        .should be_true
+    end
+  end
+
+  describe "#remove_link" do
+    it "returns the remove link" do
+      subject
+        .remove_link
+        .href
+        .end_with? VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID
+        .should be_true
     end
   end
 end
