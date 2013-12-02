@@ -11,8 +11,8 @@ describe VCloudSdk::Client do
   let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
   let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] ||  VCloudSdk::Test::DefaultSetting::STORAGE_PROFILE_NAME }
-  let(:vapp_template_dir) { ENV['VAPP_TEMPLATE_DIR'] }
-  let(:media_file) { ENV['MEDIA_FILE'] }
+  let(:vapp_template_dir) { ENV['VAPP_TEMPLATE_DIR'] || "Fake path of vapp template directory" }
+  let(:media_file) { ENV['MEDIA_FILE'] || "Fake path of media file" }
 
   describe "#initialize" do
     it "set up connection successfully" do
@@ -48,9 +48,10 @@ describe VCloudSdk::Client do
   describe "#find_catalog_by_name" do
     subject { described_class.new(url, username, password, {}, logger) }
 
-    it "return nil if targeted catalog does not exist" do
-      catalog = subject.find_catalog_by_name("xxxx")
-      catalog.should be_nil
+    it "raises exception if targeted catalog does not exist" do
+      expect { subject.find_catalog_by_name("xxxx") }
+        .to raise_exception VCloudSdk::ObjectNotFoundError,
+                            "Catalog 'xxxx' is not found"
     end
 
     it "find targeted catalog if it exists" do
@@ -89,8 +90,9 @@ describe VCloudSdk::Client do
 
           result = subject.delete_catalog(catalog_name_to_create)
           result.should be_nil
-          catalog = subject.find_catalog_by_name(catalog_name_to_create)
-          catalog.should be_nil
+          expect { subject.find_catalog_by_name(catalog_name_to_create) }
+            .to raise_exception VCloudSdk::ObjectNotFoundError,
+                                "Catalog '#{catalog_name_to_create}' is not found"
         end
       end
 
@@ -112,14 +114,17 @@ describe VCloudSdk::Client do
             subject.delete_catalog(catalog_name_to_create)
           end
 
-          catalog = subject.find_catalog_by_name(catalog_name_to_create)
-          catalog.should be_nil
+          expect { subject.find_catalog_by_name(catalog_name_to_create) }
+            .to raise_exception VCloudSdk::ObjectNotFoundError,
+                                "Catalog '#{catalog_name_to_create}' is not found"
         end
       end
 
       it "fails if targeted catalog does not exist" do
         catalog_name_to_create = SecureRandom.uuid
-        expect { subject.delete_catalog(catalog_name_to_create) }.to raise_error(VCloudSdk::ObjectNotFoundError, /Catalog \S+ not found/)
+        expect { subject.delete_catalog(catalog_name_to_create) }
+          .to raise_exception VCloudSdk::ObjectNotFoundError
+                              "Catalog '#{catalog_name_to_create}' is not found"
       end
     end
 

@@ -111,7 +111,6 @@ module VCloudSdk
           template_name, vapp_name, description, disk_locality)
 
       vdc = find_vdc_by_name vdc_name
-      fail ObjectNotFoundError, "VDC #{vdc_name} cannot be found." unless vdc
 
       vapp = connection.post(vdc.instantiate_vapp_template_link,
                              instantiate_vapp_params)
@@ -131,7 +130,7 @@ module VCloudSdk
     # Find catalog item from catalog by name and type.
     # If item_type is set to nil, returns catalog item as long as its name match.
     # Raises an exception if catalog is not found.
-    # Returns nil if an item matching the name and type is not found.
+    # Raises ObjectNotFoundError if an item matching the name and type is not found.
     # Otherwise, returns the catalog item.
     def find_item(name, item_type = nil)
       fail ObjectNotFoundError, "Catalog item name cannot be nil" unless name
@@ -142,7 +141,7 @@ module VCloudSdk
             (!item_type || catalog_item.type == item_type)
       end
 
-      nil
+      fail ObjectNotFoundError, "Catalog Item '#{name}' is not found"
     end
 
     private
