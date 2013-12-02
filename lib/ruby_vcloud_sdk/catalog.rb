@@ -20,12 +20,13 @@ module VCloudSdk
     end
 
     def items
-      admin_xml.catalog_items
+      admin_xml.catalog_items.map do |item|
+        VCloudSdk::CatalogItem.new(@session, item)
+      end
     end
 
     def delete_all_catalog_items
-      items.each do |catalog_item_xml_obj|
-        catalog_item = connection.get("/api/catalogItem/#{catalog_item_xml_obj.href_id}")
+      items.each do |catalog_item|
         Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
         connection.delete(catalog_item.remove_link)
       end
@@ -124,6 +125,7 @@ module VCloudSdk
         end
       end
 
+      vdc = find_vdc_by_name vdc_name # Refresh information about vdc
       vdc.find_vapp_by_name vapp_name
     end
 
@@ -135,24 +137,22 @@ module VCloudSdk
     def find_item(name, item_type = nil)
       fail ObjectNotFoundError, "Catalog item name cannot be nil" unless name
 
-      items.each do |item|
-        catalog_item = VCloudSdk::CatalogItem.new(@session, item)
+      items.each do |catalog_item|
         return catalog_item if catalog_item.name == name &&
-            (!item_type || catalog_item.type == item_type)
+            (item_type.nil? || catalog_item.type == item_type)
       end
 
       fail ObjectNotFoundError, "Catalog Item '#{name}' is not found"
     end
 
-    private
-
-    def item_exists?(name)
-      items.each do |item|
-        return true if item.name == name
+    def item_exists?(name, item_type = nil)
+      items.any? do |item|
+        item.name == name &&
+          (item_type.nil? || item.type == item_type)
       end
-
-      false
     end
+
+    private
 
     def upload_vapp_template_params(template_name, vdc, storage_profile)
       upload_params = Xml::WrapperFactory.create_instance(

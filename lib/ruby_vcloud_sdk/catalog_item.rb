@@ -23,7 +23,12 @@ module VCloudSdk
       entity[:href]
     end
 
+    def remove_link
+      connection.get(@catalog_item_link).remove_link
+    end
+
     private
+
     def entity
       catalog_item_xml_node = connection.get(@catalog_item_link)
       catalog_item_xml_node.entity

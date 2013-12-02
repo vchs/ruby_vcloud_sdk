@@ -348,4 +348,36 @@ describe VCloudSdk::Catalog do
                              "Catalog Item '#{VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME}' is not found"
     end
   end
+
+  describe "item_exists?" do
+    it "returns false if the targeted catalog item doesn't exist" do
+      subject
+        .item_exists?("not existing")
+        .should be_false
+    end
+
+    it "returns true if the targeted catalog item via name exists" do
+      subject
+        .item_exists?(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME)
+        .should be_true
+    end
+
+    it "returns true if the targeted catalog item via name and type exists" do
+      subject
+        .item_exists?(
+          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+          VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE]
+        )
+        .should be_true
+    end
+
+    it "returns false when the targeted catalog item type does not match" do
+        subject
+          .item_exists?(
+            VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+            VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
+          )
+          .should be_false
+    end
+  end
 end
