@@ -57,6 +57,12 @@ Copyright (c) VMware, Inc.
      delete_all_catalog_items
      
      upload_vapp_template
+
+     find_item
+        returns: catalog item matching name and type
+        throws:
+          'ObjectNotFoundError' when an item matching the name and type is not found
+          'RestClient::BadRequest' for un-expected errors
      
      add_item
      

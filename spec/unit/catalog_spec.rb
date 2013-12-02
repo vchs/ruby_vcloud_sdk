@@ -230,13 +230,14 @@ describe VCloudSdk::Catalog do
   end
 
   describe "#find_vapp_template_by_name" do
-    it "raise exception if the given vapp template name is nil" do
+    it "raises exception if the given vapp template name is nil" do
       expect { subject.find_vapp_template_by_name(nil) }.to raise_error
     end
 
-    it "return nil if the targeted vapp template doesn't exist" do
-      vapp_template = subject.find_vapp_template_by_name("not existing")
-      vapp_template.should be_nil
+    it "raises exception if the targeted vapp template doesn't exist" do
+      expect { subject.find_vapp_template_by_name("not existing") }
+        .to raise_exception VCloudSdk::ObjectNotFoundError,
+                            "Catalog Item 'not existing' is not found"
     end
 
     it "find targeted vapp template if it exists" do
@@ -316,9 +317,10 @@ describe VCloudSdk::Catalog do
       expect { subject.find_item(nil) }.to raise_error
     end
 
-    it "returns nil if the targeted catalog item doesn't exist" do
-      catalog_item = subject.find_item("not existing")
-      catalog_item.should be_nil
+    it "raises exception if the targeted catalog item doesn't exist" do
+      expect { subject.find_item("not existing") }
+        .to raise_exception VCloudSdk::ObjectNotFoundError,
+                            "Catalog Item 'not existing' is not found"
     end
 
     it "finds the targeted catalog item via name if it exists" do
@@ -337,11 +339,13 @@ describe VCloudSdk::Catalog do
     end
 
     it "returns nil when the targeted catalog item type does not match" do
-      catalog_item = subject.find_item(
+      expect do
+        subject.find_item(
           VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
           VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
-      )
-      catalog_item.should be_nil
+        )
+      end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                             "Catalog Item '#{VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME}' is not found"
     end
   end
 end
