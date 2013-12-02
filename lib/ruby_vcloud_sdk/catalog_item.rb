@@ -27,7 +27,12 @@ module VCloudSdk
       connection.get(@catalog_item_link).remove_link
     end
 
+    def to_s
+      "Catalog Item '#{name}' of type '#{type}'"
+    end
+
     private
+
     def entity
       catalog_item_xml_node = connection.get(@catalog_item_link)
       catalog_item_xml_node.entity

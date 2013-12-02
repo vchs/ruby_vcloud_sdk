@@ -56,4 +56,11 @@ describe VCloudSdk::CatalogItem do
         .should be_true
     end
   end
+
+  describe "#to_s" do
+    it "contains name and type of the item" do
+      subject.to_s
+        .should eql "Catalog Item 'existing_template' of type 'application/vnd.vmware.vcloud.vAppTemplate+xml'"
+    end
+  end
 end
