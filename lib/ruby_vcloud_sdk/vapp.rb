@@ -1,4 +1,5 @@
 require_relative "infrastructure"
+require_relative "vm"
 
 module VCloudSdk
   class VApp
@@ -6,14 +7,14 @@ module VCloudSdk
 
     attr_reader :name
 
-    def initialize(session, vapp_xml_obj)
+    def initialize(session, vapp_link)
       @session = session
-      @vapp_xml_obj = vapp_xml_obj
-      @name = @vapp_xml_obj.name
+      @vapp_link = vapp_link
+      @name = @vapp_link.name
     end
 
     def delete
-      vapp = connection.get(@vapp_xml_obj)
+      vapp = connection.get(@vapp_link)
 
       if is_vapp_status?(vapp, :POWERED_ON)
         fail CloudError,
@@ -39,7 +40,7 @@ module VCloudSdk
     end
 
     def power_on
-      vapp = connection.get(@vapp_xml_obj)
+      vapp = connection.get(@vapp_link)
       Config.logger.debug "vApp status: #{vapp[:status]}"
       if is_vapp_status?(vapp, :POWERED_ON)
         Config.logger.info "vApp #{name} is already powered-on."
@@ -60,7 +61,7 @@ module VCloudSdk
     end
 
     def power_off
-      vapp = connection.get(@vapp_xml_obj)
+      vapp = connection.get(@vapp_link)
       Config.logger.debug "vApp status: #{vapp[:status]}"
       if is_vapp_status?(vapp, :SUSPENDED)
         Config.logger.info "vApp #{name} suspended, discard state before powering off."
@@ -82,6 +83,13 @@ module VCloudSdk
       Config.logger.info "vApp #{name} is in powered off state. Need to be undeployed."
 
       undeploy_vapp(vapp)
+    end
+
+    def vms
+      vapp = connection.get(@vapp_link)
+      vapp.vms.map do |vm|
+        VCloudSdk::VM.new(@session, vm.href)
+      end
     end
 
     private

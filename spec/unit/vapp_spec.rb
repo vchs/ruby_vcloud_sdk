@@ -188,4 +188,19 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "#vms" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :on
+    end
+
+    it "returns a collection of vms" do
+      vms = subject.vms
+      vms.should have_at_least(1).item
+      vms.each do |vm|
+        vm.should be_an_instance_of VCloudSdk::VM
+      end
+    end
+  end
 end

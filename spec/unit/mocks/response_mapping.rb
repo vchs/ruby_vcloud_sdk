@@ -137,6 +137,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::MEDIA_UPLOAD_PENDING_RESPONSE
               end,
+            Test::Response::INSTANTIATED_VM_LINK =>
+              lambda do |url, headers|
+                Test::Response::INSTANTIATED_VM_RESPONSE
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
