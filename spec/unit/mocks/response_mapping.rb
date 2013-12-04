@@ -69,7 +69,7 @@ module VCloudSdk
                   Test::Response::INSTANTIAED_VAPP_RESPONSE
                 when :on
                   Test::Response::INSTANTIAED_VAPP_ON_RESPONSE
-                when :powered-off
+                when :powered_off
                   Test::Response::INSTANTIAED_VAPP_POWERED_OFF_RESPONSE
                 when :suspended
                   Test::Response::INSTANTIATED_SUSPENDED_VAPP_RESPONSE
@@ -221,6 +221,10 @@ module VCloudSdk
             Test::Response::MEDIA_UPLOAD_LINK =>
               lambda do |url, data, headers|
                 Test::Response::MEDIA_UPLOAD_PENDING_RESPONSE
+              end,
+            Test::Response::RECOMPOSE_VAPP_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::RECOMPOSE_VAPP_RESPONSE
               end,
           },
           delete: {

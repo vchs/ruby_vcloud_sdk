@@ -20,6 +20,7 @@ module VCloudSdk
       undeploy: 720,
       process_descriptor_vapp_template: 300,
       http_request: 240,
+      recompose_vapp: 200,
     }
 
     DELAY = 1

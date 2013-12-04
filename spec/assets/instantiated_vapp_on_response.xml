@@ -4,7 +4,6 @@
     <Link rel="undeploy" type="application/vnd.vmware.vcloud.undeployVAppParams+xml" href="%s"/>
     <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml" href="%s/api/vApp/vapp-%s/controlAccess/"/>
     <Link rel="controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml" href="%s/api/vApp/vapp-%s/action/controlAccess"/>
-    <Link rel="recompose" type="application/vnd.vmware.vcloud.recomposeVAppParams+xml" href="%s/api/vApp/vapp-%s/action/recomposeVApp"/>
     <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="%s/api/vdc/a974dae0-d10c-4f7c-9f4f-4bdaf7826a3a"/>
     <Link rel="edit" type="application/vnd.vmware.vcloud.vApp+xml" href="%s/api/vApp/vapp-%s"/>
     <Link rel="remove" href="%s/api/vApp/vapp-%s"/>
