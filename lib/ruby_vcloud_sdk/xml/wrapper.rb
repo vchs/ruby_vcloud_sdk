@@ -2,7 +2,6 @@ require "nokogiri"
 
 module VCloudSdk
   module Xml
-
     class WrapperFactory
       @@xml_dictionary = {}
       class << self
@@ -20,8 +19,11 @@ module VCloudSdk
         end
 
         def wrap_nodes(nodes, ns, namespace_defintions)
-          nodes.collect { |node| WrapperFactory.wrap_node(node, ns,
-            namespace_defintions) }
+          nodes.map do |node|
+            WrapperFactory.wrap_node(node,
+                                     ns,
+                                     namespace_defintions)
+          end
         end
 
         # TODO: We might run into a bug later if there are ever XML node types
@@ -38,11 +40,11 @@ module VCloudSdk
         def create_instance(type_name, ns = nil, namespace_defintions = nil,
             *args)
           xml = @@xml_dictionary[type_name]
-          if (xml)
+          if xml
             wrap_document(xml, ns, namespace_defintions, *args)
           else
-            raise CpiError,
-              "XML type #{type_name} not found in xml_templates dir."
+            fail CpiError,
+                 "XML type #{type_name} not found in xml_templates dir."
           end
         end
 
@@ -73,7 +75,7 @@ module VCloudSdk
 
         # Use (server) supplied prefixes defaulting to the preset ones for
         # those not specified.
-        @doc_namespaces = ns_definitions.nil? ? Array.new :
+        @doc_namespaces = ns_definitions.nil? ? [] :
           Array.new(ns_definitions)
         if @root.namespace_definitions
           @doc_namespaces.concat(@root.namespace_definitions)
@@ -85,11 +87,15 @@ module VCloudSdk
       end
 
       def xpath(*args)
-        WrapperFactory::wrap_nodes(@root.xpath(*args), @ns, @doc_namespaces)
+        WrapperFactory.wrap_nodes(@root.xpath(*args), @ns, @doc_namespaces)
       end
 
       def href
         @root["href"]
+      end
+
+      def href=(href)
+        @root["href"] = href
       end
 
       def href_id
@@ -113,6 +119,10 @@ module VCloudSdk
         @root["type"]
       end
 
+      def type=(type)
+        @root["type"] = type
+      end
+
       def remove_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: XML_TYPE[:REMOVE] }, true).first
@@ -124,7 +134,7 @@ module VCloudSdk
         depth_prefix = only_immediate ? nil : ".//"
         if attrs && attrs.length > 0
           attrs_list = []
-          attrs.each do |k,v|
+          attrs.each do |k, v|
             attrs_list.push(%Q[@#{k}="#{v}"])
           end
 
@@ -143,7 +153,7 @@ module VCloudSdk
         @doc_namespaces.each do |ns|
           if ns.href == href
             if ns.prefix.nil?
-              ns_wanted_no_prefix = ns;
+              ns_wanted_no_prefix = ns
             else
               namespace_wanted = ns
               break
@@ -151,7 +161,8 @@ module VCloudSdk
           end
         end
         namespace_wanted = ns_wanted_no_prefix unless namespace_wanted
-        raise CpiError, "Namespace #{href} not found." unless namespace_wanted
+        fail CpiError,
+             "Namespace #{href} not found." unless namespace_wanted
         ns_prefix = namespace_wanted.prefix.nil? ? "xmlns" :
           namespace_wanted.prefix
         "#{ns_prefix}:#{name}"
@@ -186,19 +197,26 @@ module VCloudSdk
       end
 
       def to_s
-        add_namespaces.to_xml.each_line.inject("") {
-          |xml, line| xml.concat(line.sub(/^\s+$/, "")) }
+        add_namespaces
+          .to_xml
+          .each_line
+          .reduce("") do |xml, line|
+          xml.concat(line.sub(/^\s+$/, ""))
+        end
       end
 
-      def add_child(child, namespace_prefix = nil, namespace_href = nil,
-          parent = @root)
+      def add_child(
+            child,
+            namespace_prefix = nil,
+            namespace_href = nil,
+            parent = @root)
         if child.is_a? Wrapper
           @root.add_child(child.node)
         elsif child.is_a? String
           node = Nokogiri::XML::Node.new(child, parent)
-          if (namespace_prefix.nil? ^ namespace_href.nil?)
-            raise CpiError,
-                  "Namespace prefix must both be nil or defined together."
+          if namespace_prefix.nil? ^ namespace_href.nil?
+            fail CpiError,
+                 "Namespace prefix must both be nil or defined together."
           end
           # This is a little more cumbersome but Nokogiri has problems
           # figuring out the right namespace prefix otherwise
@@ -251,6 +269,5 @@ module VCloudSdk
         clone
       end
     end
-
   end
 end
