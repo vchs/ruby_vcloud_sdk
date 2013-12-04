@@ -11,6 +11,10 @@ module VCloudSdk
         files.find_all {|f| f["size"].to_i < 0 ||
           (f["size"].to_i > f["bytesTransferred"].to_i)}
       end
+
+      def running_tasks
+        get_nodes("Task", status: TASK_STATUS[:RUNNING])
+      end
     end
 
   end

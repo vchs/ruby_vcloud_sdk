@@ -137,6 +137,25 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::MEDIA_UPLOAD_PENDING_RESPONSE
               end,
+            Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_MEDIA_CATALOG_ITEM
+              end,
+            Test::Response::EXISTING_MEDIA_LINK  =>
+                lambda do |url, headers|
+                case (options[:existing_media_state])
+                when :busy
+                  Test::ResponseMapping.set_option existing_media_state: :done
+                  Test::Response::EXISTING_MEDIA_BUSY_RESPONSE
+                when :done
+                  Test::Response::EXISTING_MEDIA_DONE_RESPONSE
+                end
+               end,
+            Test::Response::EXISTING_MEDIA_RUNNING_TASK_LINK =>
+                lambda do |url, headers|
+                  Test::Response::EXISTING_MEDIA_RUNNING_TASK_DONE
+                end,
+
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -217,6 +236,10 @@ module VCloudSdk
             Test::Response::INSTANTIATED_VAPP_LINK =>
               lambda do |url, headers|
                 Test::Response::INSTANTIATED_VAPP_DELETE_RUNNING_TASK
+              end,
+            Test::Response::EXISTING_MEDIA_LINK =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_MEDIA_DELETE_TASK_DONE
               end,
           },
           put: {

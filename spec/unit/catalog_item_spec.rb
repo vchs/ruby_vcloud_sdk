@@ -56,4 +56,18 @@ describe VCloudSdk::CatalogItem do
         .should be_true
     end
   end
+
+  describe "#delete" do
+    it "deletes a catalog item which has a running task", :positive do
+      VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
+      subject = catalog.items[1]
+      subject.delete
+    end
+
+    it "deletes a catalog item which has no running task", :positive do
+      VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
+      subject = catalog.items[1]
+      subject.delete
+    end
+  end
 end
