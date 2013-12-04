@@ -204,6 +204,10 @@ module VCloudSdk
               lambda do |url, data, headers|
                 Test::Response::MEDIA_UPLOAD_PENDING_RESPONSE
               end,
+            Test::Response::RECOMPOSE_VAPP_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::RECOMPOSE_VAPP_RESPONSE
+              end,
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>
