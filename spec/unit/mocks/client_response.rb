@@ -288,6 +288,11 @@ module VCloudSdk
 
         VAPP_TEMPLATE_INSTANTIATE_LINK = "#{URL}/api/vdc/#{VDC_ID}/action/instantiateVAppTemplate"
 
+        RECOMPOSE_VAPP_LINK = "#{URL}/api/vApp/vapp-#{VAPP_ID}/action/recomposeVApp"
+
+        RECOMPOSE_VAPP_RESPONSE = (File.read(Test.spec_asset(
+          "recompose_vapp_response.xml"))).strip
+
         EXISTING_VAPP_TEMPLATE_INSTANTIATE_REQUEST = (File.read(Test.spec_asset(
           "vapp_template_instantiate_request.xml")) % [VAPP_NAME, URL,
           EXISTING_VAPP_TEMPLATE_ID, EXISTING_VAPP_TEMPLATE_ID]).strip

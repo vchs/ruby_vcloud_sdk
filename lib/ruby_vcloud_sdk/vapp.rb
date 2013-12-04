@@ -1,5 +1,6 @@
 require_relative "infrastructure"
 require_relative "vm"
+require "securerandom"
 
 module VCloudSdk
   class VApp
@@ -85,6 +86,22 @@ module VCloudSdk
       undeploy_vapp(vapp)
     end
 
+    def recompose_from_vapp_template(catalog_name, template_name)
+      Config.logger.info "Recomposing from template '#{template_name}' in catalog '#{catalog_name}'."
+      catalog = find_catalog_by_name catalog_name
+
+      template = catalog.find_vapp_template_by_name template_name
+
+      vapp = connection.get(@vapp_link)
+
+      task = connection.post vapp.recompose_vapp_link,
+                             recompose_from_vapp_template_param(template)
+
+      monitor_task task, @session.time_limit[:recompose_vapp]
+      Config.logger.info "vApp #{name} is recomposed."
+      self
+    end
+
     def vms
       vapp = connection.get(@vapp_link)
       vapp.vms.map do |vm|
@@ -104,6 +121,14 @@ module VCloudSdk
 
     def is_vapp_status?(vapp, status)
       vapp[:status] == Xml::RESOURCE_ENTITY_STATUS[status].to_s
+    end
+
+    def recompose_from_vapp_template_param(template)
+      params = Xml::WrapperFactory.create_instance "RecomposeVAppParams"
+      params.name = name
+      params.all_eulas_accepted = true
+      params.add_source_item template.href
+      params
     end
   end
 end

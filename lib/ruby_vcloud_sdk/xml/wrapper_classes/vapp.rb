@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class VApp < Wrapper
       def description
         get_nodes("Description").first.content
@@ -38,12 +37,30 @@ module VCloudSdk
         get_nodes("Link", {"rel" => "discardState"}, true).first
       end
 
+      def recompose_vapp_link
+        link = get_nodes(XML_TYPE[:LINK],
+                         { rel: "recompose" },
+                         true).first
+
+        # recomposeLink is not available when vapp is running (so force construct the link)
+        fix_if_invalid(link,
+                       "recompose",
+                       MEDIA_TYPE[:RECOMPOSE_VAPP_PARAMS],
+                       "#{href}/action/recomposeVApp")
+      end
+
+      def vdc_link
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:VDC] },
+                  true).first
+      end
+
       def vms
         get_nodes("Vm")
       end
 
       def vm(name)
-        get_nodes("Vm", {"name" => name}).first
+        get_nodes("Vm", name: name).first
       end
     end
 
