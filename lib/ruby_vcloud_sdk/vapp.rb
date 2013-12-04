@@ -85,6 +85,31 @@ module VCloudSdk
       undeploy_vapp(vapp)
     end
 
+    def recompose_from_vapp_template(catalog_name, template_name)
+      recompose_vapp_link = connection
+                              .get(@vapp_link)
+                              .recompose_vapp_link
+
+      if recompose_vapp_link.nil?
+        # We are able to recompose vapp when it is suspended or powered off
+        # If vapp is powered on, throw exception
+        fail CloudError,
+             "VApp is in status of '#{status}' and can not be recomposed"
+      end
+
+      Config.logger.info "Recomposing from template '#{template_name}' in catalog '#{catalog_name}'."
+      catalog = find_catalog_by_name catalog_name
+
+      template = catalog.find_vapp_template_by_name template_name
+
+      task = connection.post recompose_vapp_link.href,
+                             recompose_from_vapp_template_param(template)
+
+      monitor_task task, @session.time_limit[:recompose_vapp]
+      Config.logger.info "vApp #{name} is recomposed."
+      self
+    end
+
     def vms
       vapp = connection.get(@vapp_link)
       vapp.vms.map do |vm|
@@ -104,6 +129,27 @@ module VCloudSdk
 
     def is_vapp_status?(vapp, status)
       vapp[:status] == Xml::RESOURCE_ENTITY_STATUS[status].to_s
+    end
+
+    def status
+      vapp = connection.get(@vapp_link)
+      vapp_status_code = vapp[:status].to_i
+      Xml::RESOURCE_ENTITY_STATUS.each_pair do |k,v|
+        if v == vapp_status_code
+          return k.to_s
+        end
+      end
+
+      fail CloudError,
+           "Fail to find corresponding status for code '#{vapp_status_code}'"
+    end
+
+    def recompose_from_vapp_template_param(template)
+      Xml::WrapperFactory.create_instance("RecomposeVAppParams").tap do |params|
+        params.name = name
+        params.all_eulas_accepted = true
+        params.add_source_item template.href
+      end
     end
   end
 end

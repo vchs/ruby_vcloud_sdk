@@ -214,17 +214,7 @@ module VCloudSdk
           @root.add_child(child.node)
         elsif child.is_a? String
           node = Nokogiri::XML::Node.new(child, parent)
-          if namespace_prefix.nil? ^ namespace_href.nil?
-            fail CpiError,
-                 "Namespace prefix must both be nil or defined together."
-          end
-          # This is a little more cumbersome but Nokogiri has problems
-          # figuring out the right namespace prefix otherwise
-          if namespace_prefix
-            ns = node.add_namespace_definition(namespace_prefix,
-                                               namespace_href)
-            node.namespace = ns
-          end
+          set_namespace(node, namespace_prefix, namespace_href)
           parent.add_child(node)
         else
           fail CpiError, "Cannot add child.  Unknown object passed in."
@@ -233,8 +223,12 @@ module VCloudSdk
 
       # Creates a child node but does not add it to the document.  Used when
       # a new child node has to be in a specific location or order.
-      def create_child(tag)
-        Nokogiri::XML::Node.new(tag, @root)
+      def create_child(tag,
+                       namespace_prefix = nil,
+                       namespace_href = nil)
+        node = Nokogiri::XML::Node.new(tag, @root)
+        set_namespace(node, namespace_prefix, namespace_href)
+        node
       end
 
       protected
@@ -267,6 +261,25 @@ module VCloudSdk
         end
         clone.namespace = default_ns
         clone
+      end
+
+      def set_namespace(node, namespace_prefix, namespace_href)
+        if namespace_prefix.nil? && namespace_href.nil?
+          return
+        elsif namespace_prefix.nil? || namespace_href.nil?
+          fail CpiError,
+               "Namespace prefix must both be nil or defined together."
+        end
+
+        if !node.namespace.nil? &&
+          node.namespace.prefix == namespace_prefix &&
+          node.namespace.href == namespace_href
+          return
+        end
+
+        ns = node.add_namespace_definition(namespace_prefix,
+                                           namespace_href)
+        node.namespace = ns
       end
     end
   end

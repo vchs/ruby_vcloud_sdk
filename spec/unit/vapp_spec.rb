@@ -2,6 +2,7 @@ require "spec_helper"
 require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
 require_relative "mocks/rest_client"
+require "rest_client"
 require "nokogiri/diff"
 require "ruby_vcloud_sdk/xml/wrapper_classes/vapp"
 
@@ -10,6 +11,7 @@ describe VCloudSdk::VApp do
   let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
+  let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
 
   subject do
     vdc_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
@@ -185,6 +187,77 @@ describe VCloudSdk::VApp do
         expect { subject.power_off }
           .to raise_exception VCloudSdk::VappSuspendedError,
                               "discard state first"
+      end
+    end
+  end
+
+  describe "#recompose_from_vapp_template" do
+    context "vapp is powered off" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
+        VCloudSdk::Test::ResponseMapping
+        .set_option catalog_state: :not_added
+      end
+
+      context "vapp template exists" do
+        before do
+          VCloudSdk::Test::ResponseMapping
+            .set_option catalog_state: :added
+        end
+
+        context "error occurred in recomposing request" do
+          it "raises the exception" do
+            VCloudSdk::Connection::Connection
+              .any_instance
+              .stub(:post)
+              .with(VCloudSdk::Test::Response::RECOMPOSE_VAPP_LINK, anything)
+              .and_raise RestClient::BadRequest
+
+            expect do
+              subject.recompose_from_vapp_template catalog_name,
+                                                   VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+            end.to raise_exception RestClient::BadRequest
+          end
+        end
+
+        it "adds vm to target vapp" do
+          subject
+            .recompose_from_vapp_template catalog_name,
+                                          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+        end
+      end
+
+      context "vapp template does not exist" do
+        before do
+          VCloudSdk::Test::ResponseMapping
+            .set_option catalog_state: :not_added
+        end
+
+        it "raises ObjectNotFoundError" do
+          expect do
+            subject
+              .recompose_from_vapp_template catalog_name,
+                                            VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+          end.to raise_exception VCloudSdk::ObjectNotFoundError
+                                 "Catalog Item '#{VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME}' is not found"
+        end
+      end
+    end
+
+    context "vapp is powered on" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
+
+      it "raises an exception" do
+        expect do
+          subject
+            .recompose_from_vapp_template catalog_name,
+                                          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
+        end.to raise_exception VCloudSdk::CloudError
+               "VApp is in status of 'POWERED_OFF' and can not be recomposed"
       end
     end
   end
