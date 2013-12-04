@@ -9,6 +9,7 @@ end
 
 require "yaml"
 require "ruby_vcloud_sdk"
+require "securerandom"
 
 module VCloudSdk
   module Test
@@ -69,6 +70,7 @@ module VCloudSdk
           undeploy: 3,
           process_descriptor_vapp_template: 300,
           http_request: 240,
+          recompose_vapp: 3,
         }
 
         options = {}
@@ -77,6 +79,24 @@ module VCloudSdk
         conn = VCloudSdk::Test.mock_connection(logger, url)
         VCloudSdk::Connection::Connection.stub(:new) { conn }
         VCloudSdk::Session.new(url, nil, nil, options)
+      end
+
+      def new_vapp(
+          url,
+          username,
+          password,
+          logger,
+          catalog_name,
+          vapp_template_name,
+          vdc_name)
+        return @new_vapp if @new_vapp
+        client = VCloudSdk::Client.new(url, username, password, {}, logger)
+        catalog = client.find_catalog_by_name(catalog_name)
+        @new_vapp = catalog
+                      .instantiate_vapp_template(
+                         vapp_template_name,
+                         vdc_name,
+                         SecureRandom.uuid)
       end
     end
 
