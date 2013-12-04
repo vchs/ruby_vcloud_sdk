@@ -27,6 +27,14 @@ module VCloudSdk
       connection.get(@catalog_item_link).remove_link
     end
 
+    def delete
+      xml_node = connection.get(@catalog_item_link)
+
+      delete_catalog_item_entity xml_node.entity
+
+      connection.delete(xml_node.remove_link)
+    end
+
     private
 
     def entity

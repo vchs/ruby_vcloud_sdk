@@ -220,6 +220,16 @@ module VCloudSdk
           EXISTING_MEDIA_DELETE_TASK_ID, EXISTING_MEDIA_LINK, USERNAME, URL,
           URL]).strip
 
+        EXISTING_MEDIA_RUNNING_TASK_ID = "025615cd-a591-4dec-89dc-331b322a3a75"
+
+        EXISTING_MEDIA_RUNNING_TASK_LINK = "#{URL}/api/task/#{EXISTING_MEDIA_RUNNING_TASK_ID}"
+
+        EXISTING_MEDIA_RUNNING_TASK_DONE = (File.read(Test.spec_asset(
+          "existing_media_running_task_done.xml")) %
+          [EXISTING_MEDIA_RUNNING_TASK_ID, EXISTING_MEDIA_RUNNING_TASK_LINK, URL,
+          EXISTING_MEDIA_RUNNING_TASK_ID, EXISTING_MEDIA_LINK, USERNAME, URL,
+          URL]).strip
+
         CATALOG_RESPONSE = (File.read(Test.spec_asset("catalog_response.xml")) %
           [CATALOG_NAME, CATALOG_ID, URL, CATALOG_ID, URL, URL, URL,
           CATALOG_ID, URL, CATALOG_ID, CATALOG_ADD_ITEM_LINK, URL, CATALOG_ID,
