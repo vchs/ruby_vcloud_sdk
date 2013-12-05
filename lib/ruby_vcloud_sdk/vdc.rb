@@ -48,7 +48,7 @@ module VCloudSdk
         return vapp if vapp.name == name
       end
 
-      nil
+      fail ObjectNotFoundError, "VApp '#{name}' is not found"
     end
 
     def resources

@@ -104,9 +104,11 @@ describe VCloudSdk::VDC do
       vapp.name.should eql VCloudSdk::Test::Response::VAPP_NAME
     end
 
-    it "returns nil if targeted vapp with given name does not exist" do
-      vapp = subject.find_vapp_by_name("xxxxxxx")
-      vapp.should be_nil
+    it "raises an error if targeted vapp with given name does not exist" do
+      expect do
+        subject.find_vapp_by_name("xxxx")
+      end.to raise_exception VCloudSdk::ObjectNotFoundError
+                             "VApp 'xxxx' is not found"
     end
   end
 

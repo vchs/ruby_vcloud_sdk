@@ -41,9 +41,17 @@ Copyright (c) VMware, Inc.
     find_storage_profile_by_name
     
     vapps
+      returns: array of vapp objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
     find_vapp_by_name
-    
+      returns:
+        vapp object matching name
+      throws:
+        'RuntimeError' when vapp with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
+
     resources
     
     networks
