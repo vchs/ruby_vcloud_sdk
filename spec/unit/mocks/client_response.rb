@@ -357,6 +357,13 @@ module VCloudSdk
           EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID, EXISTING_VAPP_TEMPLATE_NAME,
           URL, EXISTING_VAPP_TEMPLATE_ID]).strip
 
+        EXISTING_VAPP_TEMPLATE_DELETE_TASK_ID = "085f0844-9feb-43bd-b1df-3260218f5cb6"
+
+        EXISTING_VAPP_TEMPLATE_DELETE_DONE_TASK = (File.read(Test.spec_asset(
+          "vapp_template_delelete_done_task.xml")) % [VAPP_ID,
+          EXISTING_VAPP_TEMPLATE_DELETE_TASK_ID, URL, VAPP_TEMPLATE_DELETE_TASK_ID, URL,
+          URL, URL, URL]).strip
+
         VAPP_TEMPLATE_CATALOG_URN = "urn:vcloud:catalogitem:39a8f899-0f8e-40c4-ac68-66b2688833bc"
         VAPP_TEMPLATE_CATALOG_RESOLVER_URL = "#{URL}/api/entity/#{VAPP_TEMPLATE_CATALOG_URN}"
         VAPP_TEMPLATE_CATALOG_ITEM_LINK = "#{URL}/api/catalogItem/39a8f899-0f8e-40c4-ac68-66b2688833bc"
