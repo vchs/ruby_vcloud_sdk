@@ -20,7 +20,7 @@ Copyright (c) VMware, Inc.
       returns:
         catalog object matching name
       throws:
-        'RuntimeError' when catalog with the name does not exist
+        'ObjectNotFoundError' when catalog with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
     create_catalog
@@ -79,7 +79,7 @@ Copyright (c) VMware, Inc.
      upload_media
         returns: catalog item uploaded
         throws:
-          'RuntimeError' when strorage profile with the name does not exist or media file matching name already exists
+          'RuntimeError' when storage profile with the name does not exist or media file matching name already exists
           'RestClient::BadRequest' for un-expected errors
      
   Network
@@ -95,6 +95,14 @@ Copyright (c) VMware, Inc.
      power_on
      
      power_off
+
+     recompose_from_vapp_template
+        returns: recomposed vapp
+        throws:
+          'CloudError' when vapp is powered on
+          'ObjectNotFoundError' when catalog with the name does not exist
+          'ObjectNotFoundError' when vapp template with the name does not exist
+          'RestClient::BadRequest' for un-expected errors
      
   VdcStorageProfile
   
