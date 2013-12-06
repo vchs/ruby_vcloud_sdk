@@ -248,6 +248,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::EXISTING_MEDIA_DELETE_TASK_DONE
               end,
+            Test::Response::EXISTING_VAPP_TEMPLATE_LINK =>
+              lambda do |url, headers|
+                Test::Response::EXISTING_VAPP_TEMPLATE_DELETE_DONE_TASK
+              end,
           },
           put: {
             Test::Response::VAPP_TEMPLATE_UPLOAD_OVF_LINK =>

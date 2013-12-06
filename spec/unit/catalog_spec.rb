@@ -80,6 +80,7 @@ describe VCloudSdk::Catalog do
 
   describe "#delete_all_catalog_items" do
     it "deletes all items successfully" do
+      VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
       response = subject.delete_all_catalog_items
       response[0].name.should eql VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
       response[1].name.should eql VCloudSdk::Test::Response::EXISTING_MEDIA_NAME

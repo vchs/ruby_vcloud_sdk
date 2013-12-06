@@ -116,6 +116,7 @@ describe VCloudSdk::Client, :min, :all do
     context "target catalog has existing items" do
       it "deletes target catalog successfully" do
         VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+        VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
         delete_catalog
       end
     end

@@ -28,7 +28,7 @@ module VCloudSdk
     def delete_all_catalog_items
       items.each do |catalog_item|
         Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
-        connection.delete(catalog_item.remove_link)
+        catalog_item.delete
       end
     end
 
