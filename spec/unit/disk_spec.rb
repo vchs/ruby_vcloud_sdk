@@ -3,6 +3,7 @@ require_relative "mocks/client_response"
 require_relative "mocks/response_mapping"
 require_relative "mocks/rest_client"
 require "nokogiri/diff"
+require "ruby_vcloud_sdk/disk"
 
 describe VCloudSdk::Disk do
 

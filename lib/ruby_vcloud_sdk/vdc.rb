@@ -5,6 +5,7 @@ require_relative "vapp"
 require_relative "infrastructure"
 require_relative "resources"
 require_relative "cpu"
+require_relative "disk"
 require_relative "memory"
 require_relative "network"
 
@@ -69,6 +70,12 @@ module VCloudSdk
       end
 
       nil
+    end
+
+    def disks
+      @vdc_xml_obj.disks.map do |disk_link|
+        VCloudSdk::Disk.new(@session, disk_link)
+      end
     end
 
     def storage_profile_xml_node(name)
