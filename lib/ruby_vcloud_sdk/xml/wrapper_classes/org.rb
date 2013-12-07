@@ -33,6 +33,12 @@ module VCloudSdk
                     name: name },
                   true).first
       end
+
+      def disks
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:DISK] },
+                  true)
+      end
     end
   end
 end

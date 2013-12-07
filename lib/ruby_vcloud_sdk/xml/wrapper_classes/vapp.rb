@@ -21,10 +21,6 @@ module VCloudSdk
         get_nodes("Link", {"rel" => "power:reboot"}, true).first
       end
 
-      def running_tasks
-        get_nodes(XML_TYPE[:TASK], { status: TASK_STATUS[:RUNNING] })
-      end
-
       def tasks
         get_nodes(XML_TYPE[:TASK])
       end

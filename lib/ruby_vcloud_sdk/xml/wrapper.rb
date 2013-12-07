@@ -125,7 +125,13 @@ module VCloudSdk
 
       def remove_link
         get_nodes(XML_TYPE[:LINK],
-                  { rel: XML_TYPE[:REMOVE] }, true).first
+                  { rel: XML_TYPE[:REMOVE] },
+                  true).first
+      end
+
+      def running_tasks
+        get_nodes(XML_TYPE[:TASK],
+                  { status: TASK_STATUS[:RUNNING] })
       end
 
       def create_xpath_query(type_name, attrs = nil, only_immediate = false,

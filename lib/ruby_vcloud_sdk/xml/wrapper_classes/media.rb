@@ -32,14 +32,6 @@ module VCloudSdk
           (f["size"].to_i > f["bytesTransferred"].to_i)
         end
       end
-
-      def delete_link
-        get_nodes(XML_TYPE[:LINK], { rel: XML_TYPE[:REMOVE] }, true).first
-      end
-
-      def running_tasks
-        get_nodes("Task", status: TASK_STATUS[:RUNNING])
-      end
     end
   end
 end
