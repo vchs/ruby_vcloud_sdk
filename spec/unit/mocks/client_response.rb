@@ -742,9 +742,10 @@ module VCloudSdk
           "indy_disk_create_error.xml")).strip
 
         INDY_DISK_RESPONSE = (File.read(Test.spec_asset(
-          "indy_disk_response.xml")) % [INDY_DISK_NAME, INDY_DISK_ID,
-          INDY_DISK_URL, URL, URL, INDY_DISK_ID, URL, INDY_DISK_ID, URL,
-          INDY_DISK_ID, URL, INDY_DISK_ID, URL, URL]).strip
+          "indy_disk_response.xml")) % [INDY_DISK_SIZE * 1024 * 1024,
+          INDY_DISK_NAME, INDY_DISK_ID, INDY_DISK_URL, URL, URL,
+          INDY_DISK_ID, URL, INDY_DISK_ID, URL, INDY_DISK_ID, URL,
+          INDY_DISK_ID, URL, URL]).strip
 
         INDY_DISK_ADDRESS_ON_PARENT = "1"
 

@@ -1,7 +1,6 @@
 module VCloudSdk
   module Test
     class ResponseMapping
-
       LINK_TO_RESPONSE = {
           get: {
             Test::Response::SUPPORTED_VERSIONS_LINK =>
@@ -64,7 +63,7 @@ module VCloudSdk
               end,
             Test::Response::INSTANTIATED_VAPP_LINK =>
               lambda do |url, headers|
-                case(options[:vapp_power_state])
+                case options[:vapp_power_state]
                 when :off
                   Test::Response::INSTANTIAED_VAPP_RESPONSE
                 when :on
@@ -81,7 +80,7 @@ module VCloudSdk
               end,
             Test::Response::VAPP_TEMPLATE_LINK =>
               lambda do |url, headers|
-                case (options[:vapp_state])
+                case options[:vapp_state]
                 when :ovf_uploaded
                   Test::Response::VAPP_TEMPLATE_NO_DISKS_RESPONSE
                 when :nothing
@@ -96,7 +95,7 @@ module VCloudSdk
               end,
             Test::Response::INSTANTIATED_VAPP_LINK =>
               lambda do |url, headers|
-                case (options[:vapp_power_state])
+                case options[:vapp_power_state]
                 when :off
                   Test::Response::INSTANTIAED_VAPP_RESPONSE
                 when :on
@@ -109,7 +108,7 @@ module VCloudSdk
               end,
             Test::Response::INSTANTIATED_VAPP_DELETE_TASK_LINK =>
               lambda do |url, headers|
-                case (options[:delete_vapp_task_state])
+                case options[:delete_vapp_task_state]
                 when :running
                   Test::ResponseMapping.set_option delete_vapp_task_state: :success
                   Test::Response::INSTANTIATED_VAPP_DELETE_RUNNING_TASK
@@ -146,19 +145,23 @@ module VCloudSdk
                 Test::Response::EXISTING_MEDIA_CATALOG_ITEM
               end,
             Test::Response::EXISTING_MEDIA_LINK  =>
-                lambda do |url, headers|
-                case (options[:existing_media_state])
+              lambda do |url, headers|
+                case options[:existing_media_state]
                 when :busy
                   Test::ResponseMapping.set_option existing_media_state: :done
                   Test::Response::EXISTING_MEDIA_BUSY_RESPONSE
                 when :done
                   Test::Response::EXISTING_MEDIA_DONE_RESPONSE
                 end
-               end,
+              end,
             Test::Response::EXISTING_MEDIA_RUNNING_TASK_LINK =>
                 lambda do |url, headers|
                   Test::Response::EXISTING_MEDIA_RUNNING_TASK_DONE
                 end,
+            Test::Response::INDY_DISK_URL =>
+              lambda do |url, headers|
+                Test::Response::INDY_DISK_RESPONSE
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
@@ -283,7 +286,6 @@ module VCloudSdk
           mapping
         end
       end
-
     end
   end
 end
