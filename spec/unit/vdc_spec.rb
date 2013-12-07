@@ -185,4 +185,24 @@ describe VCloudSdk::VDC do
       network.should be_nil
     end
   end
+
+  describe "#disks" do
+    context "vdc has disks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      its(:disks) { should have_at_least(1).item }
+    end
+
+    context "vdc has disks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
+      end
+
+      its(:disks) { should have(0).item }
+    end
+  end
 end
