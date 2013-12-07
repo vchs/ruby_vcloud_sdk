@@ -185,4 +185,30 @@ describe VCloudSdk::VDC do
       network.should be_nil
     end
   end
+
+  describe "#disks" do
+    context "vdc has disks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a collection of disks" do
+        disks = subject.disks
+        disks.should have(1).item
+        disk = disks[0]
+        disk.should be_an_instance_of VCloudSdk::Disk
+        disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+      end
+    end
+
+    context "vdc has disks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
+      end
+
+      its(:disks) { should have(0).item }
+    end
+  end
 end

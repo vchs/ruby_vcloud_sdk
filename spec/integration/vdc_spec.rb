@@ -76,4 +76,8 @@ describe VCloudSdk::VDC do
       network.should be_nil
     end
   end
+
+  describe "#disks" do
+    its(:disks) { should have_at_least(1).item }
+  end
 end
