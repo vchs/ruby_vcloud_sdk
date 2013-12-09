@@ -86,6 +86,12 @@ module VCloudSdk
       fail ObjectNotFoundError, "Disk '#{name}' is not found"
     end
 
+    def disk_exists?(name)
+      disks.any? do |disk|
+        disk.name == name
+      end
+    end
+
     def storage_profile_xml_node(name)
       return nil if name.nil?
 

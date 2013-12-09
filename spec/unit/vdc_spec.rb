@@ -230,4 +230,23 @@ describe VCloudSdk::VDC do
       "Disk 'xxxx' is not found"
     end
   end
+
+  describe "#disk_exists?" do
+    let(:vdc_response) do
+      VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::VDC_RESPONSE)
+    end
+
+    context "disk with matching name exists" do
+      it "returns true" do
+        subject.disk_exists? VCloudSdk::Test::Response::INDY_DISK_NAME
+      end
+    end
+
+    context "disk with matching name does not exist" do
+      it "returns false" do
+        subject.disk_exists? "xxx"
+      end
+    end
+  end
 end
