@@ -60,7 +60,7 @@ module VCloudSdk
 
       def mock_session(logger, url)
         time_limit_sec = {
-          default: 120,
+          default: 3,
           delete_vapp_template: 120,
           delete_vapp: 3,
           delete_media: 120,

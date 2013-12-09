@@ -58,21 +58,20 @@ describe VCloudSdk::CatalogItem do
   end
 
   describe "#delete" do
+    subject { catalog.items[1] }
+
     it "deletes a catalog item which has a running task", :positive do
       VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
-      subject = catalog.items[1]
       subject.delete
     end
 
     it "deletes a catalog item which has no running task", :positive do
       VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
-      subject = catalog.items[1]
       subject.delete
     end
 
     it "raises TimeoutError when the task cannot finish within time" do
       VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
-      subject = catalog.items[1]
       subject
         .should_receive(:task_is_success)
         .at_least(3)
