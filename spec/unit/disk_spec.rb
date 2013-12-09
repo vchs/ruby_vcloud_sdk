@@ -11,8 +11,13 @@ describe VCloudSdk::Disk do
   let(:url) { VCloudSdk::Test::Response::URL }
 
   subject do
+    vdc_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
+      VCloudSdk::Test::Response::VDC_RESPONSE)
+
+    disk_link = vdc_response
+                  .disks(VCloudSdk::Test::Response::INDY_DISK_NAME)
     described_class.new(VCloudSdk::Test.mock_session(logger, url),
-                        VCloudSdk::Test::Response::INDY_DISK_URL)
+                        disk_link)
   end
 
   describe "#name" do
