@@ -57,6 +57,18 @@ Copyright (c) VMware, Inc.
     networks
     
     find_network_by_name
+
+    disks
+      returns: array of disk objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
+    find_disk_by_name
+      returns:
+        disk object matching name
+      throws:
+        'RuntimeError' when disk with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
     
   Catalog
   

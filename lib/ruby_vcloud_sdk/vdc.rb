@@ -78,6 +78,14 @@ module VCloudSdk
       end
     end
 
+    def find_disk_by_name(name)
+      disks.each do |disk|
+        return disk if disk.name == name
+      end
+
+      fail ObjectNotFoundError, "Disk '#{name}' is not found"
+    end
+
     def storage_profile_xml_node(name)
       return nil if name.nil?
 

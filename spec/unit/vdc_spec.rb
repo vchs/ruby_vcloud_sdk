@@ -211,4 +211,23 @@ describe VCloudSdk::VDC do
       its(:disks) { should have(0).item }
     end
   end
+
+  describe "#find_disk_by_name" do
+    let(:vdc_response) do
+      VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::VDC_RESPONSE)
+    end
+
+    it "returns a disk given targeted name" do
+      disk = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+      disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+    end
+
+    it "raises an error if targeted disk with given name does not exist" do
+      expect do
+        subject.find_disk_by_name("xxxx")
+      end.to raise_exception VCloudSdk::ObjectNotFoundError
+      "Disk 'xxxx' is not found"
+    end
+  end
 end
