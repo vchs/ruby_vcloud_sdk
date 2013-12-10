@@ -202,13 +202,39 @@ describe VCloudSdk::VDC do
       end
     end
 
-    context "vdc has disks" do
+    context "vdc has no disk" do
       let(:vdc_response) do
         VCloudSdk::Xml::WrapperFactory.wrap_document(
           VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
       end
 
       its(:disks) { should have(0).item }
+    end
+  end
+
+  describe "#list_disks" do
+    context "vdc has disks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a collection of disk names" do
+        disk_names = subject.list_disks
+        disk_names.should have(1).item
+        disk_name = disk_names.first
+        disk_name.should be_an_instance_of String
+        disk_name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+      end
+    end
+
+    context "vdc has no disk" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
+      end
+
+      its(:list_disks) { should have(0).item }
     end
   end
 
@@ -231,10 +257,10 @@ describe VCloudSdk::VDC do
     context "there are two disks with given name" do
       it "returns array containing two disks" do
         vdc_xml_obj = subject.instance_variable_get(:@vdc_xml_obj)
-        disk = vdc_xml_obj.disks[0]
+        disk_link = vdc_xml_obj.disks[0]
         vdc_xml_obj
           .should_receive(:disks)
-          .and_return [disk, disk]
+          .and_return [disk_link, disk_link]
 
         disks = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
         disks.should have(2).item

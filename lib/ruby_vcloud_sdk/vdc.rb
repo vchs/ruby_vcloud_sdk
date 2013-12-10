@@ -92,6 +92,12 @@ module VCloudSdk
       end
     end
 
+    def list_disks
+      @vdc_xml_obj.disks.map do |disk_link|
+        disk_link.name
+      end
+    end
+
     def find_disk_by_name(name)
       disks = @vdc_xml_obj
                 .disks
