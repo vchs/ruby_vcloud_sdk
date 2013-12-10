@@ -7,16 +7,17 @@ module VCloudSdk
   class Catalog
     include Infrastructure
 
-    attr_reader :name
-
-    def initialize(session, catalog_link)
+    def initialize(session, link)
       @session = session
-      @catalog_link = catalog_link
-      @name = @catalog_link.name
+      @link = link
+    end
+
+    def name
+      admin_xml.name
     end
 
     def id
-      @catalog_link.href_id
+      @link.href_id
     end
 
     def items
@@ -182,7 +183,7 @@ module VCloudSdk
 
       unless admin_catalog
         fail ObjectNotFoundError,
-             "Catalog #{name} of link #{admin_catalog_link} not available."
+             "Catalog link #{admin_catalog_link} not available."
       end
 
       admin_catalog

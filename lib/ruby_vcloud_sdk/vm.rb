@@ -4,19 +4,17 @@ module VCloudSdk
   class VM
     include Infrastructure
 
-    def initialize(session, vm_link)
+    def initialize(session, link)
       @session = session
-      @vm_link = vm_link
+      @link = link
     end
 
     def href
-      @vm_link
+      @link
     end
 
     def name
-      connection
-        .get(@vm_link)
-        .name
+      entity_xml.name
     end
   end
 end

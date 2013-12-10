@@ -47,16 +47,6 @@ describe VCloudSdk::CatalogItem do
     end
   end
 
-  describe "#remove_link" do
-    it "returns the remove link" do
-      subject
-        .remove_link
-        .href
-        .end_with? VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_CATALOG_ITEM_ID
-        .should be_true
-    end
-  end
-
   describe "#delete" do
     subject { catalog.items[1] }
 

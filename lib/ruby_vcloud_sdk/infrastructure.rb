@@ -21,14 +21,16 @@ module VCloudSdk
     end
 
     def catalog_exists?(name)
-      catalogs.any? do |catalog|
+      @session.org.catalogs.any? do |catalog|
         catalog.name == name
       end
     end
 
     def find_catalog_by_name(name)
-      catalogs.each do |catalog|
-        return catalog if catalog.name == name
+      @session.org.catalogs.each do |catalog_link|
+        if catalog_link.name == name
+          return VCloudSdk::Catalog.new(@session, catalog_link)
+        end
       end
 
       fail ObjectNotFoundError, "Catalog '#{name}' is not found"
@@ -114,16 +116,23 @@ module VCloudSdk
     def delete_catalog_item_entity entity
       linked_obj = connection.get(entity)
 
-      unless linked_obj.running_tasks.empty?
-        Config.logger.info "#{linked_obj.href} has tasks in progress, wait until done."
-        linked_obj.running_tasks.each do |task|
-          monitor_task(task)
-        end
-      end
-
+      wait_for_running_tasks(linked_obj, linked_obj.href)
       Config.logger.info "Deleting #{linked_obj.href}."
       monitor_task(connection.delete(linked_obj))
       Config.logger.info "#{linked_obj.href} deleted."
+    end
+
+    def entity_xml
+      connection.get(@link)
+    end
+
+    def wait_for_running_tasks(subject, subject_display)
+      unless subject.running_tasks.empty?
+        Config.logger.info "#{subject_display} has tasks in progress, wait until done."
+        subject.running_tasks.each do |task|
+          monitor_task(task)
+        end
+      end
     end
   end
 end

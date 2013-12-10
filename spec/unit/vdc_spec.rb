@@ -175,8 +175,8 @@ describe VCloudSdk::VDC do
 
     it "returns a network given targeted name" do
       network = subject
-      .find_network_by_name(
-        VCloudSdk::Test::Response::ORG_NETWORK_NAME)
+                  .find_network_by_name(
+                    VCloudSdk::Test::Response::ORG_NETWORK_NAME)
       network.name.should eql VCloudSdk::Test::Response::ORG_NETWORK_NAME
     end
 
