@@ -218,16 +218,40 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
-    it "returns a disk given targeted name" do
-      disk = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
-      disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+    context "there is one disk with given name" do
+      it "returns array containing one disk" do
+        disks = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+        disks.should have(1).item
+        disk = disks[0]
+        disk.should be_an_instance_of VCloudSdk::Disk
+        disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+      end
     end
 
-    it "raises an error if targeted disk with given name does not exist" do
-      expect do
-        subject.find_disk_by_name("xxxx")
-      end.to raise_exception VCloudSdk::ObjectNotFoundError
-      "Disk 'xxxx' is not found"
+    context "there are two disks with given name" do
+      it "returns array containing two disks" do
+        vdc_xml_obj = subject.instance_variable_get(:@vdc_xml_obj)
+        disk = vdc_xml_obj.disks[0]
+        vdc_xml_obj
+          .should_receive(:disks)
+          .and_return [disk, disk]
+
+        disks = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+        disks.should have(2).item
+        disks.each do |disk|
+          disk.should be_an_instance_of VCloudSdk::Disk
+          disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+        end
+      end
+    end
+
+    context "targeted disk with given name does not exist" do
+      it "raises an error" do
+        expect do
+          subject.find_disk_by_name("xxxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError
+        "Disk 'xxxx' is not found"
+      end
     end
   end
 
