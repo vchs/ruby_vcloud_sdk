@@ -249,4 +249,56 @@ describe VCloudSdk::VDC do
       end
     end
   end
+
+  describe "#create_disk" do
+    let(:vdc_response) do
+      VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::VDC_RESPONSE)
+    end
+
+    let(:disk_name_to_create) { VCloudSdk::Test::Response::INDY_DISK_NAME }
+
+    context "input parameter size is negative" do
+      it "raises an exception" do
+        expect do
+          subject.create_disk(disk_name_to_create, -1)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid size in MB -1"
+      end
+    end
+
+    context "error occurs when creating disk" do
+      it "raises the exception" do
+        VCloudSdk::Connection::Connection
+          .any_instance
+          .stub(:post)
+          .with(anything, anything, VCloudSdk::Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.create_disk(disk_name_to_create, 100)
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
+
+    context "create disk without vm locality" do
+      it "creates an independent disk successfully" do
+        expect do
+          subject.create_disk(disk_name_to_create, 100)
+        end.to_not raise_exception
+      end
+    end
+
+    context "create disk with vm locality" do
+      it "creates an independent disk successfully" do
+        VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+        vapp = VCloudSdk::VApp.new(VCloudSdk::Test.mock_session(logger, url),
+                                   vdc_response.vapps.first)
+        vm = vapp.vms.first
+        expect do
+          subject.create_disk(disk_name_to_create, 100, vm)
+        end.to_not raise_exception
+      end
+    end
+  end
 end

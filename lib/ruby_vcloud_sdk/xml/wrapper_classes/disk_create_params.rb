@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class DiskCreateParams < Wrapper
       def bus_type=(value)
         disk["busType"] = value.to_s
@@ -20,7 +19,7 @@ module VCloudSdk
 
       def add_locality(local)
         if !@local_exists.nil? && @local_exists
-          raise "Cannot add locality more than once to DiskCreateParams"
+          fail "Cannot add locality more than once to DiskCreateParams"
         end
         @local_exists = true
         node = create_child("Locality")
@@ -42,6 +41,5 @@ module VCloudSdk
         id.split(":").first
       end
     end
-
   end
 end

@@ -98,6 +98,25 @@ module VCloudSdk
       end
     end
 
+    # Assume the disk is SCSI and bus sub type LSILOGIC
+    def create_disk(name, size_mb, vm = nil)
+      if size_mb <= 0
+        fail CloudError,
+             "Invalid size in MB #{size_mb}"
+      end
+
+      Config.logger
+            .info "Creating independent disk #{name} of #{size_mb}MB."
+
+      disk = connection.post(@vdc_xml_obj.add_disk_link,
+                             disk_create_params(name, size_mb, vm),
+                             Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
+
+      wait_for_running_tasks(disk, "Disk #{name}")
+
+      find_disk_by_name(name)
+    end
+
     def storage_profile_xml_node(name)
       return nil if name.nil?
 
@@ -107,6 +126,18 @@ module VCloudSdk
       end
 
       storage_profile
+    end
+
+    private
+
+    def disk_create_params(name, size_mb, vm)
+      params = Xml::WrapperFactory.create_instance("DiskCreateParams")
+      params.name = name
+      params.size_bytes = size_mb * 1024 * 1024 # VCD expects bytes
+      params.bus_type = Xml::HARDWARE_TYPE[:SCSI_CONTROLLER]
+      params.bus_sub_type = Xml::BUS_SUB_TYPE[:LSILOGIC]
+      params.add_locality(connection.get(vm.href)) if vm # Use xml form of vm
+      params
     end
   end
 end
