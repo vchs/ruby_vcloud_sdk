@@ -16,67 +16,70 @@ module VCloudSdk
 
     def delete
       vapp = entity_xml
+      vapp_name = name
 
       if is_vapp_status?(vapp, :POWERED_ON)
         fail CloudError,
-             "vApp #{name} is powered on, power-off before deleting."
+             "vApp #{vapp_name} is powered on, power-off before deleting."
       end
 
-      wait_for_running_tasks(vapp, "VApp #{name}")
+      wait_for_running_tasks(vapp, "VApp #{vapp_name}")
 
-      Config.logger.info "Deleting vApp #{name}."
+      Config.logger.info "Deleting vApp #{vapp_name}."
       monitor_task(connection.delete(vapp.remove_link),
                    @session.time_limit[:delete_vapp]) do |task|
-        Config.logger.info "vApp #{name} deleted."
+        Config.logger.info "vApp #{vapp_name} deleted."
         return task
       end
 
       fail ApiRequestError,
-           "Fail to delete vApp #{name}"
+           "Fail to delete vApp #{vapp_name}"
     end
 
     def power_on
       vapp = entity_xml
+      vapp_name = vapp.name
       Config.logger.debug "vApp status: #{vapp[:status]}"
       if is_vapp_status?(vapp, :POWERED_ON)
-        Config.logger.info "vApp #{name} is already powered-on."
+        Config.logger.info "vApp #{vapp_name} is already powered-on."
         return
       end
 
       power_on_link = vapp.power_on_link
       unless power_on_link
         fail CloudError,
-             "vApp #{name} not in a state to be powered on."
+             "vApp #{vapp_name} not in a state to be powered on."
       end
 
-      Config.logger.info "Powering on vApp #{name}."
+      Config.logger.info "Powering on vApp #{vapp_name}."
       task = connection.post(power_on_link, nil)
       task = monitor_task task, @session.time_limit[:power_on]
-      Config.logger.info "vApp #{name} is powered on."
+      Config.logger.info "vApp #{vapp_name} is powered on."
       task
     end
 
     def power_off
       vapp = entity_xml
+      vapp_name = vapp.name
       Config.logger.debug "vApp status: #{vapp[:status]}"
       if is_vapp_status?(vapp, :SUSPENDED)
-        Config.logger.info "vApp #{name} suspended, discard state before powering off."
+        Config.logger.info "vApp #{vapp_name} suspended, discard state before powering off."
         fail VappSuspendedError, "discard state first"
       end
 
       if is_vapp_status?(vapp, :POWERED_OFF)
-        Config.logger.info "vApp #{name} is already powered off."
+        Config.logger.info "vApp #{vapp_name} is already powered off."
         return
       end
 
       power_off_link = vapp.power_off_link
       unless power_off_link
-        fail CloudError, "vApp #{name} is not in a state that could be powered off."
+        fail CloudError, "vApp #{vapp_name} is not in a state that could be powered off."
       end
 
       task = connection.post(power_off_link, nil)
       monitor_task task, @session.time_limit[:power_off]
-      Config.logger.info "vApp #{name} is in powered off state. Need to be undeployed."
+      Config.logger.info "vApp #{vapp_name} is in powered off state. Need to be undeployed."
 
       undeploy_vapp(vapp)
     end
