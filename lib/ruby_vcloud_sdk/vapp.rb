@@ -5,28 +5,24 @@ module VCloudSdk
   class VApp
     include Infrastructure
 
-    attr_reader :name
-
-    def initialize(session, vapp_link)
+    def initialize(session, link)
       @session = session
-      @vapp_link = vapp_link
-      @name = @vapp_link.name
+      @link = link
+    end
+
+    def name
+      entity_xml.name
     end
 
     def delete
-      vapp = connection.get(@vapp_link)
+      vapp = entity_xml
 
       if is_vapp_status?(vapp, :POWERED_ON)
         fail CloudError,
              "vApp #{name} is powered on, power-off before deleting."
       end
 
-      unless vapp.running_tasks.empty?
-        Config.logger.info "vApp #{name} has tasks in progress, wait until done."
-        vapp.running_tasks.each do |task|
-          monitor_task(task)
-        end
-      end
+      wait_for_running_tasks(vapp, "VApp #{name}")
 
       Config.logger.info "Deleting vApp #{name}."
       monitor_task(connection.delete(vapp.remove_link),
@@ -40,7 +36,7 @@ module VCloudSdk
     end
 
     def power_on
-      vapp = connection.get(@vapp_link)
+      vapp = entity_xml
       Config.logger.debug "vApp status: #{vapp[:status]}"
       if is_vapp_status?(vapp, :POWERED_ON)
         Config.logger.info "vApp #{name} is already powered-on."
@@ -61,7 +57,7 @@ module VCloudSdk
     end
 
     def power_off
-      vapp = connection.get(@vapp_link)
+      vapp = entity_xml
       Config.logger.debug "vApp status: #{vapp[:status]}"
       if is_vapp_status?(vapp, :SUSPENDED)
         Config.logger.info "vApp #{name} suspended, discard state before powering off."
@@ -74,7 +70,7 @@ module VCloudSdk
       end
 
       power_off_link = vapp.power_off_link
-      unless vapp.power_off_link
+      unless power_off_link
         fail CloudError, "vApp #{name} is not in a state that could be powered off."
       end
 
@@ -87,7 +83,7 @@ module VCloudSdk
 
     def recompose_from_vapp_template(catalog_name, template_name)
       recompose_vapp_link = connection
-                              .get(@vapp_link)
+                              .get(@link)
                               .recompose_vapp_link
 
       if recompose_vapp_link.nil?
@@ -111,8 +107,7 @@ module VCloudSdk
     end
 
     def vms
-      vapp = connection.get(@vapp_link)
-      vapp.vms.map do |vm|
+      entity_xml.vms.map do |vm|
         VCloudSdk::VM.new(@session, vm.href)
       end
     end
@@ -132,8 +127,7 @@ module VCloudSdk
     end
 
     def status
-      vapp = connection.get(@vapp_link)
-      vapp_status_code = vapp[:status].to_i
+      vapp_status_code = entity_xml[:status].to_i
       Xml::RESOURCE_ENTITY_STATUS.each_pair do |k,v|
         if v == vapp_status_code
           return k.to_s

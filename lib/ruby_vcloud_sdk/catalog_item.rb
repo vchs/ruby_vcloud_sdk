@@ -6,40 +6,27 @@ module VCloudSdk
   class CatalogItem
     include Infrastructure
 
-    def initialize(session, catalog_item_link)
+    def initialize(session, link)
       @session = session
-      @catalog_item_link = catalog_item_link
+      @link = link
     end
 
     def name
-      entity[:name]
+      entity_xml.entity[:name]
     end
 
     def type
-      entity[:type]
+      entity_xml.entity[:type]
     end
 
     def href
-      entity[:href]
-    end
-
-    def remove_link
-      connection.get(@catalog_item_link).remove_link
+      entity_xml.entity[:href]
     end
 
     def delete
-      xml_node = connection.get(@catalog_item_link)
+      delete_catalog_item_entity entity_xml.entity
 
-      delete_catalog_item_entity xml_node.entity
-
-      connection.delete(xml_node.remove_link)
-    end
-
-    private
-
-    def entity
-      catalog_item_xml_node = connection.get(@catalog_item_link)
-      catalog_item_xml_node.entity
+      connection.delete(entity_xml.remove_link)
     end
   end
 end
