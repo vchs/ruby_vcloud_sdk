@@ -249,4 +249,83 @@ describe VCloudSdk::VDC do
       end
     end
   end
+
+  describe "#create_disk" do
+    let(:vdc_response) do
+      VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::VDC_RESPONSE)
+    end
+
+    let(:disk_name_to_create) { VCloudSdk::Test::Response::INDY_DISK_NAME }
+
+    context "input parameter size is negative" do
+      it "raises an exception" do
+        expect do
+          subject.create_disk(disk_name_to_create, -1)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid size in MB -1"
+      end
+    end
+
+    context "error occurs when creating disk" do
+      it "raises the exception" do
+        VCloudSdk::Connection::Connection
+          .any_instance
+          .stub(:post)
+          .with(anything, anything, VCloudSdk::Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.create_disk(disk_name_to_create, 100)
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
+
+    context "create disk without vm locality" do
+      it "creates an independent disk successfully" do
+        disk = subject.create_disk(disk_name_to_create, 100)
+        disk.should be_an_instance_of VCloudSdk::Disk
+      end
+
+      context "bus_type and bus_sub_type are specified" do
+        it "creates an independent disk successfully" do
+          disk = subject.create_disk(disk_name_to_create,
+                                     100,
+                                     nil,
+                                     "scsi",
+                                     "lsilogic")
+          disk.should be_an_instance_of VCloudSdk::Disk
+        end
+      end
+
+      context "bus_type specified is invalid" do
+        it "raises an error" do
+          expect do
+            subject.create_disk(disk_name_to_create, 100, nil, "xxx")
+          end.to raise_exception VCloudSdk::CloudError,
+                                 "Invalid bus type!"
+        end
+      end
+
+      context "bus_sub_type specified is invalid" do
+        it "raises an error" do
+          expect do
+            subject.create_disk(disk_name_to_create, 100, nil, "scsi", "xxx")
+          end.to raise_exception VCloudSdk::CloudError,
+                                 "Invalid bus sub type!"
+        end
+      end
+    end
+
+    context "create disk with vm locality" do
+      it "creates an independent disk successfully" do
+        VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+        vapp = VCloudSdk::VApp.new(VCloudSdk::Test.mock_session(logger, url),
+                                   vdc_response.vapps.first)
+        vm = vapp.vms.first
+        disk = subject.create_disk(disk_name_to_create, 100, vm)
+        disk.should be_an_instance_of VCloudSdk::Disk
+      end
+    end
+  end
 end
