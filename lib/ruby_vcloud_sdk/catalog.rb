@@ -91,12 +91,14 @@ module VCloudSdk
 
     def add_item(item)
       catalog_item = create_catalog_item_payload(item)
-      Config.logger.info "Adding #{catalog_item.name} to catalog #{name}"
+      catalog_name = name
+      catalog_item_name = catalog_item.name
+      Config.logger.info "Adding #{catalog_item_name} to catalog #{catalog_name}"
       connection.post(admin_xml.add_item_link,
                       catalog_item,
                       Xml::ADMIN_MEDIA_TYPE[:CATALOG_ITEM])
       Config.logger.info %Q{
-        catalog_item #{catalog_item.name} added to catalog #{name}:
+        catalog_item #{catalog_item_name} added to catalog #{catalog_name}:
         #{catalog_item.to_s}
       }
       catalog_item
