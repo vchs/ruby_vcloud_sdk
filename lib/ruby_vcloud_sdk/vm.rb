@@ -1,22 +1,20 @@
+require "forwardable"
 require_relative "infrastructure"
 
 module VCloudSdk
   class VM
     include Infrastructure
 
-    def initialize(session, vm_link)
+    extend Forwardable
+    def_delegator :entity_xml, :name
+
+    def initialize(session, link)
       @session = session
-      @vm_link = vm_link
+      @link = link
     end
 
     def href
-      @vm_link
-    end
-
-    def name
-      connection
-        .get(@vm_link)
-        .name
+      @link
     end
   end
 end

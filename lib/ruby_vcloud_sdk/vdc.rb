@@ -45,8 +45,10 @@ module VCloudSdk
     end
 
     def find_vapp_by_name(name)
-      vapps.each do |vapp|
-        return vapp if vapp.name == name
+      @vdc_xml_obj.vapps.each do |vapp_link|
+        if vapp_link.name == name
+          return VCloudSdk::VApp.new(@session, vapp_link)
+        end
       end
 
       fail ObjectNotFoundError, "VApp '#{name}' is not found"
@@ -65,8 +67,10 @@ module VCloudSdk
     end
 
     def find_network_by_name(name)
-      networks.each do |network|
-        return network if network.name == name
+      @session.org.networks.each do |network_link|
+        if network_link.name == name
+          return VCloudSdk::Network.new(@session, network_link)
+        end
       end
 
       nil
@@ -79,8 +83,10 @@ module VCloudSdk
     end
 
     def find_disk_by_name(name)
-      disks.each do |disk|
-        return disk if disk.name == name
+      @vdc_xml_obj.disks.each do |disk_link|
+        if disk_link.name == name
+          return VCloudSdk::Disk.new(@session, disk_link)
+        end
       end
 
       fail ObjectNotFoundError, "Disk '#{name}' is not found"

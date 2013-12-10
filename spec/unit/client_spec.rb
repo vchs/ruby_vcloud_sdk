@@ -83,6 +83,7 @@ describe VCloudSdk::Client, :min, :all do
     end
 
     it "returns the catalog object if target catalog exists" do
+      VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
       catalog = subject.find_catalog_by_name(catalog_name)
       catalog.name.should eql VCloudSdk::Test::Response::CATALOG_NAME
     end
@@ -95,7 +96,6 @@ describe VCloudSdk::Client, :min, :all do
       VCloudSdk::Test::ResponseMapping.set_option catalog_created: true
       catalog = subject.create_catalog(VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE)
       catalog.should be_an_instance_of VCloudSdk::Catalog
-      catalog.name.should eql VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE
     end
 
     it "fails if targeted catalog with the same name already exists" do

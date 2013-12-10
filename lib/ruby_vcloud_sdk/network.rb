@@ -5,18 +5,18 @@ module VCloudSdk
   class Network
     include Infrastructure
 
-    attr_reader :name
-
-    def initialize(session, network_link)
+    def initialize(session, link)
       @session = session
-      @network_link = network_link
-      @name = @network_link.name
+      @link = link
+    end
+
+    def name
+      entity_xml.name
     end
 
     def ip_ranges
-      network = connection.get(@network_link)
       ip_ranges = nil
-      network.ip_ranges
+      entity_xml.ip_ranges
         .ranges
         .each do |i|
           new_range = IpRanges.new "#{i.start_address}-#{i.end_address}"
@@ -30,8 +30,7 @@ module VCloudSdk
     end
 
     def allocated_ips
-      network = connection.get(@network_link)
-      allocated_addresses = connection.get(network.allocated_addresses_link)
+      allocated_addresses = connection.get(entity_xml.allocated_addresses_link)
       allocated_addresses.ip_addresses.map do |i|
         i.ip_address
       end

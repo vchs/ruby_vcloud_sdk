@@ -249,7 +249,6 @@ describe VCloudSdk::Catalog do
   end
 
   describe "#instantiate_vapp_template" do
-    let!(:vapp_name) { String.new("test_vapp15_1") }
     it "instantiates a vApp from the vapp template without disk locality" do
       VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
