@@ -229,6 +229,10 @@ module VCloudSdk
               lambda do |url, data, headers|
                 Test::Response::RECOMPOSE_VAPP_RESPONSE
               end,
+            Test::Response::VDC_INDY_DISKS_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INDY_DISK_CREATE_RESPONSE
+              end,
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>

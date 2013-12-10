@@ -18,6 +18,16 @@ module VCloudSdk
                    :name, :upload_link, :upload_media_link,
                    :instantiate_vapp_template_link
 
+    BUS_TYPE = {
+      "scsi" => Xml::HARDWARE_TYPE[:SCSI_CONTROLLER]
+    }
+
+    BUS_SUB_TYPE = {
+      "lsilogic" => Xml::BUS_SUB_TYPE[:LSILOGIC]
+    }
+
+    private_constant :BUS_TYPE, :BUS_SUB_TYPE
+
     def initialize(session, vdc_xml_obj)
       @session = session
       @vdc_xml_obj = vdc_xml_obj
@@ -98,6 +108,38 @@ module VCloudSdk
       end
     end
 
+    # Assume the disk is SCSI and bus sub type LSILOGIC
+    def create_disk(
+          name,
+          size_mb,
+          vm = nil,
+          bus_type = "scsi",
+          bus_sub_type = "lsilogic")
+
+      fail(CloudError,
+           "Invalid size in MB #{size_mb}") if size_mb <= 0
+
+      bus_type = BUS_TYPE[bus_type.downcase]
+      fail(CloudError,
+           "Invalid bus type!") unless bus_type
+
+      bus_sub_type = BUS_SUB_TYPE[bus_sub_type.downcase]
+      fail(CloudError,
+           "Invalid bus sub type!") unless bus_sub_type
+
+      Config
+        .logger
+        .info "Creating independent disk #{name} of #{size_mb}MB."
+
+      disk = connection.post(@vdc_xml_obj.add_disk_link,
+                             disk_create_params(name, size_mb, bus_type, bus_sub_type, vm),
+                             Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
+
+      wait_for_running_tasks(disk, "Disk #{name}")
+
+      VCloudSdk::Disk.new(@session, disk.href)
+    end
+
     def storage_profile_xml_node(name)
       return nil if name.nil?
 
@@ -107,6 +149,18 @@ module VCloudSdk
       end
 
       storage_profile
+    end
+
+    private
+
+    def disk_create_params(name, size_mb, bus_type, bus_sub_type, vm)
+      Xml::WrapperFactory.create_instance("DiskCreateParams").tap do |params|
+        params.name = name
+        params.size_bytes = size_mb * 1024 * 1024 # VCD expects bytes
+        params.bus_type = bus_type
+        params.bus_sub_type = bus_sub_type
+        params.add_locality(connection.get(vm.href)) if vm # Use xml form of vm
+      end
     end
   end
 end
