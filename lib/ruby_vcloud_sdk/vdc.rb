@@ -172,7 +172,8 @@ module VCloudSdk
 
       storage_profile = @vdc_xml_obj.storage_profile(name)
       unless storage_profile
-        fail "Storage profile '#{name}' does not exist"
+        fail ObjectNotFoundError,
+             "Storage profile '#{name}' does not exist"
       end
 
       storage_profile
