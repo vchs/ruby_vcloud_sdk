@@ -138,7 +138,17 @@ Copyright (c) VMware, Inc.
           'ObjectNotFoundError' when catalog with the name does not exist
           'ObjectNotFoundError' when vapp template with the name does not exist
           'RestClient::BadRequest' for un-expected errors
-     
+
+     vms
+       returns: array of vm objects
+       throws:
+         'RestClient::BadRequest' for un-expected errors
+
+     list_vms
+       returns: array of vm names
+       throws:
+         'RestClient::BadRequest' for un-expected errors
+
   VdcStorageProfile
   
      available_storage
