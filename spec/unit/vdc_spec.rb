@@ -106,7 +106,7 @@ describe VCloudSdk::VDC do
     end
 
     context "storage profile with given name does not exist" do
-      it "return nil if targeted storage profile with given name does not exist" do
+      it "raises ObjectNotFoundError" do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
         expect do
           subject.find_storage_profile_by_name("xxx")
