@@ -190,6 +190,21 @@ describe VCloudSdk::VDC do
     its(:networks) { should have_at_least(1).item }
   end
 
+  describe "#list_networks" do
+    context "vdc has networks" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a collection of network names" do
+        network_names = subject.list_networks
+        network_names.should eql(["164-935-default-isolated",
+                                  VCloudSdk::Test::Response::ORG_NETWORK_NAME])
+      end
+    end
+  end
+
   describe "#find_network_by_name" do
     let(:vdc_response) do
       VCloudSdk::Xml::WrapperFactory.wrap_document(

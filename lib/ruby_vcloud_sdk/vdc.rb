@@ -77,8 +77,14 @@ module VCloudSdk
     end
 
     def networks
-      @session.org.networks.map do |network|
-        VCloudSdk::Network.new(@session, network)
+      @session.org.networks.map do |network_link|
+        VCloudSdk::Network.new(@session, network_link)
+      end
+    end
+
+    def list_networks
+      @session.org.networks.map do |network_link|
+        network_link.name
       end
     end
 

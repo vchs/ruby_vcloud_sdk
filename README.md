@@ -65,6 +65,14 @@ Copyright (c) VMware, Inc.
     resources
     
     networks
+      returns: array of network objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
+    list_networks
+      returns: array of network names
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
     find_network_by_name
 
