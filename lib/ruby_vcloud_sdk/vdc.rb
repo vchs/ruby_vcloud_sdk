@@ -102,7 +102,7 @@ module VCloudSdk
         end
       end
 
-      nil
+      fail ObjectNotFoundError, "Network '#{name}' is not found"
     end
 
     def disks
