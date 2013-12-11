@@ -88,6 +88,14 @@ Copyright (c) VMware, Inc.
   Catalog
   
      items
+       returns: array of catalog item objects
+       throws:
+         'RestClient::BadRequest' for un-expected errors
+
+     list_items
+       returns: array of catalog item names
+       throws:
+         'RestClient::BadRequest' for un-expected errors
      
      delete_all_catalog_items
      
