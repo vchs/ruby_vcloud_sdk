@@ -34,18 +34,25 @@ module VCloudSdk
     end
 
     def storage_profiles
-      connection.get("/api/query?type=orgVdcStorageProfile&filter=vdcName==#{URI.encode(name)}")
-        .org_vdc_storage_profile_records.map do |storage_profile|
-          VCloudSdk::VdcStorageProfile.new(storage_profile)
-        end
+      storage_profile_records.map do |storage_profile|
+        VCloudSdk::VdcStorageProfile.new(storage_profile)
+      end
+    end
+
+    def list_storage_profiles
+      @vdc_xml_obj.storage_profiles.map do |storage_profile|
+        storage_profile.name
+      end
     end
 
     def find_storage_profile_by_name(name)
-      storage_profiles.each do |storage_profile|
-        return storage_profile if storage_profile.name == name
+      storage_profile_records.each do |storage_profile|
+        if storage_profile.name == name
+          return VCloudSdk::VdcStorageProfile.new(storage_profile)
+        end
       end
 
-      nil
+      fail ObjectNotFoundError, "Storage profile '#{name}' is not found"
     end
 
     def vapps
@@ -172,6 +179,12 @@ module VCloudSdk
     end
 
     private
+
+    def storage_profile_records
+      connection
+        .get("/api/query?type=orgVdcStorageProfile&filter=vdcName==#{URI.encode(name)}")
+        .org_vdc_storage_profile_records
+    end
 
     def disk_create_params(name, size_mb, bus_type, bus_sub_type, vm)
       Xml::WrapperFactory.create_instance("DiskCreateParams").tap do |params|

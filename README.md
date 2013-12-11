@@ -42,8 +42,21 @@ Copyright (c) VMware, Inc.
   VDC
     
     storage_profiles
+      returns: array of storage profile objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
+    list_storage_profiles
+      returns: array of storage profile names
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
     find_storage_profile_by_name
+      returns:
+        storage profile object matching name
+      throws:
+        'RuntimeError' when storage profile with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
     
     vapps
       returns: array of vapp objects

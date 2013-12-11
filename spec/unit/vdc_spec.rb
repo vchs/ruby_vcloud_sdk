@@ -48,7 +48,45 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :empty
       end
 
-      its(:storage_profiles) { should have(0).item }
+      its(:storage_profiles) { should eql [] }
+    end
+  end
+
+  describe "#list_storage_profiles" do
+    context "vdc has storage profiles" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      before do
+        VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
+      end
+
+      context "vdc name contains no space" do
+        its(:list_storage_profiles) { should eql [VCloudSdk::Test::Response::STORAGE_PROFILE_NAME] }
+      end
+
+      context "vdc name contains spaces" do
+        before do
+          subject.instance_variable_set(:@name, VCloudSdk::Test::Response::OVDC_NAME_WITH_SPACE)
+        end
+
+        its(:list_storage_profiles) { should eql [VCloudSdk::Test::Response::STORAGE_PROFILE_NAME] }
+      end
+    end
+
+    context "vdc has no storage profile" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
+      end
+
+      before do
+        VCloudSdk::Test::ResponseMapping.set_option storage_profile: :empty
+      end
+
+      its(:storage_profiles) { should eql [] }
     end
   end
 
@@ -58,17 +96,23 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
-    it "return a storage profile given targeted name" do
-      VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
-      storage_profile = subject
-        .find_storage_profile_by_name(VCloudSdk::Test::Response::STORAGE_PROFILE_NAME)
-      storage_profile.name.should eql VCloudSdk::Test::Response::STORAGE_PROFILE_NAME
+    context "storage profile with given name exists" do
+      it "return a storage profile given targeted name" do
+        VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
+        storage_profile = subject
+                            .find_storage_profile_by_name(VCloudSdk::Test::Response::STORAGE_PROFILE_NAME)
+        storage_profile.name.should eql VCloudSdk::Test::Response::STORAGE_PROFILE_NAME
+      end
     end
 
-    it "return nil if targeted storage profile with given name does not exist" do
-      VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
-      storage_profile = subject.find_storage_profile_by_name("xxxxxxx")
-      storage_profile.should be_nil
+    context "storage profile with given name does not exist" do
+      it "return nil if targeted storage profile with given name does not exist" do
+        VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
+        expect do
+          subject.find_storage_profile_by_name("xxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Storage profile 'xxx' is not found"
+      end
     end
   end
 
