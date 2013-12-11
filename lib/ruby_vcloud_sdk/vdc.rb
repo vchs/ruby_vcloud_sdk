@@ -49,8 +49,14 @@ module VCloudSdk
     end
 
     def vapps
-      @vdc_xml_obj.vapps.map do |vapp|
-        VCloudSdk::VApp.new(@session, vapp)
+      @vdc_xml_obj.vapps.map do |vapp_link|
+        VCloudSdk::VApp.new(@session, vapp_link)
+      end
+    end
+
+    def list_vapps
+      @vdc_xml_obj.vapps.map do |vapp_link|
+        vapp_link.name
       end
     end
 
