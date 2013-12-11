@@ -245,16 +245,23 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
-    it "returns a network given targeted name" do
-      network = subject
-                  .find_network_by_name(
-                    VCloudSdk::Test::Response::ORG_NETWORK_NAME)
-      network.name.should eql VCloudSdk::Test::Response::ORG_NETWORK_NAME
+    context "network with given name exists" do
+      it "returns a network given targeted name" do
+        network = subject
+                    .find_network_by_name(
+                      VCloudSdk::Test::Response::ORG_NETWORK_NAME)
+        network.name.should eql VCloudSdk::Test::Response::ORG_NETWORK_NAME
+      end
     end
 
-    it "returns nil if targeted network with given name does not exist" do
-      network = subject.find_network_by_name("xxxxxxx")
-      network.should be_nil
+    context "network with given name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          network = subject
+                      .find_network_by_name("xxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError
+                               "Storage profile 'xxx' is not found"
+      end
     end
   end
 
