@@ -93,6 +93,32 @@ describe VCloudSdk::VDC do
 
   end
 
+  describe "#list_vapps" do
+    context "vdc has vapps" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a collection of vapp names" do
+        vapp_names = subject.list_vapps
+        vapp_names.should have(1).item
+        vapp_name = vapp_names.first
+        vapp_name.should be_an_instance_of String
+        vapp_name.should eql VCloudSdk::Test::Response::VAPP_NAME
+      end
+    end
+
+    context "vdc has no disk" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
+      end
+
+      its(:list_vapps) { should have(0).item }
+    end
+  end
+
   describe "#find_vapp_by_name" do
     let(:vdc_response) do
       VCloudSdk::Xml::WrapperFactory.wrap_document(
