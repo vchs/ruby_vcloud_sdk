@@ -115,6 +115,12 @@ module VCloudSdk
       end
     end
 
+    def list_vms
+      entity_xml.vms.map do |vm|
+        vm.name
+      end
+    end
+
     def find_vm_by_name(name)
       entity_xml.vms.each do |vm|
         if vm.name == name

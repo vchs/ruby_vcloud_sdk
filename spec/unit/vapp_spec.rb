@@ -277,6 +277,18 @@ describe VCloudSdk::VApp do
     end
   end
 
+  describe "#list_vms" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+      .set_option vapp_power_state: :on
+    end
+
+    it "returns a collection of vm names" do
+      vm_names = subject.list_vms
+      vm_names.should eql [VCloudSdk::Test::Response::VM_NAME]
+    end
+  end
+
   describe "#find_vm_by_name" do
     before do
       VCloudSdk::Test::ResponseMapping
