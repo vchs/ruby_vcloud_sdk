@@ -73,7 +73,8 @@ module VCloudSdk
         image_type = "iso")
 
       if item_exists?(media_name)
-        fail "Catalog Item '#{media_name}' already exists in catalog #{name}"
+        fail CloudError,
+             "Catalog Item '#{media_name}' already exists in catalog #{name}"
       end
 
       Config.logger.info %Q{

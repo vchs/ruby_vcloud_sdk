@@ -55,7 +55,7 @@ Copyright (c) VMware, Inc.
       returns:
         storage profile object matching name
       throws:
-        'RuntimeError' when storage profile with the name does not exist
+        'ObjectNotFoundError' when storage profile with the name does not exist
         'RestClient::BadRequest' for un-expected errors
     
     vapps
@@ -72,7 +72,7 @@ Copyright (c) VMware, Inc.
       returns:
         vapp object matching name
       throws:
-        'RuntimeError' when vapp with the name does not exist
+        'ObjectNotFoundError' when vapp with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
     resources
@@ -88,6 +88,11 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
     
     find_network_by_name
+        returns:
+          network object matching name
+        throws:
+          'ObjectNotFoundError' when network with the name does not exist
+          'RestClient::BadRequest' for un-expected errors
 
     disks
       returns: array of disk objects
@@ -103,7 +108,7 @@ Copyright (c) VMware, Inc.
       returns:
         disk object matching name
       throws:
-        'RuntimeError' when disk with the name does not exist
+        'ObjectNotFoundError' when disk with the name does not exist
         'RestClient::BadRequest' for un-expected errors
     
   Catalog
@@ -135,7 +140,8 @@ Copyright (c) VMware, Inc.
      upload_media
         returns: catalog item uploaded
         throws:
-          'RuntimeError' when storage profile with the name does not exist or media file matching name already exists
+          'CloudError' when media file matching name already exists
+          'ObjectNotFoundError' when storage profile with the name does not exist
           'RestClient::BadRequest' for un-expected errors
      
   Network
