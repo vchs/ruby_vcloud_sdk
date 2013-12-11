@@ -115,6 +115,16 @@ module VCloudSdk
       end
     end
 
+    def find_vm_by_name(name)
+      entity_xml.vms.each do |vm|
+        if vm.name == name
+          return VCloudSdk::VM.new(@session, vm.href)
+        end
+      end
+
+      fail ObjectNotFoundError, "VM '#{name}' is not found"
+    end
+
     private
 
     def undeploy_vapp(vapp)
