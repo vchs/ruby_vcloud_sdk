@@ -276,4 +276,27 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "#find_vm_by_name" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :on
+    end
+
+    context "VM matching name exists" do
+      it "returns the matching vm" do
+        vm = subject.find_vm_by_name(VCloudSdk::Test::Response::VM_NAME)
+        vm.name.should eql VCloudSdk::Test::Response::VM_NAME
+      end
+    end
+
+    context "VM matching name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.find_vm_by_name("xxxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError
+                               "VM 'xxxx' is not found"
+      end
+    end
+  end
 end
