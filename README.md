@@ -16,6 +16,11 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
 
+    list_catalogs
+      returns: array of catalog names
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
     find_catalog_by_name
       returns:
         catalog object matching name
@@ -44,6 +49,11 @@ Copyright (c) VMware, Inc.
       returns: array of vapp objects
       throws:
         'RestClient::BadRequest' for un-expected errors
+
+    list_vapps
+      returns: array of vapp names
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
     find_vapp_by_name
       returns:
@@ -60,6 +70,11 @@ Copyright (c) VMware, Inc.
 
     disks
       returns: array of disk objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
+    list_disks
+      returns: array of disk names
       throws:
         'RestClient::BadRequest' for un-expected errors
 
