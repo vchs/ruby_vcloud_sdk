@@ -15,8 +15,14 @@ module VCloudSdk
     end
 
     def catalogs
-      @session.org.catalogs.map do |catalog|
-        VCloudSdk::Catalog.new(@session, catalog)
+      @session.org.catalogs.map do |catalog_link|
+        VCloudSdk::Catalog.new(@session, catalog_link)
+      end
+    end
+
+    def list_catalogs
+      @session.org.catalogs.map do |catalog_link|
+        catalog_link.name
       end
     end
 

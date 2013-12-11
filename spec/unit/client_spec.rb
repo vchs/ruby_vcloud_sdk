@@ -56,6 +56,18 @@ describe VCloudSdk::Client, :min, :all do
     its(:catalogs) { should have_at_least(1).items }
   end
 
+  describe "#list_catalogs" do
+    subject { initialize_client }
+
+    its "returns a collection of catalogs" do
+      catalog_names = subject.list_catalogs
+      catalog_names
+        .should eql [VCloudSdk::Test::Response::CATALOG_NAME,
+                     "Public Catalog",
+                     "images"]
+    end
+  end
+
   describe "#catalog_exists?" do
     subject { initialize_client }
 
