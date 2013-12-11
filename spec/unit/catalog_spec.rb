@@ -75,7 +75,43 @@ describe VCloudSdk::Catalog do
   end
 
   describe "#items" do
-    its(:items) { should have_at_least(1).item }
+    context "catalog has items" do
+      it "returns a collection of vapp names" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+        items = subject.items
+        items.should have(2).items
+        items.each do |item|
+          item.should be_an_instance_of VCloudSdk::CatalogItem
+        end
+      end
+    end
+
+    context "catalog has no item" do
+      before do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
+      end
+
+      its(:items) { should eql [] }
+    end
+  end
+
+  describe "#list_items" do
+    context "catalog has items" do
+      it "returns a collection of vapp names" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+        items_names = subject.list_items
+        items_names.should eql [VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+                                VCloudSdk::Test::Response::EXISTING_MEDIA_NAME]
+      end
+    end
+
+    context "catalog has no item" do
+      before do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
+      end
+
+      its(:list_items) { should eql [] }
+    end
   end
 
   describe "#delete_all_catalog_items" do

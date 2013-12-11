@@ -26,6 +26,12 @@ module VCloudSdk
       end
     end
 
+    def list_items
+      admin_xml.catalog_items.map do |item_link|
+        item_link.name
+      end
+    end
+
     def delete_all_catalog_items
       items.each do |catalog_item|
         Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
