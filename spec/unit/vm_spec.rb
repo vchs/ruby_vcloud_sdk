@@ -35,6 +35,27 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#independent_disks" do
+    context "vm has attached disk" do
+      it "returns a collection of disks" do
+        VCloudSdk::Test::ResponseMapping.set_option vm_disk_attached: true
+        disks = subject.independent_disks
+        disks.should have(1).item
+        disk = disks[0]
+        disk.should be_an_instance_of VCloudSdk::Disk
+        disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+      end
+    end
+
+    context "vm has no attached disk" do
+      before do
+        VCloudSdk::Test::ResponseMapping.delete_option :vm_disk_attached
+      end
+
+      its(:independent_disks) { should eql [] }
+    end
+  end
+
   describe "#attach_disk" do
     it "attaches the disk successfully" do
       attach_task = subject.attach_disk(disk)

@@ -138,7 +138,11 @@ module VCloudSdk
               end,
             Test::Response::INSTANTIATED_VM_LINK =>
               lambda do |url, headers|
-                Test::Response::INSTANTIATED_VM_RESPONSE
+                if options && options[:vm_disk_attached]
+                  Test::Response::INSTANTIATED_VM_WITH_ATTACHED_DISK_RESPONSE
+                else
+                  Test::Response::INSTANTIATED_VM_RESPONSE
+                end
               end,
             Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK  =>
               lambda do |url, headers|
@@ -285,6 +289,11 @@ module VCloudSdk
         def set_option(option)
           @options = @options || {}
           @options.merge!(option)
+        end
+
+        def delete_option(option)
+          @options = @options || {}
+          @options.delete(option)
         end
 
         def get_mapping(http_method, url)
