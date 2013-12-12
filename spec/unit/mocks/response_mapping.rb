@@ -259,6 +259,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::EXISTING_VAPP_TEMPLATE_DELETE_DONE_TASK
               end,
+            Test::Response::INDY_DISK_URL =>
+              lambda do |url, headers|
+                Test::Response::INDY_DISK_DELETE_TASK
+              end,
           },
           put: {
             Test::Response::VAPP_TEMPLATE_UPLOAD_OVF_LINK =>

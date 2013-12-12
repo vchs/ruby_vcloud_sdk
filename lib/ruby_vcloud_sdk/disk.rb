@@ -15,5 +15,14 @@ module VCloudSdk
       @session = session
       @link = link
     end
+
+    def delete
+      disk_name = name
+      task = connection.delete(entity_xml.remove_link.href)
+      task = monitor_task(task)
+
+      Config.logger.info "Disk '#{disk_name}' of link #{@link} is deleted successfully"
+      task
+    end
   end
 end

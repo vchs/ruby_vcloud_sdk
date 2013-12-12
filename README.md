@@ -106,7 +106,7 @@ Copyright (c) VMware, Inc.
 
     find_disk_by_name
       returns:
-        disk object matching name
+        array of disk objects matching name
       throws:
         'ObjectNotFoundError' when disk with the name does not exist
         'RestClient::BadRequest' for un-expected errors

@@ -49,4 +49,28 @@ describe VCloudSdk::Disk do
       subject.status.should eql "1"
     end
   end
+
+  describe "#delete" do
+    it "deletes the disk successfully" do
+      deletion_task = subject.delete
+      subject
+        .send(:task_is_success, deletion_task)
+        .should be_true
+    end
+
+    context "error occurs when deleting disk" do
+      it "raises the exception" do
+        VCloudSdk::Connection::Connection
+          .any_instance
+          .should_receive(:delete)
+          .once
+          .with(VCloudSdk::Test::Response::INDY_DISK_URL)
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.delete
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
+  end
 end
