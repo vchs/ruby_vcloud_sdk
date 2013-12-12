@@ -7,10 +7,6 @@ module VCloudSdk
         link_node.node.before(item.node)
       end
 
-      def edit_link
-        get_nodes("Link", {"rel" => "edit"}, true).first
-      end
-
       def network_connections
         get_nodes("NetworkConnection")
       end

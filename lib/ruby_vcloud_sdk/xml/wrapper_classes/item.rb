@@ -1,14 +1,9 @@
 module VCloudSdk
   module Xml
-
     class Item < Wrapper
       def add_rasd(name)
         raise "Cannot add duplicate RASD element #{name}." if get_rasd(name)
         add_child(name, "rasd", RASD)
-      end
-
-      def edit_link
-        get_nodes("Link", {"rel" => "edit"}, true).first
       end
 
       def get_rasd(name)
@@ -23,10 +18,9 @@ module VCloudSdk
 
       def set_rasd(name, value)
         node = get_rasd(name)
-        raise "The RASD element #{name} does not exist." unless node
+        fail "The RASD element #{name} does not exist." unless node
         node.content = value
       end
     end
-
   end
 end

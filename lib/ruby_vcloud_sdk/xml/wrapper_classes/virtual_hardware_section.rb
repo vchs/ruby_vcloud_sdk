@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class VirtualHardwareSection < Wrapper
       def add_item(item)
         system_node = get_nodes("System", nil, true, OVF).first
@@ -8,8 +7,10 @@ module VCloudSdk
       end
 
       def edit_link
-        get_nodes("Link", {"rel" => "edit",
-          "type" => MEDIA_TYPE[:VIRTUAL_HARDWARE_SECTION]}, true).first
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: XML_TYPE[:EDIT],
+                    type: MEDIA_TYPE[:VIRTUAL_HARDWARE_SECTION] },
+                  true).first
       end
 
       def cpu
@@ -54,8 +55,10 @@ module VCloudSdk
       end
 
       def hard_disks
-        items = hardware.find_all { |h| h.get_rasd_content(
-          RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:HARD_DISK] }
+        items = hardware.select do |h|
+          h.get_rasd_content(
+          RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:HARD_DISK]
+        end
         items.map { |i| HardDiskItemWrapper.new(i) }
       end
 
@@ -63,6 +66,5 @@ module VCloudSdk
         get_nodes("Item", nil, false, OVF)
       end
     end
-
   end
 end
