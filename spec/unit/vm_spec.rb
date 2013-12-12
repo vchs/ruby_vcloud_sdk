@@ -56,6 +56,24 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#list_disks" do
+    context "vm has attached disk" do
+      before do
+        VCloudSdk::Test::ResponseMapping.set_option vm_disk_attached: true
+      end
+
+      its(:list_disks) { should eql ["Hard disk 1", "Hard disk 2"] }
+    end
+
+    context "vm has no attached disk" do
+      before do
+        VCloudSdk::Test::ResponseMapping.delete_option :vm_disk_attached
+      end
+
+      its(:list_disks) { should eql ["Hard disk 1"] }
+    end
+  end
+
   describe "#attach_disk" do
     it "attaches the disk successfully" do
       attach_task = subject.attach_disk(disk)

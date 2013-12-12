@@ -29,6 +29,12 @@ module VCloudSdk
       disks
     end
 
+    def list_disks
+      entity_xml.hardware_section.hard_disks.map do |disk|
+        disk.element_name
+      end
+    end
+
     def attach_disk(disk)
       task = connection.post(entity_xml.attach_disk_link.href,
                              disk_attach_or_detach_params(disk),
