@@ -264,6 +264,7 @@ module VCloudSdk
       :DEPLOYVAPPPARAMS => "DeployVAppParams",
       :DHCPSERVICE => "DhcpService",
       :DVSWITCHRECORD => "DvSwitchRecord",
+      :EDIT => "edit",
       :ENTITY => "Entity",
       :ERROR => "Error",
       :EVENTRECORD => "EventRecord",

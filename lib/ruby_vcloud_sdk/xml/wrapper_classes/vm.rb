@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class Vm < Wrapper
       def initialize(xml, ns = nil, ns_definitions = nil)
         super(xml, ns, ns_definitions)
@@ -8,8 +7,10 @@ module VCloudSdk
       end
 
       def attach_disk_link
-        get_nodes("Link", {"rel" => "disk:attach",
-          "type" => MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS]}, true).first
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "disk:attach",
+                    type: MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS] },
+                  true).first
       end
 
       def description
@@ -33,10 +34,6 @@ module VCloudSdk
           "type" => MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS]}, true).first
       end
 
-      def edit_link
-        get_nodes("Link", {"rel" => "edit"}, true).first
-      end
-
       def reconfigure_link
         get_nodes("Link", {"rel" => "reconfigureVm"}, true).first
       end
@@ -53,17 +50,12 @@ module VCloudSdk
         get_nodes("Link", {"type" => MEDIA_TYPE[:METADATA]}, true).first
       end
 
-      def name
-         @root["name"]
-      end
-
-      def name=(value)
-         @root["name"]= value
-      end
-
       def hardware_section
-        get_nodes("VirtualHardwareSection", nil, false,
-          "http://schemas.dmtf.org/ovf/envelope/1").first
+        get_nodes("VirtualHardwareSection",
+                  nil,
+                  false,
+                  "http://schemas.dmtf.org/ovf/envelope/1")
+                  .first
       end
 
       def network_connection_section
@@ -174,6 +166,5 @@ module VCloudSdk
         net_conn_section.primary_network_connection_index = nic_index
       end
     end
-
   end
 end

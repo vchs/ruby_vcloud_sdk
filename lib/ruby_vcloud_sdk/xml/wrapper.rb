@@ -129,6 +129,12 @@ module VCloudSdk
                   true).first
       end
 
+      def edit_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: XML_TYPE[:EDIT] },
+                  true).first
+      end
+
       def running_tasks
         get_nodes(XML_TYPE[:TASK],
                   { status: TASK_STATUS[:RUNNING] })
