@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class HardDiskItemWrapper < Item
       def hash
         [disk_id, instance_id, bus_type, bus_sub_type].hash
@@ -39,10 +38,13 @@ module VCloudSdk
         get_rasd_content(RASD_TYPES[:PARENT])
       end
 
+      def element_name
+        get_rasd_content(RASD_TYPES[:ELEMENT_NAME])
+      end
+
       def host_resource
         get_rasd(RASD_TYPES[:HOST_RESOURCE])
       end
     end
-
   end
 end
