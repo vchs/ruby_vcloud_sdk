@@ -304,10 +304,7 @@ describe VCloudSdk::VDC do
 
       it "returns a collection of disk names" do
         disk_names = subject.list_disks
-        disk_names.should have(1).item
-        disk_name = disk_names.first
-        disk_name.should be_an_instance_of String
-        disk_name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+        disk_names.should eql [VCloudSdk::Test::Response::INDY_DISK_NAME]
       end
     end
 

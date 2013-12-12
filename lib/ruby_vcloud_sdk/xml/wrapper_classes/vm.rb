@@ -54,7 +54,7 @@ module VCloudSdk
         get_nodes("VirtualHardwareSection",
                   nil,
                   false,
-                  "http://schemas.dmtf.org/ovf/envelope/1")
+                  OVF)
                   .first
       end
 
