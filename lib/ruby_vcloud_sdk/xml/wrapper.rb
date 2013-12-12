@@ -192,6 +192,11 @@ module VCloudSdk
         @root[attr]
       end
 
+      # get the attribute regardless what namespace the attribute has
+      def attribute(name)
+        @root.attribute(name)
+      end
+
       def []=(attr, value)
         @root[attr] = value
       end

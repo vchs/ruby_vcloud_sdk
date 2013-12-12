@@ -17,6 +17,18 @@ module VCloudSdk
       @link
     end
 
+    def attached_independent_disks
+      hardware_section = entity_xml.hardware_section
+      disks = []
+      hardware_section.hard_disks.each do |disk|
+        disk_link = disk.host_resource.attribute("disk")
+        unless disk_link.nil?
+          disks << VCloudSdk::Disk.new(@session, disk_link.to_s)
+        end
+      end
+      disks
+    end
+
     def attach_disk(disk)
       task = connection.post(entity_xml.attach_disk_link.href,
                              disk_attach_or_detach_params(disk),

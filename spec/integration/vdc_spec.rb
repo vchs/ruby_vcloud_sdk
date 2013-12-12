@@ -106,18 +106,25 @@ describe VCloudSdk::VDC do
   end
 
   describe "#create_disk" do
+
     it "creates an independent disk successfully" do
-      vapp_name = SecureRandom.uuid
-      catalog = client.find_catalog_by_name(catalog_name)
-      vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
-      vm = vapp.vms.first
+      begin
+        vapp_name = SecureRandom.uuid
+        catalog = client.find_catalog_by_name(catalog_name)
+        vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
+        vm = vapp.vms.first
+        vm.attached_independent_disks.should eql []
 
-      new_disk_name = "test"
-      new_disk = subject.create_disk(new_disk_name, 1024, vm)
-      new_disk.name.should eql new_disk_name
+        new_disk_name = "test"
+        new_disk = subject.create_disk(new_disk_name, 1024, vm)
+        new_disk.name.should eql new_disk_name
 
-      vapp.delete
-      new_disk.delete
+        vm.attach_disk(new_disk)
+        vm.attached_independent_disks.size.should eql 1
+      ensure
+        vapp.delete
+        new_disk.delete
+      end
     end
   end
 end
