@@ -233,6 +233,10 @@ module VCloudSdk
               lambda do |url, data, headers|
                 Test::Response::INDY_DISK_CREATE_RESPONSE
               end,
+            Test::Response::INSTANTIATED_VM_ATTACH_DISK_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INDY_DISK_ATTACH_TASK
+              end
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>

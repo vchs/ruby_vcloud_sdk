@@ -16,6 +16,10 @@ module VCloudSdk
       @link = link
     end
 
+    def href
+      @link
+    end
+
     def delete
       disk_name = name
       task = connection.delete(entity_xml.remove_link.href)
