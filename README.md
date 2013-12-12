@@ -104,7 +104,7 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
 
-    find_disk_by_name
+    find_disks_by_name
       returns:
         array of disk objects matching name
       throws:

@@ -321,7 +321,7 @@ describe VCloudSdk::VDC do
     end
   end
 
-  describe "#find_disk_by_name" do
+  describe "#find_disks_by_name" do
     let(:vdc_response) do
       VCloudSdk::Xml::WrapperFactory.wrap_document(
         VCloudSdk::Test::Response::VDC_RESPONSE)
@@ -329,7 +329,7 @@ describe VCloudSdk::VDC do
 
     context "there is one disk with given name" do
       it "returns array containing one disk" do
-        disks = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+        disks = subject.find_disks_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
         disks.should have(1).item
         disk = disks[0]
         disk.should be_an_instance_of VCloudSdk::Disk
@@ -345,7 +345,7 @@ describe VCloudSdk::VDC do
           .should_receive(:disks)
           .and_return [disk_link, disk_link]
 
-        disks = subject.find_disk_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+        disks = subject.find_disks_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
         disks.should have(2).item
         disks.each do |disk|
           disk.should be_an_instance_of VCloudSdk::Disk
@@ -357,7 +357,7 @@ describe VCloudSdk::VDC do
     context "targeted disk with given name does not exist" do
       it "raises an error" do
         expect do
-          subject.find_disk_by_name("xxxx")
+          subject.find_disks_by_name("xxxx")
         end.to raise_exception VCloudSdk::ObjectNotFoundError
         "Disk 'xxxx' is not found"
       end

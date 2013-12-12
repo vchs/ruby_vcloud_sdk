@@ -117,11 +117,11 @@ module VCloudSdk
       end
     end
 
-    def find_disk_by_name(name)
+    def find_disks_by_name(name)
       disks = @vdc_xml_obj
                 .disks
                 .select { |disk_link| disk_link.name == name }
-                .map { |disk_link| VCloudSdk::Disk.new(@session, disk_link) }
+                .map { |disk_link| VCloudSdk::Disk.new(@session, disk_link.href) }
 
       if disks.empty?
         fail ObjectNotFoundError, "Disk '#{name}' is not found"
