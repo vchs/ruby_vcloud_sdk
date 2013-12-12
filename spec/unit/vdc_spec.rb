@@ -156,16 +156,20 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
-    it "returns a vapp given targeted name" do
-      vapp = subject.find_vapp_by_name(VCloudSdk::Test::Response::VAPP_NAME)
-      vapp.name.should eql VCloudSdk::Test::Response::VAPP_NAME
+    context "vapp with given name exists" do
+      it "returns a vapp given targeted name" do
+        vapp = subject.find_vapp_by_name(VCloudSdk::Test::Response::VAPP_NAME)
+        vapp.name.should eql VCloudSdk::Test::Response::VAPP_NAME
+      end
     end
 
-    it "raises an error if targeted vapp with given name does not exist" do
-      expect do
-        subject.find_vapp_by_name("xxxx")
-      end.to raise_exception VCloudSdk::ObjectNotFoundError
-                             "VApp 'xxxx' is not found"
+    context "vapp with given name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.find_vapp_by_name("xxxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "VApp 'xxxx' is not found"
+      end
     end
   end
 
@@ -259,8 +263,8 @@ describe VCloudSdk::VDC do
         expect do
           network = subject
                       .find_network_by_name("xxx")
-        end.to raise_exception VCloudSdk::ObjectNotFoundError
-                               "Storage profile 'xxx' is not found"
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Network 'xxx' is not found"
       end
     end
   end

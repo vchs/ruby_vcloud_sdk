@@ -22,14 +22,21 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_storage_profile_by_name" do
-    it "return a storage profile given targeted name" do
-      storage_profile = subject.find_storage_profile_by_name(storage_profile_name)
-      storage_profile.should_not be_nil
+    context "storage profile with given name exists" do
+      it "return a storage profile given targeted name" do
+        storage_profile = subject
+                            .find_storage_profile_by_name(storage_profile_name)
+        storage_profile.name.should eql storage_profile_name
+      end
     end
 
-    it "return nil if targeted storage profile with given name does not exist" do
-      storage_profile = subject.find_storage_profile_by_name("xxxxxxx")
-      storage_profile.should be_nil
+    context "storage profile with given name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.find_storage_profile_by_name("xxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Storage profile 'xxx' is not found"
+      end
     end
   end
 
@@ -38,14 +45,20 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_vapp_by_name" do
-    it "returns a vapp given targeted name" do
-      vapp = subject.find_vapp_by_name(vapp_name)
-      vapp.name.should eql vapp_name
+    context "vapp with given name exists" do
+      it "returns a vapp given targeted name" do
+        vapp = subject.find_vapp_by_name(vapp_name)
+        vapp.name.should eql vapp_name
+      end
     end
 
-    it "returns nil if targeted vapp with given name does not exist" do
-      vapp = subject.find_vapp_by_name("xxxxxxx")
-      vapp.should be_nil
+    context "vapp with given name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.find_vapp_by_name("xxxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "VApp 'xxxx' is not found"
+      end
     end
   end
 
@@ -66,14 +79,22 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_network_by_name" do
-    it "returns a network given targeted name" do
-      network = subject.find_network_by_name(network_name)
-      network.name.should eql network_name
+    context "network with given name exists" do
+      it "returns a network given targeted name" do
+        network = subject
+                    .find_network_by_name(network_name)
+        network.name.should eql network_name
+      end
     end
 
-    it "returns nil if targeted network with given name does not exist" do
-      network = subject.find_network_by_name("xxxxxxx")
-      network.should be_nil
+    context "network with given name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          network = subject
+                      .find_network_by_name("xxx")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Network 'xxx' is not found"
+      end
     end
   end
 
