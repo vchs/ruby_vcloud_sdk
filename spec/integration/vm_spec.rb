@@ -13,8 +13,8 @@ describe VCloudSdk::VM do
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
   let(:vapp_template_name) { VCloudSdk::Test::DefaultSetting::EXISTING_VAPP_TEMPLATE_NAME }
 
-  describe "#attach_disk" do
-    it "attaches the disk successfully" do
+  describe "disk manipulation" do
+    it "attaches and detaches the disk successfully" do
       begin
         vdc = client.find_vdc_by_name(vdc_name)
         vapp_name = SecureRandom.uuid
@@ -29,6 +29,8 @@ describe VCloudSdk::VM do
 
         vm.attach_disk(new_disk)
         vm.independent_disks.size.should eql 1
+        vm.detach_disk(new_disk)
+        vm.independent_disks.should eql []
       ensure
         vapp.delete
         new_disk.delete
