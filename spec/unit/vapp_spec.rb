@@ -311,4 +311,38 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "#status" do
+    context "vApp is powered on" do
+      it "returns status POWERED_ON" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+        subject.status.should eql "POWERED_ON"
+      end
+    end
+
+    context "vApp is powered off" do
+      it "returns the status POWERED_OFF" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :powered_off
+        subject.status.should eql "POWERED_OFF"
+      end
+    end
+
+    context "vApp is powered off and undeployed" do
+      it "returns the status POWERED_OFF" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :off
+        subject.status.should eql "POWERED_OFF"
+      end
+    end
+
+    context "vApp is powered off" do
+      it "returns the status SUSPENDED" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :suspended
+        subject.status.should eql "SUSPENDED"
+      end
+    end
+  end
 end

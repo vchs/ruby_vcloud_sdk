@@ -131,6 +131,18 @@ module VCloudSdk
       fail ObjectNotFoundError, "VM '#{name}' is not found"
     end
 
+    def status
+      vapp_status_code = entity_xml[:status].to_i
+      Xml::RESOURCE_ENTITY_STATUS.each_pair do |k,v|
+        if v == vapp_status_code
+          return k.to_s
+        end
+      end
+
+      fail CloudError,
+           "Fail to find corresponding status for code '#{vapp_status_code}'"
+    end
+
     private
 
     def undeploy_vapp(vapp)
@@ -143,18 +155,6 @@ module VCloudSdk
 
     def is_vapp_status?(vapp, status)
       vapp[:status] == Xml::RESOURCE_ENTITY_STATUS[status].to_s
-    end
-
-    def status
-      vapp_status_code = entity_xml[:status].to_i
-      Xml::RESOURCE_ENTITY_STATUS.each_pair do |k,v|
-        if v == vapp_status_code
-          return k.to_s
-        end
-      end
-
-      fail CloudError,
-           "Fail to find corresponding status for code '#{vapp_status_code}'"
     end
 
     def recompose_from_vapp_template_param(template)
