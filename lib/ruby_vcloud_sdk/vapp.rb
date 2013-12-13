@@ -85,16 +85,7 @@ module VCloudSdk
     end
 
     def recompose_from_vapp_template(catalog_name, template_name)
-      recompose_vapp_link = connection
-                              .get(@link)
-                              .recompose_vapp_link
-
-      if recompose_vapp_link.nil?
-        # We are able to recompose vapp when it is suspended or powered off
-        # If vapp is powered on, throw exception
-        fail CloudError,
-             "VApp is in status of '#{status}' and can not be recomposed"
-      end
+      recompose_vapp_link = get_recompose_vapp_link
 
       Config.logger.info "Recomposing from template '#{template_name}' in catalog '#{catalog_name}'."
       catalog = find_catalog_by_name catalog_name
@@ -106,6 +97,23 @@ module VCloudSdk
 
       monitor_task task, @session.time_limit[:recompose_vapp]
       Config.logger.info "vApp #{name} is recomposed."
+      self
+    end
+
+    def remove_vm(vm_name)
+      target_vm = find_vm_by_name vm_name
+      unless target_vm
+        fail ObjectNotFoundError,
+             "VM #{vm_name} does not exist."
+      end
+
+      recompose_vapp_link = get_recompose_vapp_link
+
+      task = connection.post recompose_vapp_link.href,
+                             remove_vm_param(target_vm)
+
+      monitor_task task, @session.time_limit[:recompose_vapp]
+      Config.logger.info "VM #{vm_name} is removed."
       self
     end
 
@@ -162,6 +170,29 @@ module VCloudSdk
         params.name = name
         params.all_eulas_accepted = true
         params.add_source_item template.href
+      end
+    end
+
+    def get_recompose_vapp_link
+      recompose_vapp_link = connection
+                              .get(@link)
+                              .recompose_vapp_link
+
+      if recompose_vapp_link.nil?
+        # We are able to recompose vapp when it is suspended or powered off
+        # If vapp is powered on, throw exception
+        fail CloudError,
+             "VApp is in status of '#{status}' and can not be recomposed"
+      end
+
+      recompose_vapp_link
+    end
+
+    def remove_vm_param(vm)
+      Xml::WrapperFactory.create_instance("RecomposeVAppParams").tap do |params|
+        params.name = name
+        params.all_eulas_accepted = true
+        params.add_delete_item vm.href
       end
     end
   end

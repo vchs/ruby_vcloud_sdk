@@ -61,4 +61,26 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "#remove_vm" do
+    context "vapp is powered off" do
+      it "removes the target vm" do
+        subject.power_off
+        subject.vms.should have(1).item
+        subject.remove_vm vapp_template_for_new_vapp
+        subject.vms.should have(0).item
+      end
+    end
+
+    context "vapp is powered on" do
+      it "raises an exception" do
+        subject.power_on
+        expect do
+          subject
+          .remove_vm vapp_template_for_new_vapp
+        end.to raise_exception VCloudSdk::CloudError
+        "VApp is in status of 'POWERED_OFF' and can not be recomposed"
+      end
+    end
+  end
 end

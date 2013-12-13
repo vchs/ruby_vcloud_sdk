@@ -345,4 +345,38 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "#remove_vm" do
+    context "vapp is powered off" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :off
+      end
+
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.remove_vm "not-existing"
+        end.to raise_exception VCloudSdk::ObjectNotFoundError
+                "VM 'not-existing' is not found"
+      end
+
+      it "remove the target vm" do
+        subject.remove_vm "vm1"
+      end
+    end
+
+    context "vapp is powered on" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
+
+      it "raises CloudError exception" do
+        expect do
+          subject.remove_vm "vm1"
+        end.to raise_exception VCloudSdk::CloudError
+                "VApp is in status of 'POWERED_OFF' and can not be recomposed"
+      end
+    end
+  end
 end
