@@ -6,9 +6,23 @@ module VCloudSdk
         @logger = Config.logger
       end
 
+      def vapp_link
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:VAPP] },
+                  true)
+                  .first
+      end
+
       def attach_disk_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "disk:attach",
+                    type: MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS] },
+                  true).first
+      end
+
+      def detach_disk_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "disk:detach",
                     type: MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS] },
                   true).first
       end
@@ -27,11 +41,6 @@ module VCloudSdk
         node = nodes.first
         return unless node
         node.content = value
-      end
-
-      def detach_disk_link
-        get_nodes("Link", {"rel" => "disk:detach",
-          "type" => MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS]}, true).first
       end
 
       def reconfigure_link

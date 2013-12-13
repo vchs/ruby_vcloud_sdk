@@ -10,7 +10,7 @@
     <Link rel="disk:attach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml" href="%s"/>
     <Link rel="disk:detach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml" href="%s"/>
     <Link rel="upgrade" href="%s/api/vApp/vm-%s/action/upgradeHardwareVersion"/>
-    <Link rel="up" type="application/vnd.vmware.vcloud.vApp+xml" href="%s/api/vApp/vapp-81f65d6c-80b0-4695-a4b1-57ae1f15d795"/>
+    <Link rel="up" type="application/vnd.vmware.vcloud.vApp+xml" href="%s"/>
     <Description>A virtual machine</Description>
     <ovf:VirtualHardwareSection xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" ovf:transport="" vcloud:href="%s/api/vApp/vm-%s/virtualHardwareSection/" vcloud:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml">
         <ovf:Info>Virtual hardware requirements</ovf:Info>

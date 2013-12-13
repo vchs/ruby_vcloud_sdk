@@ -29,6 +29,8 @@ describe VCloudSdk::VM do
 
         vm.attach_disk(new_disk)
         vm.independent_disks.size.should eql 1
+        vm.detach_disk(new_disk)
+        vm.independent_disks.should eql []
       ensure
         vapp.delete
         new_disk.delete

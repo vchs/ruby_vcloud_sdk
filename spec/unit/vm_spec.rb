@@ -99,4 +99,50 @@ describe VCloudSdk::VM do
       end
     end
   end
+
+  describe "#detach_disk" do
+    context "vApp is suspended" do
+      it "raises VmSuspendedError" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :suspended
+
+        expect do
+          subject.detach_disk(disk)
+        end.to raise_exception VCloudSdk::VmSuspendedError,
+                               "vApp #{VCloudSdk::Test::Response::VAPP_NAME}" +
+                               " suspended, discard state before detaching disk."
+      end
+    end
+
+    context "vApp is powered on" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
+
+      it "detaches the disk successfully" do
+        detach_task = subject.detach_disk(disk)
+        subject
+          .send(:task_is_success, detach_task)
+          .should be_true
+      end
+
+      context "error occurs when attaching disk" do
+        it "raises the exception" do
+          VCloudSdk::Connection::Connection
+            .any_instance
+            .should_receive(:post)
+            .once
+            .with(VCloudSdk::Test::Response::INSTANTIATED_VM_DETACH_DISK_LINK,
+                  anything,
+                  VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
+            .and_raise RestClient::BadRequest
+
+          expect do
+            subject.detach_disk(disk)
+          end.to raise_exception RestClient::BadRequest
+        end
+      end
+    end
+  end
 end
