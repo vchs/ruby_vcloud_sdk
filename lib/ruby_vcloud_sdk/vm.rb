@@ -45,6 +45,22 @@ module VCloudSdk
       task
     end
 
+    def detach_disk(disk)
+      parent_vapp = vapp
+      if parent_vapp.status == "SUSPENDED"
+        fail VmSuspendedError,
+             "vApp #{parent_vapp.name} suspended, discard state before detaching disk."
+      end
+
+      task = connection.post(entity_xml.detach_disk_link.href,
+                             disk_attach_or_detach_params(disk),
+                             Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
+      task = monitor_task(task)
+
+      Config.logger.info "Disk '#{disk.name}' is detached from VM '#{name}'"
+      task
+    end
+
     private
 
     def disk_attach_or_detach_params(disk)
@@ -53,6 +69,11 @@ module VCloudSdk
         .tap do |params|
         params.disk_href = disk.href
       end
+    end
+
+    def vapp
+      vapp_link = entity_xml.vapp_link
+      VCloudSdk::VApp.new(@session, vapp_link.href)
     end
   end
 end
