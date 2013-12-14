@@ -166,6 +166,15 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::INDY_DISK_RESPONSE
               end,
+            Test::Response::INDY_DISK_ATTACHED_VMS_LINK =>
+              lambda do |url, headers|
+                case options[:disk_state]
+                when :attached
+                  Test::Response::INDY_DISK_ATTACHED_VMS_RESPONSE
+                when :not_attached
+                  Test::Response::INDY_DISK_NO_ATTACHED_VMS_RESPONSE
+                end
+              end,
           },
           post: {
             Test::Response::LOGIN_LINK =>

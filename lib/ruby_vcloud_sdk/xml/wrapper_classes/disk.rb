@@ -33,6 +33,13 @@ module VCloudSdk
         @root["status"]
       end
 
+      def vms_link
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:VMS] },
+                  true)
+                 .first
+      end
+
       private
 
       RUNNING = [TASK_STATUS[:RUNNING],

@@ -50,6 +50,7 @@ module VCloudSdk
         INDY_DISK_NAME = "indy_disk_1"
         INDY_DISK_ID = "447e14ee-52a7-45ef-93ba-666f7879490d"
         INDY_DISK_URL = "#{URL}/api/disk/#{INDY_DISK_ID}"
+        INDY_DISK_ATTACHED_VMS_LINK = "#{URL}/api/disk/#{INDY_DISK_ID}/attachedVms"
         INDY_DISK_SIZE = 200
         SCSI_CONTROLLER_ID = "2"
         SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
@@ -764,7 +765,15 @@ module VCloudSdk
           "indy_disk_response.xml")) % [INDY_DISK_SIZE * 1024 * 1024,
           INDY_DISK_NAME, INDY_DISK_ID, INDY_DISK_URL, URL, URL,
           INDY_DISK_ID, URL, INDY_DISK_ID, URL, INDY_DISK_ID, URL,
-          INDY_DISK_ID, URL, URL]).strip
+          INDY_DISK_ID, URL, INDY_DISK_ID, URL, URL]).strip
+
+        INDY_DISK_ATTACHED_VMS_RESPONSE = (File.read(Test.spec_asset(
+          "indy_disk_attached_vms_response.xml")) % [URL, INDY_DISK_ID,
+          VM_NAME, INSTANTIATED_VM_LINK]).strip
+
+        INDY_DISK_NO_ATTACHED_VMS_RESPONSE = (File.read(Test.spec_asset(
+          "indy_disk_no_attached_vms_response.xml")) % [URL, INDY_DISK_ID
+          ]).strip
 
         INDY_DISK_ADDRESS_ON_PARENT = "1"
 

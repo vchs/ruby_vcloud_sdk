@@ -1,0 +1,7 @@
+<Vms xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     type="application/vnd.vmware.vcloud.vms+xml"
+     href="%s/api/disk/%s"
+     xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+  <VmReference type="application/vnd.vmware.vcloud.vm+xml" name="%s"
+               href="%s"/>
+</Vms>

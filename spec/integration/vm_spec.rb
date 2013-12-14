@@ -26,8 +26,11 @@ describe VCloudSdk::VM do
         new_disk_name = "test2"
         new_disk = vdc.create_disk(new_disk_name, 1024, vm)
         new_disk.name.should eql new_disk_name
+        new_disk.should_not be_attached
 
         vm.attach_disk(new_disk)
+        new_disk.should be_attached
+        new_disk.vm.href.should eql vm.href
         vm.independent_disks.size.should eql 1
         vm.detach_disk(new_disk)
         vm.independent_disks.should eql []

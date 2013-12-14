@@ -13,6 +13,7 @@
     <Link rel="remove" href="%s/api/disk/%s"/>
     <Link rel="edit" type="application/vnd.vmware.vcloud.disk+xml" href="%s/api/disk/%s"/>
     <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="%s/api/disk/%s/owner"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.vms+xml" href="%s/api/disk/%s/attachedVms"/>
     <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="%s/api/disk/%s/metadata"/>
     <StorageClass type="application/vnd.vmware.vcloud.vdcStorageClass+xml"
                   name="*"
