@@ -33,6 +33,9 @@ module VCloudSdk
     end
 
     def delete
+      fail CloudError,
+           "Disk '#{name}' of link #{href} is attached to VM '#{vm.name}'" if attached?
+
       disk_name = name
       task = connection.delete(entity_xml.remove_link.href)
       task = monitor_task(task)
