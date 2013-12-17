@@ -36,6 +36,9 @@ module VCloudSdk
     end
 
     def attach_disk(disk)
+      fail CloudError,
+           "Disk '#{disk.name}' of link #{disk.href} is attached to VM '#{disk.vm.name}'" if disk.attached?
+
       task = connection.post(entity_xml.attach_disk_link.href,
                              disk_attach_or_detach_params(disk),
                              Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])

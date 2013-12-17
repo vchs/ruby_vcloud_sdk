@@ -75,27 +75,46 @@ describe VCloudSdk::VM do
   end
 
   describe "#attach_disk" do
-    it "attaches the disk successfully" do
-      attach_task = subject.attach_disk(disk)
-      subject
-        .send(:task_is_success, attach_task)
-        .should be_true
-    end
-
-    context "error occurs when attaching disk" do
-      it "raises the exception" do
-        VCloudSdk::Connection::Connection
-          .any_instance
-          .should_receive(:post)
-          .once
-          .with(VCloudSdk::Test::Response::INSTANTIATED_VM_ATTACH_DISK_LINK,
-                anything,
-                VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
-          .and_raise RestClient::BadRequest
-
+    context "the disk is already attached to VM" do
+      it "raises an error" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option disk_state: :attached
         expect do
           subject.attach_disk(disk)
-        end.to raise_exception RestClient::BadRequest
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Disk '#{disk.name}' of link #{disk.href} is attached to VM '#{disk.vm.name}'"
+      end
+    end
+
+    context "the disk is not attached to any VM" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option disk_state: :not_attached
+      end
+
+      it "attaches the disk successfully" do
+        attach_task = subject.attach_disk(disk)
+        subject
+          .send(:task_is_success, attach_task)
+          .should be_true
+      end
+
+      context "error occurs when attaching disk" do
+
+        it "raises the exception" do
+          VCloudSdk::Connection::Connection
+            .any_instance
+            .should_receive(:post)
+            .once
+            .with(VCloudSdk::Test::Response::INSTANTIATED_VM_ATTACH_DISK_LINK,
+                  anything,
+                  VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
+            .and_raise RestClient::BadRequest
+
+          expect do
+            subject.attach_disk(disk)
+          end.to raise_exception RestClient::BadRequest
+        end
       end
     end
   end
