@@ -31,7 +31,12 @@ module VCloudSdk
 
     def list_disks
       entity_xml.hardware_section.hard_disks.map do |disk|
-        disk.element_name
+        disk_link = disk.host_resource.attribute("disk")
+        if disk_link.nil?
+          disk.element_name
+        else
+          "#{disk.element_name} (#{VCloudSdk::Disk.new(@session, disk_link.to_s).name})"
+        end
       end
     end
 

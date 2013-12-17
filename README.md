@@ -176,6 +176,13 @@ Copyright (c) VMware, Inc.
        throws:
          'RestClient::BadRequest' for un-expected errors
 
+  VM
+
+     list_disks
+       returns: names of disks on vm (in parentheses it shows the name of independent disk)
+     throws:
+       'RestClient::BadRequest' for un-expected errors
+
   VdcStorageProfile
   
      available_storage

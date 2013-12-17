@@ -8,12 +8,13 @@ describe VCloudSdk::VM do
 
   let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
+  let(:disk_name) { VCloudSdk::Test::Response::INDY_DISK_NAME }
   let(:disk) do
     vdc_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
       VCloudSdk::Test::Response::VDC_RESPONSE)
 
     disk_link = vdc_response
-                  .disks(VCloudSdk::Test::Response::INDY_DISK_NAME)
+                  .disks(disk_name)
     VCloudSdk::Disk.new(VCloudSdk::Test.mock_session(logger, url),
                         disk_link)
   end
@@ -43,7 +44,7 @@ describe VCloudSdk::VM do
         disks.should have(1).item
         disk = disks[0]
         disk.should be_an_instance_of VCloudSdk::Disk
-        disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+        disk.name.should eql disk_name
       end
     end
 
@@ -62,7 +63,7 @@ describe VCloudSdk::VM do
         VCloudSdk::Test::ResponseMapping.set_option vm_disk_attached: true
       end
 
-      its(:list_disks) { should eql ["Hard disk 1", "Hard disk 2"] }
+      its(:list_disks) { should eql ["Hard disk 1", "Hard disk 2 (#{disk_name})"] }
     end
 
     context "vm has no attached disk" do
