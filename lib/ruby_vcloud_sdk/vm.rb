@@ -55,6 +55,11 @@ module VCloudSdk
              "vApp #{parent_vapp.name} suspended, discard state before detaching disk."
       end
 
+      unless (vm = disk.vm).href == href
+        fail CloudError,
+             "Disk '#{disk.name}' is attached to other VM - name: '#{vm.name}', link '#{vm.href}'"
+      end
+
       task = connection.post(entity_xml.detach_disk_link.href,
                              disk_attach_or_detach_params(disk),
                              Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])

@@ -139,28 +139,69 @@ describe VCloudSdk::VM do
           .set_option vapp_power_state: :on
       end
 
-      it "detaches the disk successfully" do
-        detach_task = subject.detach_disk(disk)
-        subject
-          .send(:task_is_success, detach_task)
-          .should be_true
-      end
-
-      context "error occurs when attaching disk" do
-        it "raises the exception" do
-          VCloudSdk::Connection::Connection
-            .any_instance
-            .should_receive(:post)
-            .once
-            .with(VCloudSdk::Test::Response::INSTANTIATED_VM_DETACH_DISK_LINK,
-                  anything,
-                  VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
-            .and_raise RestClient::BadRequest
+      context "the disk is not attached to any VM" do
+        it "raises an error" do
+          VCloudSdk::Test::ResponseMapping
+            .set_option disk_state: :not_attached
 
           expect do
             subject.detach_disk(disk)
-          end.to raise_exception RestClient::BadRequest
+          end.to raise_exception VCloudSdk::CloudError,
+                                 "No vm is attached to disk '#{disk.name}'"
         end
+      end
+
+      context "the disk is attached to other VM" do
+        it "raises an error" do
+          VCloudSdk::Test::ResponseMapping
+            .set_option disk_state: :attached
+
+          other_vm = double("other VM")
+          other_vm
+            .stub(:name) { "other VM" }
+          other_vm
+            .stub(:href) { "other vm link" }
+
+          disk
+            .should_receive(:vm)
+            .and_return other_vm
+
+          expect do
+            subject.detach_disk(disk)
+          end.to raise_exception VCloudSdk::CloudError,
+                                 "Disk '#{disk.name}' is attached to other VM - name: 'other VM', link 'other vm link'"
+        end
+      end
+
+      context "the disk is attached to current VM" do
+        before do
+          VCloudSdk::Test::ResponseMapping
+            .set_option disk_state: :attached
+        end
+
+        it "detaches the disk successfully" do
+          detach_task = subject.detach_disk(disk)
+          subject
+            .send(:task_is_success, detach_task)
+            .should be_true
+        end
+
+        context "error occurs when attaching disk" do
+          it "raises the exception" do
+            VCloudSdk::Connection::Connection
+              .any_instance
+              .should_receive(:post)
+              .once
+              .with(VCloudSdk::Test::Response::INSTANTIATED_VM_DETACH_DISK_LINK,
+                    anything,
+                    VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
+              .and_raise RestClient::BadRequest
+
+            expect do
+              subject.detach_disk(disk)
+            end.to raise_exception RestClient::BadRequest
+          end
+      end
       end
     end
   end
