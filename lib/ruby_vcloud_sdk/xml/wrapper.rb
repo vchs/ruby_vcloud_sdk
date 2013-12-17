@@ -135,6 +135,18 @@ module VCloudSdk
                   true).first
       end
 
+      def power_on_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "power:powerOn"},
+                  true).first
+      end
+
+      def power_off_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "power:powerOff"},
+                  true).first
+      end
+
       def running_tasks
         get_nodes(XML_TYPE[:TASK],
                   { status: TASK_STATUS[:RUNNING] })

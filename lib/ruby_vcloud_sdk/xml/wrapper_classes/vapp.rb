@@ -9,14 +9,6 @@ module VCloudSdk
         get_nodes("NetworkConfigSection").first
       end
 
-      def power_on_link
-        get_nodes("Link", {"rel" => "power:powerOn"}, true).first
-      end
-
-      def power_off_link
-        get_nodes("Link", {"rel" => "power:powerOff"}, true).first
-      end
-
       def reboot_link
         get_nodes("Link", {"rel" => "power:reboot"}, true).first
       end
