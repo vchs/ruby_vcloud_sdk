@@ -238,4 +238,51 @@ describe VCloudSdk::VM do
       end
     end
   end
+
+  describe "#power_on" do
+    context "VM is powered off" do
+      before do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { "8" }
+      end
+
+      it "powers on target VM successfully" do
+        power_on_task = subject.power_on
+        subject.send(:task_is_success, power_on_task)
+          .should be_true
+      end
+
+      context "request to power on VM times out" do
+        it "fails to power on VM" do
+          subject
+            .should_receive(:task_is_success)
+            .at_least(3)
+            .and_return(false)
+
+          expect { subject.power_on }
+          .to raise_exception VCloudSdk::ApiTimeoutError,
+                              "Task Starting Virtual Machine sc-1f9f883e-968c-4bad-88e3-e7cb36881788(b2ee6bb6-d70f-4c54-8789-c2fd123c6491)" +
+                              " did not complete within limit of 3 seconds."
+        end
+      end
+    end
+
+    context "VM is powered on" do
+      before do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { "4" }
+      end
+
+      it "does not try to power on VM again" do
+        subject.send(:connection)
+          .should_not_receive(:post)
+
+        subject.power_on
+      end
+    end
+  end
 end

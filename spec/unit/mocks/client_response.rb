@@ -390,6 +390,8 @@ module VCloudSdk
 
         INSTANTIATED_VAPP_POWER_ON_LINK = "#{URL}/api/vApp/vapp-#{VAPP_ID}/power/action/powerOn"
 
+        INSTANTIATED_VM_POWER_ON_LINK = "#{URL}/api/vApp/vm-#{INSTANTIATED_VM_ID}/power/action/powerOn"
+
         INSTANTIATED_VAPP_POWER_OFF_LINK = "#{URL}/api/vApp/vapp-#{VAPP_ID}/power/action/powerOff"
 
         INSTANTIATED_VAPP_POWER_REBOOT_LINK = "#{URL}/api/vApp/vapp-#{VAPP_ID}/power/action/reboot"
@@ -534,6 +536,10 @@ module VCloudSdk
 
         INSTANTIATED_VAPP_POWER_ON_TASK_LINK = "#{URL}/api/task/#{INSTANTIATED_VAPP_POWER_ON_TASK_ID}"
 
+        INSTANTIATED_VM_POWER_ON_TASK_ID = "7a3e3a12-433c-46c3-979c-51f9f4a774d8"
+
+        INSTANTIATED_VM_POWER_ON_TASK_LINK = "#{URL}/api/task/#{INSTANTIATED_VM_POWER_ON_TASK_ID}"
+
         INSTANTED_VAPP_POWER_TASK_RUNNING = (File.read(Test.spec_asset(
           "instantiated_vapp_power_task_running.xml")) %
           [INSTANTIATED_VAPP_POWER_ON_TASK_ID,
@@ -541,11 +547,24 @@ module VCloudSdk
           INSTANTIATED_VAPP_POWER_ON_TASK_ID, VAPP_NAME, URL, USERNAME, URL,
           ORGANIZATION, URL]).strip
 
+        INSTANTED_VM_POWER_TASK_RUNNING = (File.read(Test.spec_asset(
+          "instantiated_vm_power_task_running.xml")) %
+          [INSTANTIATED_VM_POWER_ON_TASK_ID,
+           INSTANTIATED_VM_POWER_ON_TASK_LINK, URL,
+           INSTANTIATED_VM_POWER_ON_TASK_ID, VM_NAME, URL, USERNAME, URL,
+           ORGANIZATION, URL]).strip
+
         INSTANTED_VAPP_POWER_TASK_SUCCESS = (File.read(Test.spec_asset(
           "instantiated_vapp_power_task_success.xml")) %
           [INSTANTIATED_VAPP_POWER_ON_TASK_ID, INSTANTIATED_VAPP_POWER_ON_TASK_LINK,
           URL, INSTANTIATED_VAPP_POWER_ON_TASK_ID, VAPP_NAME, URL, USERNAME,
           URL, ORGANIZATION, URL]).strip
+
+        INSTANTED_VM_POWER_TASK_SUCCESS = (File.read(Test.spec_asset(
+          "instantiated_vm_power_task_success.xml")) %
+          [INSTANTIATED_VM_POWER_ON_TASK_ID, INSTANTIATED_VM_POWER_ON_TASK_LINK,
+           URL, INSTANTIATED_VM_POWER_ON_TASK_ID, VM_NAME, URL, USERNAME,
+           URL, ORGANIZATION, URL]).strip
 
         INSTANTIATED_VM_CPU_LINK = "#{URL}/api/vApp/vm-#{INSTANTIATED_VM_ID}/virtualHardwareSection/cpu"
 
