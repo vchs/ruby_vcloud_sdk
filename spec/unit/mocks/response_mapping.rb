@@ -120,6 +120,10 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::INSTANTED_VAPP_POWER_TASK_SUCCESS
               end,
+            Test::Response::INSTANTIATED_VM_POWER_ON_TASK_LINK =>
+              lambda do |url, headers|
+                Test::Response::INSTANTED_VM_POWER_TASK_SUCCESS
+              end,
             Test::Response::ORG_NETWORK_LINK =>
               lambda do |url, headers|
                 Test::Response::ORG_VDC_NETWORK_RESPONSE
@@ -219,6 +223,10 @@ module VCloudSdk
               lambda do |url, data, headers|
                 set_option vapp_power_state: :on
                 Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
+              end,
+            Test::Response::INSTANTIATED_VM_POWER_ON_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INSTANTED_VM_POWER_TASK_RUNNING
               end,
             Test::Response::INSTANTIATED_VAPP_POWER_OFF_LINK =>
               lambda do |url, data, headers|
