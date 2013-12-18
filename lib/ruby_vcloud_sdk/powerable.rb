@@ -34,10 +34,45 @@ module VCloudSdk
       task
     end
 
+    # Power off VApp or VM
+    def power_off
+      target = entity_xml
+      class_name = self.class.name.split("::").last
+      Config.logger.debug "#{class_name} status: #{target[:status]}"
+      if is_status?(target, :SUSPENDED)
+        error_msg = "#{class_name} #{target.name} suspended, discard state before powering off."
+        fail class_name == "VApp" ? VappSuspendedError : VmSuspendedError,
+             error_msg
+      end
+      if is_status?(target, :POWERED_OFF)
+        Config.logger.info "#{class_name} #{target.name} is already powered off."
+        return
+      end
+
+      power_off_link = target.power_off_link
+      unless power_off_link
+        fail CloudError, "#{class_name} #{target.name} is not in a state that could be powered off."
+      end
+
+      task = connection.post(power_off_link, nil)
+      monitor_task task, @session.time_limit[:power_off]
+      Config.logger.info "#{class_name} #{target.name} is powered off."
+
+      undeploy(target, class_name)
+    end
+
     private
 
     def is_status?(target, status)
       target[:status] == Xml::RESOURCE_ENTITY_STATUS[status].to_s
+    end
+
+    def undeploy(target, class_name)
+      params = Xml::WrapperFactory.create_instance("UndeployVAppParams") # Even for VM it's called UndeployVappParams
+      task = connection.post(target.undeploy_link, params)
+      task = monitor_task(task, @session.time_limit[:undeploy])
+      Config.logger.info "#{class_name} #{target.name} is undeployed."
+      task
     end
   end
 end

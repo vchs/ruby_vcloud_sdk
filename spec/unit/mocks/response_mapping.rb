@@ -233,10 +233,18 @@ module VCloudSdk
                 set_option vapp_power_state: :powered_off
                 Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
               end,
+            Test::Response::INSTANTIATED_VM_POWER_OFF_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INSTANTED_VM_POWER_TASK_RUNNING
+              end,
             Test::Response::INSTANTIATED_VAPP_UNDEPLOY_LINK =>
               lambda do |url, data, headers|
                 set_option vapp_power_state: :off
                 Test::Response::INSTANTED_VAPP_POWER_TASK_RUNNING
+              end,
+            Test::Response::INSTANTIATED_VM_UNDEPLOY_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INSTANTED_VM_POWER_TASK_RUNNING
               end,
             Test::Response::VAPP_TEMPLATE_INSTANTIATE_LINK =>
               lambda do |url, data, headers|

@@ -149,16 +149,18 @@ describe VCloudSdk::VApp do
           .should be_true
       end
 
-      it "fails to power off vApp" do
-        subject
-          .should_receive(:task_is_success)
-          .at_least(3)
-          .and_return(false)
+      context "request to power off vApp times out" do
+        it "fails to power off vApp" do
+          subject
+            .should_receive(:task_is_success)
+            .at_least(3)
+            .and_return(false)
 
-        expect { subject.power_off }
-          .to raise_exception VCloudSdk::ApiTimeoutError,
-                              "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
-                              " did not complete within limit of 3 seconds."
+          expect { subject.power_off }
+            .to raise_exception VCloudSdk::ApiTimeoutError,
+                                "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
+                                " did not complete within limit of 3 seconds."
+        end
       end
     end
 
@@ -182,13 +184,13 @@ describe VCloudSdk::VApp do
           .set_option vapp_power_state: :suspended
       end
 
-      it "raises error" do
+      it "raises an error" do
         subject.send(:connection)
           .should_not_receive(:post)
 
         expect { subject.power_off }
           .to raise_exception VCloudSdk::VappSuspendedError,
-                              "discard state first"
+                              "VApp #{vapp_name} suspended, discard state before powering off."
       end
     end
   end
