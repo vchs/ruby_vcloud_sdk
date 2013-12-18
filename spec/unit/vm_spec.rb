@@ -202,7 +202,39 @@ describe VCloudSdk::VM do
               subject.detach_disk(disk)
             end.to raise_exception RestClient::BadRequest
           end
+        end
       end
+    end
+  end
+
+  describe "#status" do
+    context "VM is powered on" do
+      it "returns status POWERED_ON" do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { 4 }
+        subject.status.should eql "POWERED_ON"
+      end
+    end
+
+    context "VM is powered off" do
+      it "returns the status POWERED_OFF" do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { 8 }
+        subject.status.should eql "POWERED_OFF"
+      end
+    end
+
+    context "VM is suspended" do
+      it "returns the status SUSPENDED" do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { 3 }
+        subject.status.should eql "SUSPENDED"
       end
     end
   end
