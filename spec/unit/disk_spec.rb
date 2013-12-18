@@ -106,8 +106,8 @@ describe VCloudSdk::Disk do
 
       context "error occurs when deleting disk" do
         it "raises the exception" do
-          VCloudSdk::Connection::Connection
-            .any_instance
+          subject
+            .send(:connection)
             .should_receive(:delete)
             .once
             .with(VCloudSdk::Test::Response::INDY_DISK_URL)

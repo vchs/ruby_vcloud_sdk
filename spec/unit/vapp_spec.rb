@@ -212,8 +212,8 @@ describe VCloudSdk::VApp do
 
         context "error occurred in recomposing request" do
           it "raises the exception" do
-            VCloudSdk::Connection::Connection
-              .any_instance
+            subject
+              .send(:connection)
               .stub(:post)
               .with(VCloudSdk::Test::Response::RECOMPOSE_VAPP_LINK, anything)
               .and_raise RestClient::BadRequest
