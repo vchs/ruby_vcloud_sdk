@@ -1,6 +1,9 @@
 <Vm xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" needsCustomization="true" deployed="false" status="8" name="vm1" id="urn:vcloud:vm:%s" type="application/vnd.vmware.vcloud.vm+xml" href="%s/api/vApp/vm-%s" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_VirtualSystemSettingData.xsd http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1.5 http://10.20.46.172/api/v1.5/schema/master.xsd http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_ResourceAllocationSettingData.xsd">
     <Link rel="power:powerOn" href="%s/api/vApp/vm-%s/power/action/powerOn"/>
+    <Link rel="power:powerOff" href="%s/api/vApp/vm-%s/power/action/powerOff"/>
     <Link rel="deploy" type="application/vnd.vmware.vcloud.deployVAppParams+xml" href="%s/api/vApp/vm-%s/action/deploy"/>
+    <Link rel="undeploy" type="application/vnd.vmware.vcloud.undeployVAppParams+xml"
+          href="%s/api/vApp/vm-%s/action/undeploy"/>
     <Link rel="edit" type="application/vnd.vmware.vcloud.vm+xml" href="%s/api/vApp/vm-%s"/>
     <Link rel="remove" href="%s/api/vApp/vm-%s"/>
     <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="%s/api/vApp/vm-%s/metadata"/>

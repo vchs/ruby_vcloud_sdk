@@ -38,32 +38,6 @@ module VCloudSdk
            "Fail to delete vApp #{vapp_name}"
     end
 
-    def power_off
-      vapp = entity_xml
-      vapp_name = vapp.name
-      Config.logger.debug "vApp status: #{vapp[:status]}"
-      if is_status?(vapp, :SUSPENDED)
-        Config.logger.info "vApp #{vapp_name} suspended, discard state before powering off."
-        fail VappSuspendedError, "discard state first"
-      end
-
-      if is_status?(vapp, :POWERED_OFF)
-        Config.logger.info "vApp #{vapp_name} is already powered off."
-        return
-      end
-
-      power_off_link = vapp.power_off_link
-      unless power_off_link
-        fail CloudError, "vApp #{vapp_name} is not in a state that could be powered off."
-      end
-
-      task = connection.post(power_off_link, nil)
-      monitor_task task, @session.time_limit[:power_off]
-      Config.logger.info "vApp #{vapp_name} is in powered off state. Need to be undeployed."
-
-      undeploy_vapp(vapp)
-    end
-
     def recompose_from_vapp_template(catalog_name, template_name)
       recompose_vapp_link = get_recompose_vapp_link
 
@@ -119,17 +93,7 @@ module VCloudSdk
       fail ObjectNotFoundError, "VM '#{name}' is not found"
     end
 
-
-
     private
-
-    def undeploy_vapp(vapp)
-      params = Xml::WrapperFactory.create_instance("UndeployVAppParams")
-      task = connection.post(vapp.undeploy_link, params)
-      task = monitor_task(task, @session.time_limit[:undeploy])
-      Config.logger.info "vApp #{name} is undeployed."
-      task
-    end
 
     def recompose_from_vapp_template_param(template)
       Xml::WrapperFactory.create_instance("RecomposeVAppParams").tap do |params|

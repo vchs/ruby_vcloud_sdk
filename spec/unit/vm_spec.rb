@@ -19,6 +19,8 @@ describe VCloudSdk::VM do
                         disk_link)
   end
 
+  let(:vm_name) { VCloudSdk::Test::Response::VM_NAME }
+
   subject do
     described_class.new(VCloudSdk::Test.mock_session(logger, url),
                         VCloudSdk::Test::Response::INSTANTIATED_VM_LINK)
@@ -32,7 +34,7 @@ describe VCloudSdk::VM do
 
   describe "#name" do
     it "returns the name of VM" do
-      subject.name.should eql VCloudSdk::Test::Response::VM_NAME
+      subject.name.should eql vm_name
     end
   end
 
@@ -282,6 +284,74 @@ describe VCloudSdk::VM do
           .should_not_receive(:post)
 
         subject.power_on
+      end
+    end
+  end
+
+  describe "#power_off" do
+
+    context "VM is powered on" do
+      before do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { "4" }
+      end
+
+      it "powers off target VM successfully" do
+        power_off_task = subject.power_off
+        subject.send(:task_is_success, power_off_task)
+          .should be_true
+      end
+
+      context "request to power off VM times out" do
+        it "fails to power off VM" do
+          subject
+            .should_receive(:task_is_success)
+            .at_least(3)
+            .and_return(false)
+
+          expect { subject.power_off }
+          .to raise_exception VCloudSdk::ApiTimeoutError,
+                              "Task Starting Virtual Machine sc-1f9f883e-968c-4bad-88e3-e7cb36881788(b2ee6bb6-d70f-4c54-8789-c2fd123c6491)" +
+                              " did not complete within limit of 3 seconds."
+        end
+      end
+    end
+
+    context "VM is powered off" do
+      before do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { "8" }
+      end
+
+      it "does not try to power off the VM again" do
+        subject
+          .send(:connection)
+          .should_not_receive(:post)
+
+        subject.power_off
+      end
+    end
+
+    context "VM is suspended" do
+      before do
+        VCloudSdk::Xml::Vm
+          .any_instance
+          .stub(:[])
+          .with(:status) { "3" }
+      end
+
+      it "raises an error" do
+        subject
+          .send(:connection)
+          .should_not_receive(:post)
+
+        expect { subject.power_off }
+        .to raise_exception VCloudSdk::VmSuspendedError,
+                            "VM #{vm_name} suspended, discard state before powering off."
       end
     end
   end

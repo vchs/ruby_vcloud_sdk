@@ -147,6 +147,12 @@ module VCloudSdk
                   true).first
       end
 
+      def undeploy_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "undeploy" },
+                  true).first
+      end
+
       def running_tasks
         get_nodes(XML_TYPE[:TASK],
                   { status: TASK_STATUS[:RUNNING] })

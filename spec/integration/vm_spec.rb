@@ -41,4 +41,18 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "vm manipulation" do
+    it "powers on and powers off vm successfully" do
+      begin
+        vapp_name = SecureRandom.uuid
+        catalog = client.find_catalog_by_name(catalog_name)
+        vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
+        vm = vapp.vms.first
+        vm.power_on
+        vm.power_off
+      ensure
+        vapp.delete
+      end
+    end
+  end
 end

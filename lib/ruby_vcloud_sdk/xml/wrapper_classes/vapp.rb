@@ -17,10 +17,6 @@ module VCloudSdk
         get_nodes(XML_TYPE[:TASK])
       end
 
-      def undeploy_link
-        get_nodes("Link", {"rel" => "undeploy"}, true).first
-      end
-
       def discard_state
         get_nodes("Link", {"rel" => "discardState"}, true).first
       end
