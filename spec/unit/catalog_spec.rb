@@ -61,12 +61,12 @@ describe VCloudSdk::Catalog do
     end
 
     it "throws exception if admin_catalog_xml is nil" do
-      VCloudSdk::Connection::Connection
-        .any_instance
+      subject
+        .send(:connection)
         .stub(:get)
 
-      VCloudSdk::Connection::Connection
-        .any_instance
+      subject
+        .send(:connection)
         .stub(:get)
         .with(VCloudSdk::Test::Response::CATALOG_LINK)
         .and_return nil

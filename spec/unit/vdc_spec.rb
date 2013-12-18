@@ -399,8 +399,8 @@ describe VCloudSdk::VDC do
 
     context "error occurs when creating disk" do
       it "raises the exception" do
-        VCloudSdk::Connection::Connection
-          .any_instance
+        subject
+          .send(:connection)
           .stub(:post)
           .with(anything, anything, VCloudSdk::Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
           .and_raise RestClient::BadRequest

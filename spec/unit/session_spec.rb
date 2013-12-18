@@ -100,8 +100,8 @@ describe VCloudSdk::Session do
       error_msg = "400 Bad Request"
       session_xml_obj = VCloudSdk::Xml::WrapperFactory
         .wrap_document(VCloudSdk::Test::Response::SESSION)
-      VCloudSdk::Connection::Connection
-        .any_instance
+      subject
+        .send(:connection)
         .stub(:get)
         .with(session_xml_obj.organization)
         .and_raise(error_msg)

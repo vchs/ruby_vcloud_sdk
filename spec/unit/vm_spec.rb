@@ -105,8 +105,8 @@ describe VCloudSdk::VM do
       context "error occurs when attaching disk" do
 
         it "raises the exception" do
-          VCloudSdk::Connection::Connection
-            .any_instance
+          subject
+            .send(:connection)
             .should_receive(:post)
             .once
             .with(VCloudSdk::Test::Response::INSTANTIATED_VM_ATTACH_DISK_LINK,
@@ -191,8 +191,8 @@ describe VCloudSdk::VM do
 
         context "error occurs when attaching disk" do
           it "raises the exception" do
-            VCloudSdk::Connection::Connection
-              .any_instance
+            subject
+              .send(:connection)
               .should_receive(:post)
               .once
               .with(VCloudSdk::Test::Response::INSTANTIATED_VM_DETACH_DISK_LINK,
