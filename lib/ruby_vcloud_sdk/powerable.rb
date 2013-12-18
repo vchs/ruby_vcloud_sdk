@@ -11,6 +11,29 @@ module VCloudSdk
            "Fail to find corresponding status for code '#{status_code}'"
     end
 
+    # Power on VApp or VM
+    def power_on
+      target = entity_xml
+      class_name = self.class.name.split("::").last
+      Config.logger.debug "#{class_name} status: #{target[:status]}"
+      if is_status?(target, :POWERED_ON)
+        Config.logger.info "#{class_name} #{target.name} is already powered-on."
+        return
+      end
+
+      power_on_link = target.power_on_link
+      unless power_on_link
+        fail CloudError,
+             "#{class_name} #{target.name} not in a state able to power on."
+      end
+
+      Config.logger.info "Powering on #{class_name} #{target.name}."
+      task = connection.post(power_on_link, nil)
+      task = monitor_task task, @session.time_limit[:power_on]
+      Config.logger.info "#{class_name} #{target.name} is powered on."
+      task
+    end
+
     private
 
     def is_status?(target, status)

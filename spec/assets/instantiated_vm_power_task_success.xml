@@ -1,0 +1,25 @@
+<Task xmlns="http://www.vmware.com/vcloud/v1.5"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      status="success"
+      startTime="2013-12-18T16:46:42.927-05:00"
+      serviceNamespace="com.vmware.vcloud"
+      operationName="vappDeploy"
+      operation="Running Virtual Machine sc-1f9f883e-968c-4bad-88e3-e7cb36881788(b2ee6bb6-d70f-4c54-8789-c2fd123c6491)"
+      expiryTime="2014-03-18T16:46:42.927-04:00"
+      cancelRequested="false"
+      name="task"
+      id="urn:vcloud:task:%s"
+      type="application/vnd.vmware.vcloud.task+xml"
+      href="%s"
+      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+  <Link rel="task:cancel" href="%s/api/task/%s/action/cancel"/>
+  <Owner type="application/vnd.vmware.vcloud.vm+xml" name="%s"
+         href="%s/api/vApp/vm-b2ee6bb6-d70f-4c54-8789-c2fd123c6491"/>
+  <User type="application/vnd.vmware.admin.user+xml" name="%s"
+        href="%s/api/admin/user/1db91e2d-3e0e-4678-b39b-a23716a6480a"/>
+  <Organization type="application/vnd.vmware.vcloud.org+xml" name="%s"
+                href="%s/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+  <Progress>0</Progress>
+  <Details/>
+</Task>
+

@@ -105,16 +105,18 @@ describe VCloudSdk::VApp do
           .should be_true
       end
 
-      it "fails to power on vApp" do
-        subject
-          .should_receive(:task_is_success)
-          .at_least(3)
-          .and_return(false)
+      context "request to power on vApp times out" do
+        it "fails to power on vApp" do
+          subject
+            .should_receive(:task_is_success)
+            .at_least(3)
+            .and_return(false)
 
-        expect { subject.power_on }
-          .to raise_exception VCloudSdk::ApiTimeoutError,
-                              "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
-                              " did not complete within limit of 3 seconds."
+          expect { subject.power_on }
+            .to raise_exception VCloudSdk::ApiTimeoutError,
+                                "Task Starting Virtual Application test17_3_8(2b685484-ed2f-48c3-9396-5ad29cb282f4)" +
+                                " did not complete within limit of 3 seconds."
+        end
       end
     end
 
