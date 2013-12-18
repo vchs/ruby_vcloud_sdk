@@ -1,9 +1,11 @@
 require_relative "infrastructure"
+require_relative "powerable"
 require_relative "vm"
 
 module VCloudSdk
   class VApp
     include Infrastructure
+    include Powerable
 
     def initialize(session, link)
       @session = session
@@ -18,7 +20,7 @@ module VCloudSdk
       vapp = entity_xml
       vapp_name = name
 
-      if is_vapp_status?(vapp, :POWERED_ON)
+      if is_status?(vapp, :POWERED_ON)
         fail CloudError,
              "vApp #{vapp_name} is powered on, power-off before deleting."
       end
@@ -40,7 +42,7 @@ module VCloudSdk
       vapp = entity_xml
       vapp_name = vapp.name
       Config.logger.debug "vApp status: #{vapp[:status]}"
-      if is_vapp_status?(vapp, :POWERED_ON)
+      if is_status?(vapp, :POWERED_ON)
         Config.logger.info "vApp #{vapp_name} is already powered-on."
         return
       end
@@ -62,12 +64,12 @@ module VCloudSdk
       vapp = entity_xml
       vapp_name = vapp.name
       Config.logger.debug "vApp status: #{vapp[:status]}"
-      if is_vapp_status?(vapp, :SUSPENDED)
+      if is_status?(vapp, :SUSPENDED)
         Config.logger.info "vApp #{vapp_name} suspended, discard state before powering off."
         fail VappSuspendedError, "discard state first"
       end
 
-      if is_vapp_status?(vapp, :POWERED_OFF)
+      if is_status?(vapp, :POWERED_OFF)
         Config.logger.info "vApp #{vapp_name} is already powered off."
         return
       end
@@ -139,17 +141,7 @@ module VCloudSdk
       fail ObjectNotFoundError, "VM '#{name}' is not found"
     end
 
-    def status
-      vapp_status_code = entity_xml[:status].to_i
-      Xml::RESOURCE_ENTITY_STATUS.each_pair do |k,v|
-        if v == vapp_status_code
-          return k.to_s
-        end
-      end
 
-      fail CloudError,
-           "Fail to find corresponding status for code '#{vapp_status_code}'"
-    end
 
     private
 
@@ -159,10 +151,6 @@ module VCloudSdk
       task = monitor_task(task, @session.time_limit[:undeploy])
       Config.logger.info "vApp #{name} is undeployed."
       task
-    end
-
-    def is_vapp_status?(vapp, status)
-      vapp[:status] == Xml::RESOURCE_ENTITY_STATUS[status].to_s
     end
 
     def recompose_from_vapp_template_param(template)

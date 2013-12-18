@@ -1,9 +1,11 @@
 require "forwardable"
 require_relative "infrastructure"
+require_relative "powerable"
 
 module VCloudSdk
   class VM
     include Infrastructure
+    include Powerable
 
     extend Forwardable
     def_delegator :entity_xml, :name

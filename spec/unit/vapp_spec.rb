@@ -337,7 +337,7 @@ describe VCloudSdk::VApp do
       end
     end
 
-    context "vApp is powered off" do
+    context "vApp is suspended" do
       it "returns the status SUSPENDED" do
         VCloudSdk::Test::ResponseMapping
           .set_option vapp_power_state: :suspended
