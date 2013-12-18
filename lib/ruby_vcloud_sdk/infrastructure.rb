@@ -119,15 +119,6 @@ module VCloudSdk
       end
     end
 
-    def delete_catalog_item_entity entity
-      linked_obj = connection.get(entity)
-
-      wait_for_running_tasks(linked_obj, linked_obj.href)
-      Config.logger.info "Deleting #{linked_obj.href}."
-      monitor_task(connection.delete(linked_obj))
-      Config.logger.info "#{linked_obj.href} deleted."
-    end
-
     def entity_xml
       connection.get(@link)
     end
