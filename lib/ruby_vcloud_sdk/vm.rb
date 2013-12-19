@@ -76,6 +76,22 @@ module VCloudSdk
       task
     end
 
+    def insert_media(catalog_name, media_file_name)
+      catalog = find_catalog_by_name(catalog_name)
+      media = catalog.find_item(media_file_name, Xml::MEDIA_TYPE[:MEDIA])
+
+      vm = entity_xml
+      media_xml = connection.get(media.href)
+      Config.logger.info("Inserting media #{media_xml.name} into VM #{vm.name}.")
+
+      wait_for_running_tasks(media_xml, "Media '#{media_xml.name}'")
+
+      task = connection.post(vm.insert_media_link.href,
+                             media_insert_or_eject_params(media),
+                             Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+      task = monitor_task(task)
+    end
+
     private
 
     def disk_attach_or_detach_params(disk)
@@ -89,6 +105,12 @@ module VCloudSdk
     def vapp
       vapp_link = entity_xml.vapp_link
       VCloudSdk::VApp.new(@session, vapp_link.href)
+    end
+
+    def media_insert_or_eject_params(media)
+      Xml::WrapperFactory.create_instance("MediaInsertOrEjectParams").tap do |params|
+        params.media_href = media.href
+      end
     end
   end
 end
