@@ -270,6 +270,10 @@ module VCloudSdk
               lambda do |href, data, headers|
                 Test::Response::INDY_DISK_DETACH_TASK
               end,
+            Test::Response::INSTANTIATED_VM_INSERT_MEDIA_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::INSTANTIATED_VM_INSERT_MEDIA_TASK_DONE
+              end,
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>
