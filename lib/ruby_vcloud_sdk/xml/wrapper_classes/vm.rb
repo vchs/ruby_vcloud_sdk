@@ -48,7 +48,9 @@ module VCloudSdk
       end
 
       def insert_media_link
-        get_nodes("Link", {"rel" => "media:insertMedia"}, true).first
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "media:insertMedia" },
+                  true).first
       end
 
       def eject_media_link
