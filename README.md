@@ -88,11 +88,11 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
     
     find_network_by_name
-        returns:
-          network object matching name
-        throws:
-          'ObjectNotFoundError' when network with the name does not exist
-          'RestClient::BadRequest' for un-expected errors
+      returns:
+        network object matching name
+      throws:
+        'ObjectNotFoundError' when network with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
 
     disks
       returns: array of disk objects
@@ -177,11 +177,61 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
   VM
+     independent_disks
+       returns: array of disk objects
+       throws:
+         'RestClient::BadRequest' for un-expected errors
 
      list_disks
        returns: names of disks on vm (in parentheses it shows the name of independent disk)
-     throws:
-       'RestClient::BadRequest' for un-expected errors
+       throws:
+         'RestClient::BadRequest' for un-expected errors
+
+     attach_disk
+       returns: task object
+       throws:
+         'CloudError' if disk is already attached
+         'RestClient::BadRequest' for un-expected errors
+
+     detach_disk
+       returns: task object
+       throws:
+         'VmSuspendedError' if containing vApp is suspended
+         'CloudError' if disk is not attached or attached to other VM
+         'RestClient::BadRequest' for un-expected errors
+
+     status
+       returns: string object
+       throws:
+         'CloudError' if status code is invalid
+         'RestClient::BadRequest' for un-expected errors
+
+     power_on
+       returns: task object
+       throws:
+         'CloudError' if power_on_link of VM is missing
+         'RestClient::BadRequest' for un-expected errors
+
+     power_off
+       returns: task object
+       throws:
+         'CloudError' if power_off_link of VM is missing
+         'VmSuspendedError' if VM is suspended
+         'RestClient::BadRequest' for un-expected errors
+
+     insert_media
+       returns: task object
+       throws:
+         'ObjectNotFoundError' if when catalog with the name does not exist
+         'ObjectNotFoundError' if when media with the name does not exist
+         'RestClient::BadRequest' for un-expected errors
+
+     eject_media
+       returns: task object
+       throws:
+         'ObjectNotFoundError' if when catalog with the name does not exist
+         'ObjectNotFoundError' if when media with the name does not exist
+         'RestClient::BadRequest' for un-expected errors
 
   VdcStorageProfile
   
