@@ -54,7 +54,9 @@ module VCloudSdk
       end
 
       def eject_media_link
-        get_nodes("Link", {"rel" => "media:ejectMedia"}, true).first
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "media:ejectMedia" },
+                  true).first
       end
 
       def metadata_link
