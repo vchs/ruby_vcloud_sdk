@@ -9,7 +9,7 @@
     <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="%s/api/vApp/vm-%s/metadata"/>
     <Link rel="screen:thumbnail" href="%s/api/vApp/vm-%s/screen"/>
     <Link rel="media:insertMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml" href="%s"/>
-    <Link rel="media:ejectMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml" href="%s/api/vApp/vm-%s/media/action/ejectMedia"/>
+    <Link rel="media:ejectMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml" href="%s"/>
     <Link rel="disk:attach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml" href="%s"/>
     <Link rel="disk:detach" type="application/vnd.vmware.vcloud.diskAttachOrDetachParams+xml" href="%s"/>
     <Link rel="upgrade" href="%s/api/vApp/vm-%s/action/upgradeHardwareVersion"/>

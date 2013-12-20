@@ -77,19 +77,17 @@ module VCloudSdk
     end
 
     def insert_media(catalog_name, media_file_name)
-      catalog = find_catalog_by_name(catalog_name)
-      media = catalog.find_item(media_file_name, Xml::MEDIA_TYPE[:MEDIA])
+      insert_or_eject_media(catalog_name,
+                            media_file_name,
+                            :insert_media_link,
+                            "Inserting media %s into VM %s")
+    end
 
-      vm = entity_xml
-      media_xml = connection.get(media.href)
-      Config.logger.info("Inserting media #{media_xml.name} into VM #{vm.name}.")
-
-      wait_for_running_tasks(media_xml, "Media '#{media_xml.name}'")
-
-      task = connection.post(vm.insert_media_link.href,
-                             media_insert_or_eject_params(media),
-                             Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
-      monitor_task(task)
+    def eject_media(catalog_name, media_file_name)
+      insert_or_eject_media(catalog_name,
+                            media_file_name,
+                            :eject_media_link,
+                            "Ejecting media %s from VM %s")
     end
 
     private
@@ -111,6 +109,22 @@ module VCloudSdk
       Xml::WrapperFactory.create_instance("MediaInsertOrEjectParams").tap do |params|
         params.media_href = media.href
       end
+    end
+
+    def insert_or_eject_media(catalog_name, media_file_name, link, log_msg)
+      catalog = find_catalog_by_name(catalog_name)
+      media = catalog.find_item(media_file_name, Xml::MEDIA_TYPE[:MEDIA])
+
+      vm = entity_xml
+      media_xml = connection.get(media.href)
+      Config.logger.info(sprintf(log_msg, media_xml.name, vm.name))
+
+      wait_for_running_tasks(media_xml, "Media '#{media_xml.name}'")
+
+      task = connection.post(vm.public_send(link).href,
+                             media_insert_or_eject_params(media),
+                             Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+      monitor_task(task)
     end
   end
 end
