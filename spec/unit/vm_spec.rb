@@ -432,4 +432,79 @@ describe VCloudSdk::VM do
       end
     end
   end
+
+  describe "#eject_media" do
+    context "catalog containing media file does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.eject_media("dummy", "dummy")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Catalog 'dummy' is not found"
+      end
+    end
+
+    context "catalog containing media file exists" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option catalog_state: :added
+      end
+
+      context "media file matching the name does not exist" do
+        it "raises ObjectNotFoundError" do
+          expect do
+            subject.eject_media(catalog_name, "dummy")
+          end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                                 "Catalog Item 'dummy' is not found"
+        end
+      end
+
+      context "media file matching the name exists" do
+        before do
+          VCloudSdk::Test::ResponseMapping
+            .set_option existing_media_state: :done
+        end
+
+        context "media file has a running task" do
+          it "ejects media file successfully" do
+            VCloudSdk::Test::ResponseMapping
+              .set_option existing_media_state: :busy
+            task = subject.eject_media(catalog_name,
+                                        media_name)
+            subject
+              .send(:task_is_success, task)
+              .should be_true
+          end
+        end
+
+        context "media file has no running task" do
+          it "ejects media file successfully" do
+            task = subject.eject_media(catalog_name,
+                                        media_name)
+
+            subject
+              .send(:task_is_success, task)
+              .should be_true
+          end
+        end
+
+        context "error occurs when ejecting media" do
+          it "raises the exception" do
+            subject
+              .send(:connection)
+              .should_receive(:post)
+              .once
+              .with(VCloudSdk::Test::Response::INSTANTIATED_VM_EJECT_MEDIA_LINK,
+                    anything,
+                    VCloudSdk::Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+              .and_raise RestClient::BadRequest
+
+            expect do
+              subject.eject_media(catalog_name,
+                                   media_name)
+            end.to raise_exception RestClient::BadRequest
+          end
+        end
+      end
+    end
+  end
 end

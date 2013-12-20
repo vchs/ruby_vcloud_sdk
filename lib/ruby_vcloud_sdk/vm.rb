@@ -82,11 +82,27 @@ module VCloudSdk
 
       vm = entity_xml
       media_xml = connection.get(media.href)
-      Config.logger.info("Inserting media #{media_xml.name} into VM #{vm.name}.")
+      Config.logger.info("Inserting media #{media_xml.name} into VM #{vm.name}")
 
       wait_for_running_tasks(media_xml, "Media '#{media_xml.name}'")
 
       task = connection.post(vm.insert_media_link.href,
+                             media_insert_or_eject_params(media),
+                             Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+      monitor_task(task)
+    end
+
+    def eject_media(catalog_name, media_file_name)
+      catalog = find_catalog_by_name(catalog_name)
+      media = catalog.find_item(media_file_name, Xml::MEDIA_TYPE[:MEDIA])
+
+      vm = entity_xml
+      media_xml = connection.get(media.href)
+      Config.logger.info("Ejecting media #{media_xml.name} from VM #{vm.name}")
+
+      wait_for_running_tasks(media_xml, "Media '#{media_xml.name}'")
+
+      task = connection.post(vm.eject_media_link.href,
                              media_insert_or_eject_params(media),
                              Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
       monitor_task(task)
