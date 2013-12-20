@@ -12,6 +12,7 @@ describe VCloudSdk::VM do
   let(:vapp_name) { ENV['VAPP_NAME'] ||  VCloudSdk::Test::DefaultSetting::VAPP_NAME }
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
   let(:vapp_template_name) { VCloudSdk::Test::DefaultSetting::EXISTING_VAPP_TEMPLATE_NAME }
+  let(:media_name) { "mini1" }
 
   describe "disk manipulation" do
     it "attaches and detaches the disk successfully" do
@@ -42,13 +43,15 @@ describe VCloudSdk::VM do
   end
 
   describe "vm manipulation" do
-    it "powers on and powers off vm successfully" do
+    it "powers on/off vm and inserts/ejects media successfully" do
       begin
         vapp_name = SecureRandom.uuid
         catalog = client.find_catalog_by_name(catalog_name)
         vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
         vm = vapp.vms.first
         vm.power_on
+        vm.insert_media(catalog_name, media_name)
+        vm.eject_media(catalog_name, media_name)
         vm.power_off
       ensure
         vapp.delete
