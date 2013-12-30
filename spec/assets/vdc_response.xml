@@ -16,6 +16,8 @@
   <Link rel="add" type="application/vnd.vmware.vcloud.captureVAppParams+xml" href="%s/api/vdc/%s/action/captureVApp"/>
   <Link rel="add" type="application/vnd.vmware.vcloud.composeVAppParams+xml" href="%s/api/vdc/%s/action/composeVApp"/>
   <Link rel="add" type="application/vnd.vmware.vcloud.diskCreateParams+xml" href="%s"/>
+  <Link rel="edgeGateways" type="application/vnd.vmware.vcloud.query.records+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways"/>
   <Description/>
   <AllocationModel>AllocationVApp</AllocationModel>
   <StorageCapacity>

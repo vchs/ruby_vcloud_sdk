@@ -8,6 +8,7 @@ require_relative "cpu"
 require_relative "disk"
 require_relative "memory"
 require_relative "network"
+require_relative "edge_gateway"
 
 module VCloudSdk
   class VDC
@@ -103,6 +104,15 @@ module VCloudSdk
       end
 
       fail ObjectNotFoundError, "Network '#{name}' is not found"
+    end
+
+    def edge_gateways
+      connection
+        .get(@vdc_xml_obj.edge_gateways_link)
+        .edge_gateway_records
+        .map do |edge_gateway_link|
+        VCloudSdk::EdgeGateway.new(@session, edge_gateway_link.href)
+      end
     end
 
     def disks

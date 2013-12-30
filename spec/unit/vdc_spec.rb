@@ -458,4 +458,20 @@ describe VCloudSdk::VDC do
       end
     end
   end
+
+  describe "#edge_gateways" do
+    context "vdc has edge gateways" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a collection of edge gateways" do
+        edge_gateways = subject.edge_gateways
+        edge_gateways.should have(1).item
+        edge_gateway = edge_gateways.first
+        edge_gateway.should be_an_instance_of VCloudSdk::EdgeGateway
+      end
+    end
+  end
 end

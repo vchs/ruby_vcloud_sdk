@@ -28,6 +28,10 @@ module VCloudSdk
                   Test::Response::ORG_VDC_STORAGE_PROFILE_RESPONSE
                 end
               end,
+            Test::Response::ORG_VDC_EDGE_GATEWAYS_LINK =>
+              lambda do |url, headers|
+                Test::Response::ORG_VDC_EDGE_GATEWAYS_RESPONSE
+              end,
             Test::Response::ORG_VDC_EDGE_GATEWAY_LINK =>
               lambda do |url, headers|
                 Test::Response::ORG_VDC_EDGE_GATEWAY_RESPONSE
