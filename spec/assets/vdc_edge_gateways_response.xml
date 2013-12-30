@@ -1,0 +1,18 @@
+<QueryResultRecords xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    total="1" pageSize="25" page="1" name="edgeGateway"
+                    type="application/vnd.vmware.vcloud.query.records+xml"
+                    href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways?page=1&amp;pageSize=25&amp;format=records"
+                    xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.query.references+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways?page=1&amp;pageSize=25&amp;format=references"/>
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.query.idrecords+xml"
+        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways?page=1&amp;pageSize=25&amp;format=idrecords"/>
+  <EdgeGatewayRecord vdc="https://p2v1-vcd.vchs.vmware.com:443/api/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"
+                     numberOfOrgNetworks="1" numberOfExtNetworks="1" name="164-935" isBusy="false" haStatus="UP"
+                     gatewayStatus="READY"
+                     href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf"
+                     isSyslogServerSettingInSync="true" taskStatus="error"
+                     taskOperation="networkConfigureEdgeGatewayServices"
+                     task="https://p2v1-vcd.vchs.vmware.com:443/api/task/8297e698-1767-4bfa-b6be-b85dde26eb85"
+                     taskDetails="  Cannot update edge gateway &quot;164-935&quot;"/>
+</QueryResultRecords>

@@ -40,6 +40,12 @@ module VCloudSdk
         get_nodes(:ResourceEntity, type: MEDIA_TYPE[:VAPP])
       end
 
+      def edge_gateways_link
+        get_nodes(XML_TYPE[:LINK],
+                  rel: "edgeGateways")
+                  .first
+      end
+
       # vApp Template names are not unique so multiple ones can be returned.
       def get_vapp_templates(name)
         get_nodes("ResourceEntity",
