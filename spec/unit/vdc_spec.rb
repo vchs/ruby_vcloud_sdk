@@ -261,8 +261,8 @@ describe VCloudSdk::VDC do
     context "network with given name does not exist" do
       it "raises ObjectNotFoundError" do
         expect do
-          network = subject
-                      .find_network_by_name("xxx")
+          subject
+            .find_network_by_name("xxx")
         end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                "Network 'xxx' is not found"
       end
@@ -455,6 +455,34 @@ describe VCloudSdk::VDC do
         vm = vapp.vms.first
         disk = subject.create_disk(disk_name_to_create, 100, vm)
         disk.should be_an_instance_of VCloudSdk::Disk
+      end
+    end
+  end
+
+  describe "#edge_gateways" do
+    context "vdc has edge gateways" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+          VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
+      it "returns a collection of edge gateways" do
+        edge_gateways = subject.edge_gateways
+        edge_gateways.should have(1).item
+        edge_gateway = edge_gateways.first
+        edge_gateway.should be_an_instance_of VCloudSdk::EdgeGateway
+        edge_gateway.name.should eql "164-935"
+      end
+
+      context "there are no edge gateways" do
+        it "returns empty array" do
+          VCloudSdk::Xml::QueryResultRecords
+            .any_instance
+            .stub(:edge_gateway_records)
+            .and_return []
+          edge_gateways = subject.edge_gateways
+          edge_gateways.should be_empty
+        end
       end
     end
   end

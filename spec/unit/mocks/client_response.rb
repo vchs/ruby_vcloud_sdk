@@ -56,6 +56,7 @@ module VCloudSdk
         SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
         ORG_LINK = "#{URL}/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
         ORG_VDC_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==#{OVDC}"
+        ORG_VDC_EDGE_GATEWAYS_LINK = "#{URL}/api/admin/vdc/#{VDC_ID}/edgeGateways"
         ORG_VDC_EDGE_GATEWAY_LINK = "#{URL}/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf"
         ORG_VDC_ENCODED_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==XX%20XX%20XX"
 
@@ -127,6 +128,11 @@ module VCloudSdk
         VDC_INDY_DISKS_LINK = "#{URL}/api/vdc/#{VDC_ID}/disk"
 
         STORAGE_PROFILE_NAME = "tenant-iscsi"
+
+        ORG_VDC_EDGE_GATEWAYS_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateways_response.xml")) %
+          [URL, URL, URL, OVDC, URL, STORAGE_PROFILE_NAME, URL]).strip
+
+        ORG_VDC_EDGE_GATEWAYS_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateways_response.xml"))).strip
 
         ORG_VDC_EDGE_GATEWAY_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateway_response.xml"))).strip
 

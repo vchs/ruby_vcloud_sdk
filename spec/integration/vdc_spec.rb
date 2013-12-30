@@ -122,4 +122,13 @@ describe VCloudSdk::VDC do
       end
     end
   end
+
+  describe "#edge_gateways" do
+    it "returns a collection of edge gateways" do
+      edge_gateways = subject.edge_gateways
+      edge_gateways.should have(1).item
+      edge_gateway = edge_gateways.first
+      edge_gateway.should be_an_instance_of VCloudSdk::EdgeGateway
+    end
+  end
 end
