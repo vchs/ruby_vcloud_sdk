@@ -1,10 +1,11 @@
 ## Ruby VCloud SDK is a gem to simplify making vCloud Director API calls.
+
 Copyright (c) VMware, Inc.
 
 ## Object Model
 
   Client
-  
+
     find_vdc_by_name
       returns: VDC object matching name
       throws:
@@ -38,9 +39,9 @@ Copyright (c) VMware, Inc.
       throws:
         'ObjectNotFoundError' when catalog with the name does not exist
         'RestClient::BadRequest' for un-expected errors
-    
+
   VDC
-    
+
     storage_profiles
       returns: array of storage profile objects
       throws:
@@ -50,14 +51,14 @@ Copyright (c) VMware, Inc.
       returns: array of storage profile names
       throws:
         'RestClient::BadRequest' for un-expected errors
-    
+
     find_storage_profile_by_name
       returns:
         storage profile object matching name
       throws:
         'ObjectNotFoundError' when storage profile with the name does not exist
         'RestClient::BadRequest' for un-expected errors
-    
+
     vapps
       returns: array of vapp objects
       throws:
@@ -67,7 +68,7 @@ Copyright (c) VMware, Inc.
       returns: array of vapp names
       throws:
         'RestClient::BadRequest' for un-expected errors
-    
+
     find_vapp_by_name
       returns:
         vapp object matching name
@@ -76,7 +77,7 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     resources
-    
+
     networks
       returns: array of network objects
       throws:
@@ -86,7 +87,7 @@ Copyright (c) VMware, Inc.
       returns: array of network names
       throws:
         'RestClient::BadRequest' for un-expected errors
-    
+
     find_network_by_name
         returns:
           network object matching name
@@ -110,9 +111,9 @@ Copyright (c) VMware, Inc.
       throws:
         'ObjectNotFoundError' when disk with the name does not exist
         'RestClient::BadRequest' for un-expected errors
-    
+
   Catalog
-  
+
      items
        returns: array of catalog item objects
        throws:
@@ -122,9 +123,9 @@ Copyright (c) VMware, Inc.
        returns: array of catalog item names
        throws:
          'RestClient::BadRequest' for un-expected errors
-     
+
      delete_all_catalog_items
-     
+
      upload_vapp_template
 
      find_item
@@ -132,9 +133,9 @@ Copyright (c) VMware, Inc.
         throws:
           'ObjectNotFoundError' when an item matching the name and type is not found
           'RestClient::BadRequest' for un-expected errors
-     
+
      add_item
-     
+
      find_vapp_template_by_name
 
      upload_media
@@ -143,19 +144,19 @@ Copyright (c) VMware, Inc.
           'CloudError' when media file matching name already exists
           'ObjectNotFoundError' when storage profile with the name does not exist
           'RestClient::BadRequest' for un-expected errors
-     
+
   Network
-  
+
      ip_ranges
-     
+
      allocated_ips
-     
+
   VApp
-  
+
      delete
-     
+
      power_on
-     
+
      power_off
 
      recompose_from_vapp_template
@@ -184,6 +185,6 @@ Copyright (c) VMware, Inc.
        'RestClient::BadRequest' for un-expected errors
 
   VdcStorageProfile
-  
+
      available_storage
-  
+
