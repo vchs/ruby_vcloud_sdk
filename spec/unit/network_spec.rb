@@ -68,5 +68,17 @@ describe VCloudSdk::Network do
              "10.146.21.232"]
       allocated_ips.should eql ips
     end
+
+    context "there are no allocated ips" do
+      it "returns empty ip ranges" do
+        VCloudSdk::Xml::AllocatedIpAddresses
+          .any_instance
+          .stub(:ip_addresses)
+          .and_return []
+
+        allocated_ips = subject.allocated_ips
+        allocated_ips.should be_empty
+      end
+    end
   end
 end
