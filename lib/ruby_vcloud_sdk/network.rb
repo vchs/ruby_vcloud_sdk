@@ -15,18 +15,11 @@ module VCloudSdk
     end
 
     def ip_ranges
-      ip_ranges = nil
       entity_xml.ip_ranges
         .ranges
-        .each do |i|
-          new_range = IpRanges.new "#{i.start_address}-#{i.end_address}"
-          if ip_ranges
-            ip_ranges += new_range
-          else
-            ip_ranges = new_range
-          end
+        .reduce(IpRanges.new) do |result, i|
+          result + IpRanges.new("#{i.start_address}-#{i.end_address}")
         end
-      ip_ranges
     end
 
     def allocated_ips

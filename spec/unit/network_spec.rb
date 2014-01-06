@@ -19,7 +19,7 @@ describe VCloudSdk::Network do
 
   describe "#ip_ranges" do
     it "has correct ip ranges" do
-      ip_ranges= subject.ip_ranges
+      ip_ranges = subject.ip_ranges
       ip_ranges.should be_an_instance_of VCloudSdk::IpRanges
 
       ranges = ip_ranges.ranges
@@ -29,6 +29,22 @@ describe VCloudSdk::Network do
                  .new("10.146.21.150-10.146.21.189,10.146.21.250-10.146.21.255")
                  .ranges
       ranges.should eql result
+    end
+
+    context "there are no ips" do
+      it "returns empty ip ranges" do
+        VCloudSdk::Xml::IpRanges
+          .any_instance
+          .stub(:ranges)
+          .and_return []
+
+        ip_ranges = subject.ip_ranges
+        ip_ranges.should be_an_instance_of VCloudSdk::IpRanges
+
+        ranges = ip_ranges.ranges
+        ranges.should be_an_instance_of Set
+        ranges.should be_empty
+      end
     end
   end
 
