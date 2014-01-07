@@ -129,9 +129,6 @@ module VCloudSdk
 
         STORAGE_PROFILE_NAME = "tenant-iscsi"
 
-        ORG_VDC_EDGE_GATEWAYS_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateways_response.xml")) %
-          [URL, URL, URL, OVDC, URL, STORAGE_PROFILE_NAME, URL]).strip
-
         ORG_VDC_EDGE_GATEWAYS_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateways_response.xml"))).strip
 
         ORG_VDC_EDGE_GATEWAY_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateway_response.xml"))).strip
