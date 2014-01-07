@@ -30,13 +30,6 @@ module VCloudSdk
                       Xml::ADMIN_MEDIA_TYPE[:CATALOG])
       find_catalog_by_name name
     end
-
-    def delete_catalog(name)
-      catalog = find_catalog_by_name(name)
-      catalog.delete_all_catalog_items
-      connection.delete("/api/admin/catalog/#{catalog.id}")
-      nil
-    end
   end
 
 end
