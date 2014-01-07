@@ -26,7 +26,11 @@ describe VCloudSdk::VDC do
       end
 
       context "vdc name contains no space" do
-        its(:storage_profiles) { should have_at_least(1).item }
+        it "returns array of VdcStorageProfile object" do
+          storage_profiles = subject.storage_profiles
+          storage_profiles.should have(1).item
+          storage_profiles.first.should be_an_instance_of VCloudSdk::VdcStorageProfile
+        end
       end
 
       context "vdc name contains spaces" do
@@ -34,7 +38,11 @@ describe VCloudSdk::VDC do
           subject.instance_variable_set(:@name, VCloudSdk::Test::Response::OVDC_NAME_WITH_SPACE)
         end
 
-        its(:storage_profiles) { should have_at_least(1).item }
+        it "returns array of VdcStorageProfile object" do
+          storage_profiles = subject.storage_profiles
+          storage_profiles.should have(1).item
+          storage_profiles.first.should be_an_instance_of VCloudSdk::VdcStorageProfile
+        end
       end
     end
 
@@ -48,7 +56,9 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :empty
       end
 
-      its(:storage_profiles) { should eql [] }
+      it "returns empty array" do
+        subject.storage_profiles.should eql []
+      end
     end
   end
 
@@ -63,7 +73,11 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
       end
 
-      its(:list_storage_profiles) { should eql [VCloudSdk::Test::Response::STORAGE_PROFILE_NAME] }
+      it "returns array of storage profile names" do
+        subject
+          .list_storage_profiles
+          .should eql [VCloudSdk::Test::Response::STORAGE_PROFILE_NAME]
+      end
     end
 
     context "vdc has no storage profile" do
@@ -76,7 +90,11 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :empty
       end
 
-      its(:storage_profiles) { should eql [] }
+      it "returns empty array" do
+        subject
+          .list_storage_profiles
+          .should eql []
+      end
     end
   end
 
@@ -113,7 +131,10 @@ describe VCloudSdk::VDC do
           VCloudSdk::Test::Response::VDC_RESPONSE)
       end
 
-      its(:vapps) { should have_at_least(1).item }
+      it "returns array of VApp objects" do
+        subject.vapps.should have(1).item
+        subject.vapps.first.should be_an_instance_of VCloudSdk::VApp
+      end
     end
 
     context "vdc has no vapps" do
@@ -122,7 +143,9 @@ describe VCloudSdk::VDC do
           VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
       end
 
-      its(:vapps) { should have(0).item }
+      it "returns empty array" do
+        subject.vapps.should eql []
+      end
     end
 
   end
@@ -146,7 +169,9 @@ describe VCloudSdk::VDC do
           VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
       end
 
-      its(:list_vapps) { should have(0).item }
+      it "returns empty array" do
+        subject.list_vapps.should eql []
+      end
     end
   end
 
@@ -225,7 +250,13 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
-    its(:networks) { should have_at_least(1).item }
+    it "returns array of Network objects" do
+      networks = subject.networks
+      networks.should have(2).items
+      networks.each do |network|
+        network.should be_an_instance_of VCloudSdk::Network
+      end
+    end
   end
 
   describe "#list_networks" do
@@ -291,7 +322,9 @@ describe VCloudSdk::VDC do
           VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
       end
 
-      its(:disks) { should have(0).item }
+      it "returns empty array" do
+        subject.disks.should eql []
+      end
     end
   end
 
@@ -314,7 +347,9 @@ describe VCloudSdk::VDC do
           VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
       end
 
-      its(:list_disks) { should have(0).item }
+      it "returns empty array" do
+        subject.list_disks.should eql []
+      end
     end
   end
 
