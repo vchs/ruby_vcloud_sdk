@@ -32,12 +32,6 @@ Copyright (c) VMware, Inc.
       returns: catalog object created
       throws:
         'RestClient::BadRequest' for un-expected errors
-
-    delete_catalog
-      returns: nil
-      throws:
-        'ObjectNotFoundError' when catalog with the name does not exist
-        'RestClient::BadRequest' for un-expected errors
     
   VDC
     
@@ -123,8 +117,6 @@ Copyright (c) VMware, Inc.
        throws:
          'RestClient::BadRequest' for un-expected errors
      
-     delete_all_catalog_items
-     
      upload_vapp_template
 
      find_item
@@ -142,6 +134,11 @@ Copyright (c) VMware, Inc.
         throws:
           'CloudError' when media file matching name already exists
           'ObjectNotFoundError' when storage profile with the name does not exist
+          'RestClient::BadRequest' for un-expected errors
+
+     delete
+        returns: nil
+        throws:
           'RestClient::BadRequest' for un-expected errors
      
   Network

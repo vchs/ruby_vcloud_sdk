@@ -11,9 +11,14 @@ describe VCloudSdk::Catalog do
   let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
   let(:vapp_template_name) { VCloudSdk::Test::DefaultSetting::EXISTING_VAPP_TEMPLATE_NAME }
+  let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] ||  VCloudSdk::Test::DefaultSetting::STORAGE_PROFILE_NAME }
+  let(:vapp_template_dir) { ENV['VAPP_TEMPLATE_DIR'] || "Fake path of vapp template directory" }
+  let(:media_file) { ENV['MEDIA_FILE'] || "Fake path of media file" }
 
+  let(:client) do
+    VCloudSdk::Client.new(url, username, password, {}, logger)
+  end
   subject do
-    client = VCloudSdk::Client.new(url, username, password, {}, logger)
     client.find_catalog_by_name(catalog_name)
   end
 
@@ -85,6 +90,48 @@ describe VCloudSdk::Catalog do
         )
       end.to raise_exception VCloudSdk::ObjectNotFoundError,
                              "Catalog Item '#{catalog_item_name}' is not found"
+    end
+  end
+
+  describe "#delete" do
+    context "catalog has no items" do
+      it "deletes catalog successfully" do
+        catalog_name_to_create = SecureRandom.uuid
+        catalog = client.create_catalog(catalog_name_to_create)
+        catalog.name.should eql catalog_name_to_create
+
+        result = catalog.delete
+        result.should be_nil
+        expect do
+          client.find_catalog_by_name(catalog_name_to_create)
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Catalog '#{catalog_name_to_create}' is not found"
+      end
+    end
+
+    context "catalog has existing items" do
+      it "deletes target catalog successfully" do
+        catalog_name_to_create = SecureRandom.uuid
+        catalog = client.create_catalog(catalog_name_to_create)
+        catalog.name.should eql catalog_name_to_create
+
+        begin
+          vapp_name = "new vapp"
+          catalog_item = catalog.upload_vapp_template vdc_name, vapp_name, vapp_template_dir
+          catalog_item.name.should eql vapp_name
+
+          media_name = "new media"
+          catalog_item = catalog.upload_media vdc_name, media_name, media_file, storage_profile_name
+          catalog_item.name.should eql media_name
+        ensure
+          catalog.delete
+        end
+
+        expect do
+          subject.find_catalog_by_name(catalog_name_to_create)
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Catalog '#{catalog_name_to_create}' is not found"
+      end
     end
   end
 end
