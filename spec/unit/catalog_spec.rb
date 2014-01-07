@@ -91,7 +91,9 @@ describe VCloudSdk::Catalog do
         VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
       end
 
-      its(:items) { should eql [] }
+      it "returns empty array" do
+        subject.items.should eql []
+      end
     end
   end
 
@@ -110,16 +112,9 @@ describe VCloudSdk::Catalog do
         VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
       end
 
-      its(:list_items) { should eql [] }
-    end
-  end
-
-  describe "#delete_all_catalog_items" do
-    it "deletes all items successfully" do
-      VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
-      response = subject.delete_all_catalog_items
-      response[0].name.should eql VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
-      response[1].name.should eql VCloudSdk::Test::Response::EXISTING_MEDIA_NAME
+      it "returns empty array" do
+        subject.list_items.should eql []
+      end
     end
   end
 
@@ -414,6 +409,38 @@ describe VCloudSdk::Catalog do
             VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
           )
           .should be_false
+    end
+  end
+
+  describe "#delete" do
+    context "catalog has no items" do
+      it "deletes catalog successfully" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
+        subject.delete
+      end
+    end
+
+    context "catalog has existing items" do
+      it "deletes catalog successfully" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+        VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
+        subject.delete
+      end
+    end
+
+    context "error occurred when deleting catalog" do
+      it "raises the exception" do
+        VCloudSdk::Test::ResponseMapping.set_option catalog_state: :not_added
+        subject
+          .send(:connection)
+          .stub(:delete)
+          .with("/api/admin/catalog/#{VCloudSdk::Test::Response::CATALOG_ID}")
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.delete
+        end.to raise_exception RestClient::BadRequest
+      end
     end
   end
 end

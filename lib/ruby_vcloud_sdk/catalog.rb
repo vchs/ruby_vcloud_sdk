@@ -32,13 +32,6 @@ module VCloudSdk
       end
     end
 
-    def delete_all_catalog_items
-      items.each do |catalog_item|
-        Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
-        catalog_item.delete
-      end
-    end
-
     def upload_vapp_template(
         vdc_name,
         template_name,
@@ -162,7 +155,20 @@ module VCloudSdk
       end
     end
 
+    def delete
+      delete_all_items
+      connection.delete("/api/admin/catalog/#{id}")
+      nil
+    end
+
     private
+
+    def delete_all_items
+      items.each do |catalog_item|
+        Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
+        catalog_item.delete
+      end
+    end
 
     def upload_vapp_template_params(template_name, vdc, storage_profile)
       upload_params = Xml::WrapperFactory.create_instance(
