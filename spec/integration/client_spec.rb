@@ -122,9 +122,10 @@ describe VCloudSdk::Client do
 
       it "fails if targeted catalog does not exist" do
         catalog_name_to_create = SecureRandom.uuid
-        expect { subject.delete_catalog(catalog_name_to_create) }
-          .to raise_exception VCloudSdk::ObjectNotFoundError
-                              "Catalog '#{catalog_name_to_create}' is not found"
+        expect do
+          subject.delete_catalog(catalog_name_to_create)
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Catalog '#{catalog_name_to_create}' is not found"
       end
     end
 

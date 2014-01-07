@@ -53,13 +53,19 @@ describe VCloudSdk::Client, :min, :all do
   describe "#catalogs" do
     subject { initialize_client }
 
-    its(:catalogs) { should have_at_least(1).items }
+    it "returns array of Catalog objects" do
+      catalogs = subject.catalogs
+      catalogs.should have(3).items
+      catalogs.each do |catalog|
+        catalog.should be_an_instance_of VCloudSdk::Catalog
+      end
+    end
   end
 
   describe "#list_catalogs" do
     subject { initialize_client }
 
-    its "returns a collection of catalogs" do
+    it "returns array of catalog names" do
       catalog_names = subject.list_catalogs
       catalog_names
         .should eql [VCloudSdk::Test::Response::CATALOG_NAME,
