@@ -147,16 +147,35 @@ Copyright (c) VMware, Inc.
   Network
   
      ip_ranges
+        returns: IpRanges object
+        throws:
+          'RestClient::BadRequest' for un-expected errors
      
      allocated_ips
+        returns: array of strings
+        throws:
+          'RestClient::BadRequest' for un-expected errors
      
   VApp
   
      delete
+        returns: task object
+        throws:
+          'CloudError' if VApp is powered on
+          'RestClient::BadRequest' for un-expected errors
      
      power_on
+        returns: task object
+        throws:
+          'CloudError' if power_on_link of VApp is missing
+          'RestClient::BadRequest' for un-expected errors
      
      power_off
+        returns: task object
+        throws:
+          'CloudError' if power_off_link of VApp is missing
+          'VappSuspendedError' if VApp is suspended
+          'RestClient::BadRequest' for un-expected errors
 
      recompose_from_vapp_template
         returns: recomposed vapp
@@ -177,6 +196,7 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
   VM
+
      independent_disks
        returns: array of disk objects
        throws:
@@ -236,4 +256,14 @@ Copyright (c) VMware, Inc.
   VdcStorageProfile
   
      available_storage
+       returns:
+         integer number of available storage in MB, i.e. storageLimitMB - storageUsedMB
+         -1 if 'storageLimitMB' is 0
+
+  EdgeGateway
+
+     public_ips:
+       returns: IpRanges object
+       throws:
+         'RestClient::BadRequest' for un-expected errors
   
