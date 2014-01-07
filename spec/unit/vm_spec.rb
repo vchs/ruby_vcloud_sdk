@@ -57,7 +57,9 @@ describe VCloudSdk::VM do
         VCloudSdk::Test::ResponseMapping.delete_option :vm_disk_attached
       end
 
-      its(:independent_disks) { should eql [] }
+      it "returns empty array" do
+        subject.independent_disks.should eql []
+      end
     end
   end
 
@@ -67,7 +69,9 @@ describe VCloudSdk::VM do
         VCloudSdk::Test::ResponseMapping.set_option vm_disk_attached: true
       end
 
-      its(:list_disks) { should eql ["Hard disk 1", "Hard disk 2 (#{disk_name})"] }
+      it "returns array of disk names" do
+        subject.list_disks.should eql ["Hard disk 1", "Hard disk 2 (#{disk_name})"]
+      end
     end
 
     context "vm has no attached disk" do
@@ -75,7 +79,9 @@ describe VCloudSdk::VM do
         VCloudSdk::Test::ResponseMapping.delete_option :vm_disk_attached
       end
 
-      its(:list_disks) { should eql ["Hard disk 1"] }
+      it "returns array of disk names" do
+        subject.list_disks.should eql ["Hard disk 1"]
+      end
     end
   end
 
