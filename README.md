@@ -195,6 +195,19 @@ Copyright (c) VMware, Inc.
        throws:
          'RestClient::BadRequest' for un-expected errors
 
+     find_vm_by_name
+       returns: VM object
+       throws:
+         'ObjectNotFoundError' when VM with the name does not exist
+         'RestClient::BadRequest' for un-expected errors
+
+     remove_vm_by_name
+       returns: parent VApp object
+       throws:
+         'ObjectNotFoundError' when VM with the name does not exist
+         'CloudError' when VApp is in status of 'POWERED_ON' and can not be recomposed
+         'RestClient::BadRequest' for un-expected errors
+
   VM
 
      independent_disks

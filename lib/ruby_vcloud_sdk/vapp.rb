@@ -54,23 +54,6 @@ module VCloudSdk
       self
     end
 
-    def remove_vm_by_name (vm_name)
-      target_vm = find_vm_by_name vm_name
-      unless target_vm
-        fail ObjectNotFoundError,
-             "VM #{vm_name} does not exist."
-      end
-
-      recompose_vapp_link = get_recompose_vapp_link
-
-      task = connection.post recompose_vapp_link.href,
-                             remove_vm_param(target_vm)
-
-      monitor_task task, @session.time_limit[:recompose_vapp]
-      Config.logger.info "VM #{vm_name} is removed."
-      self
-    end
-
     def vms
       entity_xml.vms.map do |vm|
         VCloudSdk::VM.new(@session, vm.href)
@@ -85,12 +68,22 @@ module VCloudSdk
 
     def find_vm_by_name(name)
       entity_xml.vms.each do |vm|
-        if vm.name == name
-          return VCloudSdk::VM.new(@session, vm.href)
-        end
+        return VCloudSdk::VM.new(@session, vm.href) if vm.name == name
       end
 
       fail ObjectNotFoundError, "VM '#{name}' is not found"
+    end
+
+    def remove_vm_by_name(vm_name)
+      target_vm = find_vm_by_name vm_name
+      recompose_vapp_link = get_recompose_vapp_link
+
+      task = connection.post recompose_vapp_link.href,
+                             remove_vm_param(target_vm)
+
+      monitor_task task, @session.time_limit[:recompose_vapp]
+      Config.logger.info "VM #{vm_name} is removed."
+      self
     end
 
     private
