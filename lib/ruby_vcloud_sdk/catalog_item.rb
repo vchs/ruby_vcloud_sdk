@@ -22,22 +22,5 @@ module VCloudSdk
     def href
       entity_xml.entity[:href]
     end
-
-    def delete
-      delete_catalog_item_entity entity_xml.entity
-
-      connection.delete(entity_xml.remove_link)
-    end
-
-    private
-
-    def delete_catalog_item_entity entity
-      linked_obj = connection.get(entity)
-
-      wait_for_running_tasks(linked_obj, linked_obj.href)
-      Config.logger.info "Deleting #{linked_obj.href}."
-      monitor_task(connection.delete(linked_obj))
-      Config.logger.info "#{linked_obj.href} deleted."
-    end
   end
 end

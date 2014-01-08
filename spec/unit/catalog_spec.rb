@@ -114,12 +114,89 @@ describe VCloudSdk::Catalog do
     end
   end
 
-  describe "#delete_all_catalog_items" do
+  describe "#delete_item" do
+    before do
+      VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
+    end
+
+    context "argument item_type is not specified" do
+      context "item to be deleted does not exist" do
+        it "raises ObjectNotFoundError" do
+          expect do
+            subject.delete_item("dummy")
+          end.to raise_exception VCloudSdk::ObjectNotFoundError
+        end
+      end
+
+      context "item has a running task" do
+        it "deletes item successfully" do
+          VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
+          subject
+            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+            .should be_nil
+        end
+      end
+
+      context "item has no running task" do
+        it "deletes item successfully" do
+          VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
+          subject
+            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+            .should be_nil
+        end
+      end
+    end
+
+    context "argument item_type is specified" do
+      context "item to be deleted does not have matching type" do
+        it "raises ObjectNotFoundError" do
+          expect do
+            subject.delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
+                                VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
+          end.to raise_exception VCloudSdk::ObjectNotFoundError
+        end
+      end
+
+      context "item has a running task" do
+        it "deletes item successfully" do
+          VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
+          subject
+            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
+                         VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
+            .should be_nil
+        end
+      end
+
+      context "item has no running task" do
+        it "deletes item successfully" do
+          VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
+          subject
+            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
+                         VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
+            .should be_nil
+        end
+      end
+    end
+
+    context "deletion task cannot finish within time" do
+      it "raises TimeoutError" do
+        VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
+        subject
+          .should_receive(:task_is_success)
+          .at_least(3)
+          .and_return(false)
+
+        expect do
+          subject.delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+        end.to raise_exception VCloudSdk::ApiTimeoutError
+      end
+    end
+  end
+
+  describe "#delete_all_items" do
     it "deletes all items successfully" do
       VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
-      response = subject.delete_all_catalog_items
-      response[0].name.should eql VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
-      response[1].name.should eql VCloudSdk::Test::Response::EXISTING_MEDIA_NAME
+      subject.delete_all_items.should be_nil
     end
   end
 
@@ -374,7 +451,7 @@ describe VCloudSdk::Catalog do
       catalog_item.name.should eq VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
     end
 
-    it "returns nil when the targeted catalog item type does not match" do
+    it "raises an error when the targeted catalog item type does not match" do
       expect do
         subject.find_item(
           VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
@@ -408,12 +485,12 @@ describe VCloudSdk::Catalog do
     end
 
     it "returns false when the targeted catalog item type does not match" do
-        subject
-          .item_exists?(
-            VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
-            VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
-          )
-          .should be_false
+      subject
+        .item_exists?(
+          VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
+          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
+        )
+        .should be_false
     end
   end
 end

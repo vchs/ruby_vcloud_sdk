@@ -123,19 +123,27 @@ Copyright (c) VMware, Inc.
        throws:
          'RestClient::BadRequest' for un-expected errors
      
-     delete_all_catalog_items
-     
-     upload_vapp_template
-
      find_item
         returns: catalog item matching name and type
         throws:
           'ObjectNotFoundError' when an item matching the name and type is not found
           'RestClient::BadRequest' for un-expected errors
+
+     item_exists?
+        returns: boolean
+        throws:
+          'RestClient::BadRequest' for un-expected errors
      
-     add_item
-     
-     find_vapp_template_by_name
+     delete_item
+        returns: nil
+        throws:
+          'ObjectNotFoundError' when an item matching the name and type is not found
+          'RestClient::BadRequest' for un-expected errors
+
+     delete_all_items
+        returns: nil
+        throws:
+          'RestClient::BadRequest' for un-expected errors
 
      upload_media
         returns: catalog item uploaded
@@ -143,6 +151,12 @@ Copyright (c) VMware, Inc.
           'CloudError' when media file matching name already exists
           'ObjectNotFoundError' when storage profile with the name does not exist
           'RestClient::BadRequest' for un-expected errors
+
+     upload_vapp_template
+
+     find_vapp_template_by_name
+
+     instantiate_vapp_template
      
   Network
   

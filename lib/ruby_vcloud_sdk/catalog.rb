@@ -32,37 +32,40 @@ module VCloudSdk
       end
     end
 
-    def delete_all_catalog_items
-      items.each do |catalog_item|
-        Config.logger.info "Deleting catalog item \"#{catalog_item.name}\""
-        catalog_item.delete
+    # Find catalog item from catalog by name and type.
+    # If item_type is set to nil, returns catalog item as long as its name match.
+    # Raises an exception if catalog is not found.
+    # Raises ObjectNotFoundError if an item matching the name and type is not found.
+    # Otherwise, returns the catalog item.
+    def find_item(name, item_type = nil)
+      link = find_item_link(name)
+      item = VCloudSdk::CatalogItem.new(@session, link)
+      check_item_type(item, item_type)
+      item
+    end
+
+    def item_exists?(name, item_type = nil)
+      items.any? do |item|
+        item.name == name &&
+          (item_type.nil? || item.type == item_type)
       end
     end
 
-    def upload_vapp_template(
-        vdc_name,
-        template_name,
-        directory,
-        storage_profile_name = nil)
-      if item_exists?(template_name)
-        fail "vApp template '#{template_name}' already exists in catalog #{name}"
+    def delete_item(name, item_type = nil)
+      link = find_item_link(name)
+      item = VCloudSdk::CatalogItem.new(@session, link)
+
+      check_item_type(item, item_type)
+      delete_item_by_link(link)
+      nil
+    end
+
+    def delete_all_items
+      admin_xml.catalog_items.map do |link|
+        Config.logger.info "Deleting catalog item \"#{link.name}\""
+        delete_item_by_link(link)
       end
-
-      vdc = find_vdc_by_name vdc_name
-
-      storage_profile = vdc.storage_profile_xml_node storage_profile_name
-
-      Config.logger.info "Uploading vApp #{template_name} to #{vdc.name}"
-      vapp_template = upload_vapp_template_params(template_name, vdc, storage_profile)
-
-      vapp_template = upload_vapp_files(vapp_template, ovf_directory(directory))
-
-      validate_vapp_template_tasks vapp_template
-
-      Config.logger.info %Q{
-        Template #{template_name} uploaded, adding to catalog #{name}.
-      }
-      add_item(vapp_template)
+      nil
     end
 
     def upload_media(
@@ -96,19 +99,30 @@ module VCloudSdk
       add_item(media)
     end
 
-    def add_item(item)
-      catalog_item = create_catalog_item_payload(item)
-      catalog_name = name
-      catalog_item_name = catalog_item.name
-      Config.logger.info "Adding #{catalog_item_name} to catalog #{catalog_name}"
-      connection.post(admin_xml.add_item_link,
-                      catalog_item,
-                      Xml::ADMIN_MEDIA_TYPE[:CATALOG_ITEM])
+    def upload_vapp_template(
+      vdc_name,
+        template_name,
+        directory,
+        storage_profile_name = nil)
+      if item_exists?(template_name)
+        fail "vApp template '#{template_name}' already exists in catalog #{name}"
+      end
+
+      vdc = find_vdc_by_name vdc_name
+
+      storage_profile = vdc.storage_profile_xml_node storage_profile_name
+
+      Config.logger.info "Uploading vApp #{template_name} to #{vdc.name}"
+      vapp_template = upload_vapp_template_params(template_name, vdc, storage_profile)
+
+      vapp_template = upload_vapp_files(vapp_template, ovf_directory(directory))
+
+      validate_vapp_template_tasks vapp_template
+
       Config.logger.info %Q{
-        catalog_item #{catalog_item_name} added to catalog #{catalog_name}:
-        #{catalog_item.to_s}
+        Template #{template_name} uploaded, adding to catalog #{name}.
       }
-      catalog_item
+      add_item(vapp_template)
     end
 
     def find_vapp_template_by_name(name)
@@ -139,30 +153,54 @@ module VCloudSdk
       vdc.find_vapp_by_name vapp_name
     end
 
-    # Find catalog item from catalog by name and type.
-    # If item_type is set to nil, returns catalog item as long as its name match.
-    # Raises an exception if catalog is not found.
-    # Raises ObjectNotFoundError if an item matching the name and type is not found.
-    # Otherwise, returns the catalog item.
-    def find_item(name, item_type = nil)
+    private
+
+    def add_item(item)
+      catalog_item = create_catalog_item_payload(item)
+      catalog_name = name
+      catalog_item_name = catalog_item.name
+      Config.logger.info "Adding #{catalog_item_name} to catalog #{catalog_name}"
+      connection.post(admin_xml.add_item_link,
+                      catalog_item,
+                      Xml::ADMIN_MEDIA_TYPE[:CATALOG_ITEM])
+      Config.logger.info %Q{
+        catalog_item #{catalog_item_name} added to catalog #{catalog_name}:
+        #{catalog_item.to_s}
+      }
+      catalog_item
+    end
+
+    def delete_item_by_link(link)
+      entity_xml = connection.get(link)
+      delete_item_entity entity_xml.entity
+
+      connection.delete(entity_xml.remove_link)
+    end
+
+    def delete_item_entity(entity)
+      linked_obj = connection.get(entity)
+
+      wait_for_running_tasks(linked_obj, linked_obj.href)
+      Config.logger.info "Deleting #{linked_obj.href}."
+      monitor_task(connection.delete(linked_obj))
+      Config.logger.info "#{linked_obj.href} deleted."
+    end
+
+    def find_item_link(name)
       fail ObjectNotFoundError, "Catalog item name cannot be nil" unless name
 
-      items.each do |catalog_item|
-        return catalog_item if catalog_item.name == name &&
-            (item_type.nil? || catalog_item.type == item_type)
+      admin_xml.catalog_items.each do |item_link|
+        return item_link if name == item_link.name
       end
 
       fail ObjectNotFoundError, "Catalog Item '#{name}' is not found"
     end
 
-    def item_exists?(name, item_type = nil)
-      items.any? do |item|
-        item.name == name &&
-          (item_type.nil? || item.type == item_type)
+    def check_item_type(item, item_type)
+      unless item_type.nil? || item.type == item_type
+        fail ObjectNotFoundError, "Catalog Item '#{item.name}' is not found"
       end
     end
-
-    private
 
     def upload_vapp_template_params(template_name, vdc, storage_profile)
       upload_params = Xml::WrapperFactory.create_instance(
