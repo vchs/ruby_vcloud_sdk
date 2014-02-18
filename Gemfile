@@ -11,5 +11,4 @@ group :development, :test do
   gem 'simplecov-rcov'
   gem 'rest-client'
   gem 'rubocop'
-  gem "netaddr"
 end
