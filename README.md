@@ -152,11 +152,31 @@ Copyright (c) VMware, Inc.
           'ObjectNotFoundError' when storage profile with the name does not exist
           'RestClient::BadRequest' for un-expected errors
 
+     find_media_by_name
+        returns: media catalog item matching name
+        throws:
+          'ObjectNotFoundError' when an item matching the name and type is not found
+          'RestClient::BadRequest' for un-expected error
+
      upload_vapp_template
+        returns: CatalogItem object uploaded
+        throws:
+          'CloudError' when vapp template matching name already exists
+          'ApiTimeoutError' if uploading vapp files times out
+          'CloudError' when uploading vapp template task is not successful
+          'RestClient::BadRequest' for un-expected error
 
      find_vapp_template_by_name
+        returns: vapp template catalog item matching name
+        throws:
+          'ObjectNotFoundError' when an item matching the name and type is not found
+          'RestClient::BadRequest' for un-expected error
 
      instantiate_vapp_template
+         returns: CatalogItem object instantiated
+         throws:
+           'ApiError' when instantiating vapp template task is not successful
+           'RestClient::BadRequest' for un-expected error
      
   Network
   
