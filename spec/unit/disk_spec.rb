@@ -89,48 +89,4 @@ describe VCloudSdk::Disk do
       end
     end
   end
-
-  describe "#delete" do
-    context "disk is not attached to VM" do
-      before do
-        VCloudSdk::Test::ResponseMapping
-          .set_option disk_state: :not_attached
-      end
-
-      it "deletes the disk successfully" do
-        deletion_task = subject.delete
-        subject
-          .send(:task_is_success, deletion_task)
-          .should be_true
-      end
-
-      context "error occurs when deleting disk" do
-        it "raises the exception" do
-          subject
-            .send(:connection)
-            .should_receive(:delete)
-            .once
-            .with(VCloudSdk::Test::Response::INDY_DISK_URL)
-            .and_raise RestClient::BadRequest
-
-          expect do
-            subject.delete
-          end.to raise_exception RestClient::BadRequest
-        end
-      end
-    end
-
-    context "disk is attached to VM" do
-      it "raises an error" do
-        VCloudSdk::Test::ResponseMapping
-          .set_option disk_state: :attached
-        expect do
-          subject.delete
-        end.to raise_exception VCloudSdk::CloudError,
-                               "Disk '#{disk_name}' of link " +
-                               "#{VCloudSdk::Test::Response::INDY_DISK_URL}" +
-                               " is attached to VM '#{VCloudSdk::Test::Response::VM_NAME}'"
-      end
-    end
-  end
 end
