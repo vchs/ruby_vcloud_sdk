@@ -177,6 +177,32 @@ module VCloudSdk
       VCloudSdk::Disk.new(@session, disk.href)
     end
 
+    def delete_disk_by_name(name)
+      disks = find_disks_by_name(name)
+      fail CloudError,
+           "#{disks.size} disks with name #{name} were found" if disks.size > 1
+
+      delete_single_disk(disks.first)
+      nil
+    end
+
+    def delete_all_disks_by_name(name)
+      disks = find_disks_by_name(name)
+      success = true
+      disks.each do |disk|
+        begin
+          delete_single_disk(disk)
+        rescue RuntimeError => e
+          success = false
+          Config.logger.error("Disk deletion failed with exception: #{e}")
+        end
+      end
+
+      fail CloudError,
+           "Failed to delete one or more of the disks with name '#{name}'. Check logs for details." unless success
+      nil
+    end
+
     def storage_profile_xml_node(name)
       return nil if name.nil?
 
@@ -205,6 +231,18 @@ module VCloudSdk
         params.bus_sub_type = bus_sub_type
         params.add_locality(connection.get(vm.href)) if vm # Use xml form of vm
       end
+    end
+
+    def delete_single_disk(disk)
+      Config.logger.info "Deleting disk '#{disk.name}', link #{disk.href}"
+      fail CloudError,
+           "Disk '#{disk.name}', link #{disk.href} is attached to VM '#{disk.vm.name}'" if disk.attached?
+
+      entity_xml = connection.get(disk.href)
+      task = connection.delete(entity_xml.remove_link.href)
+      monitor_task(task)
+
+      Config.logger.info "Disk deleted successfully"
     end
   end
 end
