@@ -97,15 +97,21 @@ module VCloudSdk
       media = upload_media_file media, media_file
 
       add_item(media)
+      find_media_by_name(media_name)
+    end
+
+    def find_media_by_name(name)
+      find_item(name, Xml::MEDIA_TYPE[:MEDIA])
     end
 
     def upload_vapp_template(
-      vdc_name,
+        vdc_name,
         template_name,
         directory,
         storage_profile_name = nil)
       if item_exists?(template_name)
-        fail "vApp template '#{template_name}' already exists in catalog #{name}"
+        fail CloudError,
+             "vApp template '#{template_name}' already exists in catalog #{name}"
       end
 
       vdc = find_vdc_by_name vdc_name
@@ -123,6 +129,7 @@ module VCloudSdk
         Template #{template_name} uploaded, adding to catalog #{name}.
       }
       add_item(vapp_template)
+      find_vapp_template_by_name(template_name)
     end
 
     def find_vapp_template_by_name(name)
@@ -156,18 +163,16 @@ module VCloudSdk
     private
 
     def add_item(item)
-      catalog_item = create_catalog_item_payload(item)
+      payload = create_catalog_item_payload(item)
       catalog_name = name
-      catalog_item_name = catalog_item.name
+      catalog_item_name = item.name
       Config.logger.info "Adding #{catalog_item_name} to catalog #{catalog_name}"
       connection.post(admin_xml.add_item_link,
-                      catalog_item,
+                      payload,
                       Xml::ADMIN_MEDIA_TYPE[:CATALOG_ITEM])
       Config.logger.info %Q{
-        catalog_item #{catalog_item_name} added to catalog #{catalog_name}:
-        #{catalog_item.to_s}
+        catalog_item #{catalog_item_name} added to catalog #{catalog_name}
       }
-      catalog_item
     end
 
     def delete_item_by_link(link)
@@ -237,10 +242,10 @@ module VCloudSdk
     end
 
     def create_catalog_item_payload(item)
-      catalog_item = Xml::WrapperFactory.create_instance(Xml::XML_TYPE[:CATALOGITEM])
-      catalog_item.name = item.name
-      catalog_item.entity = item
-      catalog_item
+      Xml::WrapperFactory.create_instance(Xml::XML_TYPE[:CATALOGITEM]).tap do |payload|
+        payload.name = item.name
+        payload.entity = item
+      end
     end
 
     def validate_vapp_template_tasks(vapp_template)

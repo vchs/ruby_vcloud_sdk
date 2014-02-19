@@ -201,6 +201,11 @@ describe VCloudSdk::Catalog do
   end
 
   describe "#upload_vapp_template" do
+    let(:vapp_template_uploaded) do
+      vapp_template = double("vapp template")
+      vapp_template.stub(:name) { vapp_name }
+      vapp_template
+    end
 
     context "A template with the same name already exists" do
       it "raises an error" do
@@ -245,6 +250,11 @@ describe VCloudSdk::Catalog do
             .set_option vapp_state: :disks_uploaded
         end
 
+        subject
+          .should_receive(:find_vapp_template_by_name)
+          .with(vapp_name)
+          .and_return vapp_template_uploaded
+
         catalog_item = subject
           .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
         catalog_item.name.should eql vapp_name
@@ -262,14 +272,24 @@ describe VCloudSdk::Catalog do
           .set_option vapp_state: :disks_uploaded
       end
 
+      subject
+        .should_receive(:find_vapp_template_by_name)
+        .with(vapp_name)
+        .and_return vapp_template_uploaded
+
       catalog_item = subject
-        .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
+                       .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
       catalog_item.name.should eql vapp_name
     end
 
   end
 
   describe "#upload_media" do
+    let(:media_uploaded) do
+      media = double("media")
+      media.stub(:name) { media_name }
+      media
+    end
 
     context "An media with the same name already exists" do
       it "raises an error" do
@@ -321,6 +341,11 @@ describe VCloudSdk::Catalog do
           data.read.should eql VCloudSdk::Test::Response::MEDIA_CONTENT
         end
 
+        subject
+          .should_receive(:find_media_by_name)
+          .with(media_name)
+          .and_return media_uploaded
+
         catalog_item = subject.upload_media vdc_name,
                                             media_name,
                                             mock_media_file
@@ -335,11 +360,36 @@ describe VCloudSdk::Catalog do
         data.read.should eql VCloudSdk::Test::Response::MEDIA_CONTENT
       end
 
+      subject
+        .should_receive(:find_media_by_name)
+        .with(media_name)
+        .and_return media_uploaded
+
       catalog_item = subject.upload_media vdc_name,
                                           media_name,
                                           mock_media_file,
                                           storage_profile_name
       catalog_item.name.should eql media_name
+    end
+  end
+
+  describe "#find_media_by_name" do
+    it "raises ObjectNotFoundError if the given media name is nil" do
+      expect do
+        subject.find_media_by_name(nil)
+      end.to raise_error VCloudSdk::ObjectNotFoundError
+    end
+
+    it "raises ObjectNotFoundError if the targeted media doesn't exist" do
+      expect { subject.find_media_by_name("not existing") }
+        .to raise_exception VCloudSdk::ObjectNotFoundError,
+                            "Catalog Item 'not existing' is not found"
+    end
+
+    it "find targeted media if it exists" do
+      media = subject.find_media_by_name(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+      media.should_not be_nil
+      media.name.should eq VCloudSdk::Test::Response::EXISTING_MEDIA_NAME
     end
   end
 
