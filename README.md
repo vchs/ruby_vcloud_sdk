@@ -110,7 +110,38 @@ Copyright (c) VMware, Inc.
       throws:
         'ObjectNotFoundError' when disk with the name does not exist
         'RestClient::BadRequest' for un-expected errors
-    
+
+    create_disk
+      parameters:
+        name (String): name of disk
+        size_mb (Integer): disk size in megabyte
+        vm (VCloudSdk::VM, optional): VM that to add disk locality to
+        bus_type (String, optional): bus type of disk, defaults to "scsi"
+        bus_sub_type (String, optional): bus sub type of disk, defaults to "lsilogic"
+      returns: Disk object created
+      throws:
+        'CloudError' when size_mb is less than or equal to 0
+        'CloudError' when bus_type is invalid
+        'CloudError' when bus_sub_type is invalid
+        'RestClient::BadRequest' for un-expected errors
+
+    delete_disk
+      parameters:
+        name (String): name of disk
+      returns: nil
+      throws:
+        'CloudError' when more than one disks matching the name exist
+        'CloudError' when disk is attached to vm
+        'RestClient::BadRequest' for un-expected errors
+
+    delete_all_disks
+      parameters:
+        name (String): name of disk
+      returns: nil
+      throws:
+        'CloudError' when any disk deletion failure occurs
+        'RestClient::BadRequest' for un-expected errors
+
   Catalog
   
      items
