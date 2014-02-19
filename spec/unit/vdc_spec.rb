@@ -8,6 +8,7 @@ describe VCloudSdk::VDC do
 
   let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
+  let(:disk_name) { VCloudSdk::Test::Response::INDY_DISK_NAME }
 
   subject do
     described_class.new(VCloudSdk::Test.mock_session(logger, url),
@@ -171,6 +172,10 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
+    before do
+      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :on
+    end
+
     context "vapp with given name exists" do
       it "returns a vapp given targeted name" do
         vapp = subject.find_vapp_by_name(VCloudSdk::Test::Response::VAPP_NAME)
@@ -302,7 +307,7 @@ describe VCloudSdk::VDC do
         disks.should have(1).item
         disk = disks[0]
         disk.should be_an_instance_of VCloudSdk::Disk
-        disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+        disk.name.should eql disk_name
       end
     end
 
@@ -327,7 +332,7 @@ describe VCloudSdk::VDC do
 
       it "returns a collection of disk names" do
         disk_names = subject.list_disks
-        disk_names.should eql [VCloudSdk::Test::Response::INDY_DISK_NAME]
+        disk_names.should eql [disk_name]
       end
     end
 
@@ -351,11 +356,11 @@ describe VCloudSdk::VDC do
 
     context "there is one disk with given name" do
       it "returns array containing one disk" do
-        disks = subject.find_disks_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+        disks = subject.find_disks_by_name(disk_name)
         disks.should have(1).item
         disk = disks[0]
         disk.should be_an_instance_of VCloudSdk::Disk
-        disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+        disk.name.should eql disk_name
       end
     end
 
@@ -367,11 +372,11 @@ describe VCloudSdk::VDC do
           .should_receive(:disks)
           .and_return [disk_link, disk_link]
 
-        disks = subject.find_disks_by_name(VCloudSdk::Test::Response::INDY_DISK_NAME)
+        disks = subject.find_disks_by_name(disk_name)
         disks.should have(2).item
         disks.each do |disk|
           disk.should be_an_instance_of VCloudSdk::Disk
-          disk.name.should eql VCloudSdk::Test::Response::INDY_DISK_NAME
+          disk.name.should eql disk_name
         end
       end
     end
@@ -394,7 +399,7 @@ describe VCloudSdk::VDC do
 
     context "disk with matching name exists" do
       it "returns true" do
-        subject.disk_exists? VCloudSdk::Test::Response::INDY_DISK_NAME
+        subject.disk_exists? disk_name
       end
     end
 
@@ -411,7 +416,7 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::Response::VDC_RESPONSE)
     end
 
-    let(:disk_name_to_create) { VCloudSdk::Test::Response::INDY_DISK_NAME }
+    let(:disk_name_to_create) { disk_name }
 
     context "input parameter size is negative" do
       it "raises an exception" do
@@ -480,6 +485,143 @@ describe VCloudSdk::VDC do
         vm = vapp.vms.first
         disk = subject.create_disk(disk_name_to_create, 100, vm)
         disk.should be_an_instance_of VCloudSdk::Disk
+      end
+    end
+  end
+
+  describe "#delete_disk_by_name" do
+    let(:vdc_response) do
+      VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::VDC_RESPONSE)
+    end
+
+    context "disk matching the name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.delete_disk_by_name("dummy")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Disk 'dummy' is not found"
+      end
+    end
+
+    context "more than one disks matching the name exist" do
+      it "raises ObjectNotFoundError" do
+        subject
+          .should_receive(:find_disks_by_name)
+          .with(disk_name)
+          .and_return [double("disk 1"), double("disk 2")]
+
+        expect do
+          subject.delete_disk_by_name(disk_name)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "2 disks of name indy_disk_1 are found"
+      end
+    end
+
+    context "disk is not attached to VM" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option disk_state: :not_attached
+      end
+
+      it "deletes the disk successfully" do
+        expect do
+          subject.delete_disk_by_name(disk_name)
+        end.to_not raise_error
+      end
+
+      context "error occurs when deleting disk" do
+        it "raises the exception" do
+          subject
+            .should_receive(:delete_single_disk)
+            .and_raise RestClient::BadRequest
+
+          expect do
+            subject.delete_disk_by_name(disk_name)
+          end.to raise_exception RestClient::BadRequest
+        end
+      end
+    end
+
+    context "disk is attached to VM" do
+      it "raises an error" do
+        VCloudSdk::Test::ResponseMapping
+          .set_option disk_state: :attached
+        expect do
+          subject.delete_disk_by_name(disk_name)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Disk '#{disk_name}' of link " +
+                                 "#{VCloudSdk::Test::Response::INDY_DISK_URL}" +
+                                 " is attached to VM '#{VCloudSdk::Test::Response::VM_NAME}'"
+      end
+    end
+  end
+
+  describe "#delete_all_disks_by_name" do
+    let(:vdc_response) do
+      VCloudSdk::Xml::WrapperFactory.wrap_document(
+        VCloudSdk::Test::Response::VDC_RESPONSE)
+    end
+
+    context "one disk matching the name exists" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+        .set_option disk_state: :not_attached
+      end
+
+      it "deletes the disk successfully" do
+        expect do
+          subject.delete_all_disks_by_name(disk_name)
+        end.to_not raise_error
+      end
+
+      context "error occurs when deleting disk" do
+        it "raises an exception" do
+          subject
+            .should_receive(:delete_single_disk)
+            .and_raise RestClient::BadRequest
+
+          expect do
+            subject.delete_all_disks_by_name(disk_name)
+          end.to raise_exception "Disks deletion is unsuccessful"
+        end
+      end
+    end
+
+    context "two disks matching the name exist" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option disk_state: :not_attached
+      end
+
+      it "deletes the disks successfully" do
+        subject
+          .should_receive(:find_disks_by_name)
+          .with(disk_name)
+          .and_return [double("disk 1"), double("disk 2")]
+        subject
+          .should_receive(:delete_single_disk)
+          .twice
+        expect do
+          subject.delete_all_disks_by_name(disk_name)
+        end.to_not raise_error
+      end
+
+      context "error occurs when deleting disks" do
+        it "raises an exception" do
+          subject
+            .should_receive(:find_disks_by_name)
+            .with(disk_name)
+            .and_return [double("disk 1"), double("disk 2")]
+          subject
+            .should_receive(:delete_single_disk)
+            .twice
+            .and_raise RestClient::BadRequest
+
+          expect do
+            subject.delete_all_disks_by_name(disk_name)
+          end.to raise_exception "Disks deletion is unsuccessful"
+        end
       end
     end
   end

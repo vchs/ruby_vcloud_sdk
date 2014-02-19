@@ -39,7 +39,7 @@ describe VCloudSdk::VM do
         vm.independent_disks.should eql []
       ensure
         vapp.delete
-        new_disk.delete
+        vdc.delete_all_disks_by_name(new_disk_name)
       end
     end
   end
