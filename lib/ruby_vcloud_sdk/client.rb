@@ -2,6 +2,7 @@ require_relative "vdc"
 require_relative "catalog"
 require_relative "session"
 require_relative "infrastructure"
+require_relative "right_record"
 
 module VCloudSdk
 
@@ -36,6 +37,14 @@ module VCloudSdk
       catalog.delete_all_items
       connection.delete("/api/admin/catalog/#{catalog.id}")
       nil
+    end
+
+    def right_records
+      right_records = connection.get("/api/admin/rights/query").right_records
+
+      right_records.map do |right_record|
+        VCloudSdk::RightRecord.new(right_record)
+      end
     end
   end
 

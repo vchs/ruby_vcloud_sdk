@@ -130,4 +130,13 @@ describe VCloudSdk::Client do
     end
 
   end
+
+  describe "#right_records" do
+    subject { described_class.new(url, username, password, {}, logger) }
+
+    it "returns the current user right records" do
+      right_records = subject.right_records
+      right_records.should_not be_nil
+    end
+  end
 end
