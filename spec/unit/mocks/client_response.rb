@@ -54,6 +54,7 @@ module VCloudSdk
         INDY_DISK_SIZE = 200
         SCSI_CONTROLLER_ID = "2"
         SUPPORTED_VERSIONS_LINK = "#{URL}/api/versions"
+        RIGHT_RECORDS_LINK = "#{URL}/api/admin/rights/query"
         ORG_LINK = "#{URL}/api/org/82124610-59dc-4070-9181-bfca2c04cab0"
         ORG_VDC_STORAGE_PROFILE_LINK = "#{URL}/api/query?type=orgVdcStorageProfile&filter=vdcName==#{OVDC}"
         ORG_VDC_EDGE_GATEWAYS_LINK = "#{URL}/api/admin/vdc/#{VDC_ID}/edgeGateways"
@@ -130,6 +131,9 @@ module VCloudSdk
         STORAGE_PROFILE_NAME = "tenant-iscsi"
 
         ORG_VDC_EDGE_GATEWAYS_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateways_response.xml"))).strip
+
+        RIGHT_RECORDS_RESPONSE = (File.read(Test.spec_asset("right_records_response.xml")) %
+          [URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL, URL]).strip
 
         ORG_VDC_EDGE_GATEWAY_RESPONSE = (File.read(Test.spec_asset("vdc_edge_gateway_response.xml"))).strip
 
