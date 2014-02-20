@@ -62,6 +62,18 @@ describe VCloudSdk::Client, :min, :all do
     end
   end
 
+  describe "#right_records" do
+    subject { initialize_client }
+
+    it "returns the current user rights" do
+      right_records = subject.right_records
+      right_records.should have(9).items
+      right_records.each do |right_record|
+        right_record.should be_an_instance_of VCloudSdk::RightRecord
+      end
+    end
+  end
+
   describe "#list_catalogs" do
     subject { initialize_client }
 

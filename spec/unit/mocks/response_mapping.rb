@@ -187,6 +187,10 @@ module VCloudSdk
                   Test::Response::INDY_DISK_NO_ATTACHED_VMS_RESPONSE
                 end
               end,
+            Test::Response::RIGHT_RECORDS_LINK =>
+                lambda do |url, headers|
+                  Test::Response::RIGHT_RECORDS_RESPONSE
+                end,
           },
           post: {
             Test::Response::LOGIN_LINK =>
