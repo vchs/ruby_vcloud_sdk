@@ -68,17 +68,17 @@ describe VCloudSdk::Client do
       catalog = subject.create_catalog(catalog_name_to_create)
       catalog.should be_an_instance_of VCloudSdk::Catalog
       catalog.name.should eql catalog_name_to_create
-      subject.delete_catalog(catalog_name_to_create)
+      subject.delete_catalog_by_name(catalog_name_to_create)
     end
 
     it "fails if targeted catalog with the same name already exists" do
       catalog_name_to_create = SecureRandom.uuid
       subject.create_catalog(catalog_name_to_create)
       expect { subject.create_catalog(catalog_name_to_create) }.to raise_error("400 Bad Request")
-      subject.delete_catalog(catalog_name_to_create)
+      subject.delete_catalog_by_name(catalog_name_to_create)
     end
 
-    describe "#delete_catalog" do
+    describe "#delete_catalog_by_name" do
       subject { described_class.new(url, username, password, {}, logger) }
 
       context "target catalog has no items" do
@@ -88,7 +88,7 @@ describe VCloudSdk::Client do
           catalog = subject.find_catalog_by_name(catalog_name_to_create)
           catalog.name.should eql catalog_name_to_create
 
-          result = subject.delete_catalog(catalog_name_to_create)
+          result = subject.delete_catalog_by_name(catalog_name_to_create)
           result.should be_nil
           expect { subject.find_catalog_by_name(catalog_name_to_create) }
             .to raise_exception VCloudSdk::ObjectNotFoundError,
@@ -111,7 +111,7 @@ describe VCloudSdk::Client do
             media_name = "new media"
             media = catalog.upload_media vdc_name, media_name, media_file, storage_profile_name
           ensure
-            subject.delete_catalog(catalog_name_to_create)
+            subject.delete_catalog_by_name(catalog_name_to_create)
           end
 
           expect { subject.find_catalog_by_name(catalog_name_to_create) }
@@ -123,7 +123,7 @@ describe VCloudSdk::Client do
       it "fails if targeted catalog does not exist" do
         catalog_name_to_create = SecureRandom.uuid
         expect do
-          subject.delete_catalog(catalog_name_to_create)
+          subject.delete_catalog_by_name(catalog_name_to_create)
         end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                "Catalog '#{catalog_name_to_create}' is not found"
       end
