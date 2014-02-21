@@ -105,7 +105,7 @@ module VCloudSdk
       VCLOUD_USERNAME = "dev_mgr@dev"
       VCLOUD_PWD = "vmware"
       VDC_NAME = "tempest"
-      CATALOG_NAME = "cloudfoundry"
+      CATALOG_NAME = "ruby_vcloud_sdk_integration_test"
       STORAGE_PROFILE_NAME = "large"
       CATALOG_NAME_TO_CREATE = "dev test catalog"
       VAPP_NAME = "PCF vApp"

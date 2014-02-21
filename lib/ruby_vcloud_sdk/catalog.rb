@@ -51,7 +51,7 @@ module VCloudSdk
       end
     end
 
-    def delete_item(name, item_type = nil)
+    def delete_item_by_name_and_type(name, item_type = nil)
       link = find_item_link(name)
       item = VCloudSdk::CatalogItem.new(@session, link)
 

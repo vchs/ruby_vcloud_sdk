@@ -114,7 +114,7 @@ describe VCloudSdk::Catalog do
     end
   end
 
-  describe "#delete_item" do
+  describe "#delete_item_by_name_and_type" do
     before do
       VCloudSdk::Test::ResponseMapping.set_option catalog_state: :added
     end
@@ -123,7 +123,7 @@ describe VCloudSdk::Catalog do
       context "item to be deleted does not exist" do
         it "raises ObjectNotFoundError" do
           expect do
-            subject.delete_item("dummy")
+            subject.delete_item_by_name_and_type("dummy")
           end.to raise_exception VCloudSdk::ObjectNotFoundError
         end
       end
@@ -132,7 +132,7 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
           subject
-            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+            .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
             .should be_nil
         end
       end
@@ -141,7 +141,7 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
           subject
-            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+            .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
             .should be_nil
         end
       end
@@ -151,7 +151,7 @@ describe VCloudSdk::Catalog do
       context "item to be deleted does not have matching type" do
         it "raises ObjectNotFoundError" do
           expect do
-            subject.delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
+            subject.delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
                                 VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
           end.to raise_exception VCloudSdk::ObjectNotFoundError
         end
@@ -161,7 +161,7 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
           subject
-            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
+            .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
                          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
             .should be_nil
         end
@@ -171,7 +171,7 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
           subject
-            .delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
+            .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
                          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
             .should be_nil
         end
@@ -187,7 +187,7 @@ describe VCloudSdk::Catalog do
           .and_return(false)
 
         expect do
-          subject.delete_item(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+          subject.delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
         end.to raise_exception VCloudSdk::ApiTimeoutError
       end
     end
