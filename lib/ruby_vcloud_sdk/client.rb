@@ -32,7 +32,7 @@ module VCloudSdk
       find_catalog_by_name name
     end
 
-    def delete_catalog(name)
+    def delete_catalog_by_name(name)
       catalog = find_catalog_by_name(name)
       catalog.delete_all_items
       connection.delete("/api/admin/catalog/#{catalog.id}")

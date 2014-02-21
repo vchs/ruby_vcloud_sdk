@@ -33,7 +33,9 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
 
-    delete_catalog
+    delete_catalog_by_name
+      parameters:
+        name (String): name of catalog
       returns: nil
       throws:
         'ObjectNotFoundError' when catalog with the name does not exist
@@ -165,7 +167,10 @@ Copyright (c) VMware, Inc.
         throws:
           'RestClient::BadRequest' for un-expected errors
      
-     delete_item
+     delete_item_by_name_and_type
+        parameters:
+          name (String): name of item
+          type (String, optional): type of item - "application/vnd.vmware.vcloud.vAppTemplate+xml" or "application/vnd.vmware.vcloud.media+xml"
         returns: nil
         throws:
           'ObjectNotFoundError' when an item matching the name and type is not found
