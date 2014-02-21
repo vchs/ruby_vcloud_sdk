@@ -1,0 +1,19 @@
+<QueryResultRecords xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    total="1" pageSize="25" page="1" name="edgeGateway"
+                    type="application/vnd.vmware.vcloud.query.records+xml"
+                    href="%s/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways?page=1&amp;pageSize=25&amp;format=records"
+                    xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.query.references+xml"
+        href="%s/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways?page=1&amp;pageSize=25&amp;format=references"/>
+  <Link rel="alternate" type="application/vnd.vmware.vcloud.query.idrecords+xml"
+        href="%s/api/admin/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b/edgeGateways?page=1&amp;pageSize=25&amp;format=idrecords"/>
+  <RightRecord name="General: Administrator View" category="General" href="%s/api/admin/right/0b8c8cd2-5af9-32ad-a0bd-dc356503a552"/>
+  <RightRecord name="vApp: Use Console" category="vApp" href="%s/api/admin/right/0efcfea8-d79f-3556-8275-0ba6e18ce05b"/>
+  <RightRecord name="vApp: Sharing" category="vApp" href="%s/api/admin/right/1222edb5-adb4-32c4-be70-0e88aef1f03b"/>
+  <RightRecord name="Organization Network: View" category="Organization" href="%s/api/admin/right/194c71a1-3d68-3156-b789-6a6384028b78"/>
+  <RightRecord name="vApp Template / Media: View" category="Catalog Item" href="%s/api/admin/right/1aa46727-6192-365d-b571-5ce51beb3b48"/>
+  <RightRecord name="Disk: Delete" category="Disk" href="%s/api/admin/right/1e5ad20d-1023-34d1-b073-1ea30bce3854"/>
+  <RightRecord name="vApp Template / Media: Edit" category="Catalog Item" href="%s/api/admin/right/3eedbfb4-c4a3-373d-b4b5-d76ca363ab50"/>
+  <RightRecord name="Disk: Create" category="Disk" href="%s/api/admin/right/438e45e9-9389-3e29-9073-638b36921a2a"/>
+  <RightRecord name="vApp Template / Media: Copy" category="Catalog Item" href="%s/api/admin/right/444def42-24a8-33b5-a780-13af93b52fac"/>
+</QueryResultRecords>

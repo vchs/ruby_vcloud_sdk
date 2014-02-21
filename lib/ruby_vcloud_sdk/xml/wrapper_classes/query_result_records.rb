@@ -9,6 +9,10 @@ module VCloudSdk
       def edge_gateway_records
         get_nodes("EdgeGatewayRecord")
       end
+
+      def right_records
+        get_nodes("RightRecord")
+      end
     end
   end
 end
