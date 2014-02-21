@@ -177,7 +177,7 @@ module VCloudSdk
       VCloudSdk::Disk.new(@session, disk.href)
     end
 
-    def delete_disk(name)
+    def delete_disk_by_name(name)
       disks = find_disks_by_name(name)
       fail CloudError,
            "#{disks.size} disks of name #{name} are found" if disks.size > 1
@@ -186,7 +186,7 @@ module VCloudSdk
       nil
     end
 
-    def delete_all_disks(name)
+    def delete_all_disks_by_name(name)
       disks = find_disks_by_name(name)
       success = true
       disks.each do |disk|

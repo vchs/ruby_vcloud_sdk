@@ -118,7 +118,7 @@ describe VCloudSdk::VDC do
         new_disk.name.should eql new_disk_name
       ensure
         vapp.delete
-        subject.delete_all_disks(new_disk_name)
+        subject.delete_all_disks_by_name(new_disk_name)
       end
     end
   end

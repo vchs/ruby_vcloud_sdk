@@ -489,7 +489,7 @@ describe VCloudSdk::VDC do
     end
   end
 
-  describe "#delete_disk" do
+  describe "#delete_disk_by_name" do
     let(:vdc_response) do
       VCloudSdk::Xml::WrapperFactory.wrap_document(
         VCloudSdk::Test::Response::VDC_RESPONSE)
@@ -498,7 +498,7 @@ describe VCloudSdk::VDC do
     context "disk matching the name does not exist" do
       it "raises ObjectNotFoundError" do
         expect do
-          subject.delete_disk("dummy")
+          subject.delete_disk_by_name("dummy")
         end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                "Disk 'dummy' is not found"
       end
@@ -512,7 +512,7 @@ describe VCloudSdk::VDC do
           .and_return [double("disk 1"), double("disk 2")]
 
         expect do
-          subject.delete_disk(disk_name)
+          subject.delete_disk_by_name(disk_name)
         end.to raise_exception VCloudSdk::CloudError,
                                "2 disks of name indy_disk_1 are found"
       end
@@ -526,7 +526,7 @@ describe VCloudSdk::VDC do
 
       it "deletes the disk successfully" do
         expect do
-          subject.delete_disk(disk_name)
+          subject.delete_disk_by_name(disk_name)
         end.to_not raise_error
       end
 
@@ -537,7 +537,7 @@ describe VCloudSdk::VDC do
             .and_raise RestClient::BadRequest
 
           expect do
-            subject.delete_disk(disk_name)
+            subject.delete_disk_by_name(disk_name)
           end.to raise_exception RestClient::BadRequest
         end
       end
@@ -548,7 +548,7 @@ describe VCloudSdk::VDC do
         VCloudSdk::Test::ResponseMapping
           .set_option disk_state: :attached
         expect do
-          subject.delete_disk(disk_name)
+          subject.delete_disk_by_name(disk_name)
         end.to raise_exception VCloudSdk::CloudError,
                                "Disk '#{disk_name}' of link " +
                                  "#{VCloudSdk::Test::Response::INDY_DISK_URL}" +
@@ -557,7 +557,7 @@ describe VCloudSdk::VDC do
     end
   end
 
-  describe "#delete_disks" do
+  describe "#delete_all_disks_by_name" do
     let(:vdc_response) do
       VCloudSdk::Xml::WrapperFactory.wrap_document(
         VCloudSdk::Test::Response::VDC_RESPONSE)
@@ -571,7 +571,7 @@ describe VCloudSdk::VDC do
 
       it "deletes the disk successfully" do
         expect do
-          subject.delete_all_disks(disk_name)
+          subject.delete_all_disks_by_name(disk_name)
         end.to_not raise_error
       end
 
@@ -582,7 +582,7 @@ describe VCloudSdk::VDC do
             .and_raise RestClient::BadRequest
 
           expect do
-            subject.delete_all_disks(disk_name)
+            subject.delete_all_disks_by_name(disk_name)
           end.to raise_exception "Disks deletion is unsuccessful"
         end
       end
@@ -603,7 +603,7 @@ describe VCloudSdk::VDC do
           .should_receive(:delete_single_disk)
           .twice
         expect do
-          subject.delete_all_disks(disk_name)
+          subject.delete_all_disks_by_name(disk_name)
         end.to_not raise_error
       end
 
@@ -619,7 +619,7 @@ describe VCloudSdk::VDC do
             .and_raise RestClient::BadRequest
 
           expect do
-            subject.delete_all_disks(disk_name)
+            subject.delete_all_disks_by_name(disk_name)
           end.to raise_exception "Disks deletion is unsuccessful"
         end
       end

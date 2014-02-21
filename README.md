@@ -125,7 +125,7 @@ Copyright (c) VMware, Inc.
         'CloudError' when bus_sub_type is invalid
         'RestClient::BadRequest' for un-expected errors
 
-    delete_disk
+    delete_disk_by_name
       parameters:
         name (String): name of disk
       returns: nil
@@ -134,7 +134,7 @@ Copyright (c) VMware, Inc.
         'CloudError' when disk is attached to vm
         'RestClient::BadRequest' for un-expected errors
 
-    delete_all_disks
+    delete_all_disks_by_name
       parameters:
         name (String): name of disk
       returns: nil
