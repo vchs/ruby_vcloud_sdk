@@ -33,7 +33,7 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
 
-    delete_catalog
+    delete_catalog_by_name
       returns: nil
       throws:
         'ObjectNotFoundError' when catalog with the name does not exist

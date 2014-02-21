@@ -135,7 +135,7 @@ describe VCloudSdk::Client, :min, :all do
     end
   end
 
-  describe "#delete_catalog" do
+  describe "#delete_catalog_by_name" do
     subject { initialize_client }
 
     context "target catalog has no items" do
@@ -156,7 +156,7 @@ describe VCloudSdk::Client, :min, :all do
     context "targeted catalog does not exist" do
       it "raises an error" do
         catalog_name_to_create = "XXXX"
-        expect { subject.delete_catalog(catalog_name_to_create) }
+        expect { subject.delete_catalog_by_name(catalog_name_to_create) }
           .to raise_error "Catalog 'XXXX' is not found"
       end
     end
@@ -171,7 +171,7 @@ describe VCloudSdk::Client, :min, :all do
       subject.should_receive(:find_catalog_by_name)
         .with(catalog_name).once.and_return(catalog)
 
-      response = subject.delete_catalog(catalog_name)
+      response = subject.delete_catalog_by_name(catalog_name)
       response.should be_nil
     end
   end
