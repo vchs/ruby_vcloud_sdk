@@ -67,7 +67,7 @@ describe VCloudSdk::VApp do
       it "removes the target vm" do
         subject.power_off
         size = subject.vms.size
-        subject.remove_vm_by_name vapp_template_for_new_vapp
+        subject.remove_vm_by_name subject.vms.first.name
         subject.vms.should have(size - 1).items
       end
     end
@@ -77,7 +77,7 @@ describe VCloudSdk::VApp do
         subject.power_on
         expect do
           subject
-            .remove_vm_by_name vapp_template_for_new_vapp
+            .remove_vm_by_name subject.vms.first.name
         end.to raise_exception VCloudSdk::CloudError,
                                "VApp is in status of 'POWERED_ON' and can not be recomposed"
       end
