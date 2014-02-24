@@ -227,7 +227,18 @@ Copyright (c) VMware, Inc.
          throws:
            'ApiError' when instantiating vapp template task is not successful
            'RestClient::BadRequest' for un-expected error
-     
+
+      delete_vapp_by_name
+         parameters:
+           vdc_name (String): name of vdc
+           vapp_name (String): name of vapp
+         returns: nil
+         throws:
+           'ObjectNotFoundError' when VDC with the name does not exist
+           'CloudError' if VApp is powered on
+           'ApiRequestError' when deleting vapp request fails
+           'RestClient::BadRequest' for un-expected errors
+
   Network
   
      ip_ranges
@@ -241,12 +252,6 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
      
   VApp
-  
-     delete
-        returns: task object
-        throws:
-          'CloudError' if VApp is powered on
-          'RestClient::BadRequest' for un-expected errors
      
      power_on
         returns: task object

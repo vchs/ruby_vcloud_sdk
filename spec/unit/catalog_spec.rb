@@ -11,9 +11,12 @@ describe VCloudSdk::Catalog do
   let(:url) { VCloudSdk::Test::Response::URL }
   let!(:vmdk_string_io) { StringIO.new("vmdk") }
   let(:vdc_name) { VCloudSdk::Test::Response::OVDC }
-  let(:vapp_name) { VCloudSdk::Test::Response::VAPP_TEMPLATE_NAME }
+  let(:vapp_template_name) { VCloudSdk::Test::Response::VAPP_TEMPLATE_NAME }
+  let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
   let(:media_name) { VCloudSdk::Test::Response::MEDIA_NAME }
-  let(:storage_profile_name) { VCloudSdk::Test::Response::STORAGE_PROFILE_NAME }
+  let(:storage_profile_name) do
+    VCloudSdk::Test::Response::STORAGE_PROFILE_NAME
+  end
   let(:new_vapp) { double("new vapp") }
   let(:mock_ovf_directory) do
     directory = double("Directory")
@@ -57,7 +60,10 @@ describe VCloudSdk::Catalog do
 
   describe "#admin_xml" do
     it "has correct name" do
-      subject.send(:admin_xml).name.should eql VCloudSdk::Test::Response::CATALOG_NAME
+      subject
+        .send(:admin_xml)
+        .name
+        .should eql VCloudSdk::Test::Response::CATALOG_NAME
     end
 
     it "throws exception if admin_catalog_xml is nil" do
@@ -70,7 +76,9 @@ describe VCloudSdk::Catalog do
         .stub(:get)
         .with(VCloudSdk::Test::Response::CATALOG_LINK)
         .and_return nil
-      expect { subject.send(:admin_xml) }.to raise_error(VCloudSdk::ObjectNotFoundError)
+      expect do
+        subject.send(:admin_xml)
+      end.to raise_error(VCloudSdk::ObjectNotFoundError)
     end
   end
 
@@ -152,27 +160,29 @@ describe VCloudSdk::Catalog do
         it "raises ObjectNotFoundError" do
           expect do
             subject.delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
-                                VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
+                                                 VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
           end.to raise_exception VCloudSdk::ObjectNotFoundError
         end
       end
 
       context "item has a running task" do
         it "deletes item successfully" do
-          VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
+          VCloudSdk::Test::ResponseMapping
+            .set_option existing_media_state: :busy
           subject
             .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
-                         VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
+                                          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
             .should be_nil
         end
       end
 
       context "item has no running task" do
         it "deletes item successfully" do
-          VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
+          VCloudSdk::Test::ResponseMapping
+            .set_option existing_media_state: :done
           subject
             .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
-                         VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
+                                          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
             .should be_nil
         end
       end
@@ -187,7 +197,8 @@ describe VCloudSdk::Catalog do
           .and_return(false)
 
         expect do
-          subject.delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+          subject
+            .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
         end.to raise_exception VCloudSdk::ApiTimeoutError
       end
     end
@@ -203,7 +214,7 @@ describe VCloudSdk::Catalog do
   describe "#upload_vapp_template" do
     let(:vapp_template_uploaded) do
       vapp_template = double("vapp template")
-      vapp_template.stub(:name) { vapp_name }
+      vapp_template.stub(:name) { vapp_template_name }
       vapp_template
     end
 
@@ -214,9 +225,9 @@ describe VCloudSdk::Catalog do
         .and_return(true)
 
         expect do
-          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
-        end.to raise_exception("vApp template '#{vapp_name}' already exists" +
-                                 " in catalog #{VCloudSdk::Test::Response::CATALOG_NAME}")
+          subject.upload_vapp_template vdc_name, vapp_template_name, mock_ovf_directory, storage_profile_name
+        end.to raise_exception("vApp template '#{vapp_template_name}' already exists" +
+                               " in catalog #{VCloudSdk::Test::Response::CATALOG_NAME}")
       end
     end
 
@@ -233,7 +244,7 @@ describe VCloudSdk::Catalog do
         end
 
         expect do
-          subject.upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
+          subject.upload_vapp_template vdc_name, vapp_template_name, mock_ovf_directory, storage_profile_name
         end.to raise_exception("Error uploading vApp template")
       end
     end
@@ -252,12 +263,14 @@ describe VCloudSdk::Catalog do
 
         subject
           .should_receive(:find_vapp_template_by_name)
-          .with(vapp_name)
+          .with(vapp_template_name)
           .and_return vapp_template_uploaded
 
         catalog_item = subject
-          .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory
-        catalog_item.name.should eql vapp_name
+          .upload_vapp_template vdc_name,
+                                vapp_template_name,
+                                mock_ovf_directory
+        catalog_item.name.should eql vapp_template_name
       end
     end
 
@@ -274,12 +287,15 @@ describe VCloudSdk::Catalog do
 
       subject
         .should_receive(:find_vapp_template_by_name)
-        .with(vapp_name)
+        .with(vapp_template_name)
         .and_return vapp_template_uploaded
 
       catalog_item = subject
-                       .upload_vapp_template vdc_name, vapp_name, mock_ovf_directory, storage_profile_name
-      catalog_item.name.should eql vapp_name
+                       .upload_vapp_template vdc_name,
+                                             vapp_template_name,
+                                             mock_ovf_directory,
+                                             storage_profile_name
+      catalog_item.name.should eql vapp_template_name
     end
 
   end
@@ -387,7 +403,8 @@ describe VCloudSdk::Catalog do
     end
 
     it "find targeted media if it exists" do
-      media = subject.find_media_by_name(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
+      media = subject
+                .find_media_by_name(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
       media.should_not be_nil
       media.name.should eq VCloudSdk::Test::Response::EXISTING_MEDIA_NAME
     end
@@ -405,7 +422,8 @@ describe VCloudSdk::Catalog do
     end
 
     it "find targeted vapp template if it exists" do
-      vapp_template = subject.find_vapp_template_by_name(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME)
+      vapp_template = subject
+                        .find_vapp_template_by_name(VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME)
       vapp_template.should_not be_nil
       vapp_template.name.should eq VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME
     end
@@ -417,30 +435,32 @@ describe VCloudSdk::Catalog do
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
       VCloudSdk::VDC.any_instance
         .stub(:find_vapp_by_name)
-        .with(vapp_name)
+        .with(vapp_template_name)
         .and_return new_vapp
 
       vapp = subject.instantiate_vapp_template(
           VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
           VCloudSdk::Test::Response::OVDC,
-          vapp_name,
+          vapp_template_name,
       )
 
       vapp.should eq new_vapp
     end
 
     it "instantiates a vApp from the vapp template with disk locality" do
-      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
-      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+      VCloudSdk::Test::ResponseMapping
+        .set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
       VCloudSdk::VDC.any_instance
         .stub(:find_vapp_by_name)
-        .with(vapp_name)
+        .with(vapp_template_name)
         .and_return new_vapp
 
       vapp = subject.instantiate_vapp_template(
           VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
           VCloudSdk::Test::Response::OVDC,
-          vapp_name,
+          vapp_template_name,
           "desc",
           [VCloudSdk::Test::Response::INDY_DISK_URL]
       )
@@ -449,29 +469,100 @@ describe VCloudSdk::Catalog do
     end
 
     it "raises an exception when vapp template cannot be found" do
-      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
-      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+      VCloudSdk::Test::ResponseMapping
+        .set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
 
       expect do
         subject.instantiate_vapp_template(
           "not_existing_vapp_template",
           VCloudSdk::Test::Response::OVDC,
-          vapp_name,
+          vapp_template_name,
         )
       end.to raise_error VCloudSdk::ObjectNotFoundError
     end
 
     it "raises an exception when VDC cannot be found" do
-      VCloudSdk::Test::ResponseMapping.set_option template_instantiate_state: :running
-      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
+      VCloudSdk::Test::ResponseMapping
+        .set_option template_instantiate_state: :running
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
 
       expect do
         subject.instantiate_vapp_template(
             VCloudSdk::Test::Response::EXISTING_VAPP_TEMPLATE_NAME,
             "not_existing_vdc",
-            vapp_name,
+            vapp_template_name,
         )
       end.to raise_error VCloudSdk::ObjectNotFoundError
+    end
+  end
+
+  describe "#delete_vapp_by_name" do
+
+    before do
+      VCloudSdk::Test::ResponseMapping
+        .set_option delete_vapp_task_state: :running
+    end
+
+    context "vApp is stopped" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :off
+      end
+
+      context "vApp has no running_tasks" do
+        it "deletes target vApp successfully" do
+          expect do
+            subject.delete_vapp_by_name(vdc_name, vapp_name)
+          end.to_not raise_error
+        end
+
+        it "fails to delete vApp" do
+          subject
+            .should_receive(:task_is_success)
+            .at_least(3)
+            .and_return(false)
+
+          expect do
+            subject.delete_vapp_by_name(vdc_name, vapp_name)
+          end.to raise_exception VCloudSdk::ApiTimeoutError,
+                                 "Task Deleting Virtual Application " +
+                                 "(#{VCloudSdk::Test::Response::VAPP_ID}) did not complete within limit of 3 seconds."
+        end
+      end
+
+      context "vApp has running_tasks" do
+        it "waits until running tasks complete" do
+          deletion_running_task = VCloudSdk::Xml::WrapperFactory.wrap_document(
+            VCloudSdk::Test::Response::INSTANTIATED_VAPP_DELETE_RUNNING_TASK)
+          running_tasks = [deletion_running_task]
+          VCloudSdk::Xml::VApp
+            .any_instance
+            .should_receive(:running_tasks)
+            .twice
+            .and_return(running_tasks)
+
+          expect do
+            subject.delete_vapp_by_name(vdc_name, vapp_name)
+          end.to_not raise_error
+        end
+      end
+    end
+
+    context "vApp is powered on" do
+      before do
+        VCloudSdk::Test::ResponseMapping
+          .set_option vapp_power_state: :on
+      end
+
+      it "fails to delete target vApp" do
+        expect do
+          subject.delete_vapp_by_name(vdc_name, vapp_name)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "vApp #{vapp_name} is powered on, power-off before deleting."
+      end
     end
   end
 

@@ -38,7 +38,7 @@ describe VCloudSdk::VM do
         vm.detach_disk(new_disk)
         vm.independent_disks.should eql []
       ensure
-        vapp.delete
+        catalog.delete_vapp_by_name(vdc_name, vapp_name)
         vdc.delete_all_disks_by_name(new_disk_name)
       end
     end
@@ -56,7 +56,7 @@ describe VCloudSdk::VM do
         vm.power_on
         vm.power_off
       ensure
-        vapp.delete
+        catalog.delete_vapp_by_name(vdc_name, vapp_name)
       end
     end
   end
@@ -77,7 +77,7 @@ describe VCloudSdk::VM do
         vm.send(:task_is_success, task)
           .should be_true
       ensure
-        vapp.delete
+        catalog.delete_vapp_by_name(vdc_name, vapp_name)
       end
     end
 
@@ -99,7 +99,7 @@ describe VCloudSdk::VM do
           end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                  "Catalog 'dummy' is not found"
         ensure
-          vapp.delete
+          catalog.delete_vapp_by_name(vdc_name, vapp_name)
         end
       end
     end
@@ -122,7 +122,7 @@ describe VCloudSdk::VM do
           end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                  "Catalog Item 'dummy' is not found"
         ensure
-          vapp.delete
+          catalog.delete_vapp_by_name(vdc_name, vapp_name)
         end
       end
     end
@@ -143,7 +143,7 @@ describe VCloudSdk::VM do
           vm.send(:task_is_success, task)
             .should be_true
         ensure
-          vapp.delete
+          catalog.delete_vapp_by_name(vdc_name, vapp_name)
         end
       end
     end
@@ -161,7 +161,7 @@ describe VCloudSdk::VM do
           vm.send(:task_is_success, task)
             .should be_true
         ensure
-          vapp.delete
+          catalog.delete_vapp_by_name(vdc_name, vapp_name)
         end
       end
     end

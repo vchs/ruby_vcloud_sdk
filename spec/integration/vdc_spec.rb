@@ -117,7 +117,7 @@ describe VCloudSdk::VDC do
         new_disk = subject.create_disk(new_disk_name, 1024, vm)
         new_disk.name.should eql new_disk_name
       ensure
-        vapp.delete
+        catalog.delete_vapp_by_name(vdc_name, vapp_name)
         subject.delete_all_disks_by_name(new_disk_name)
       end
     end

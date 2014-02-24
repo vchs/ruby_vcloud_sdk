@@ -160,6 +160,26 @@ module VCloudSdk
       vdc.find_vapp_by_name vapp_name
     end
 
+    def delete_vapp_by_name(vdc_name, vapp_name)
+      vdc = find_vdc_by_name vdc_name
+      vapp = vdc.find_vapp_by_name vapp_name
+      vapp_entity_xml = connection.get(vapp.href)
+      vapp_name = vapp_entity_xml.name
+      fail CloudError,
+           "vApp #{vapp_name} is powered on, power-off before deleting." if vapp.status == "POWERED_ON"
+
+      wait_for_running_tasks(vapp_entity_xml, "VApp #{vapp_name}")
+      Config.logger.info "Deleting vApp #{vapp_name}."
+      monitor_task(connection.delete(vapp_entity_xml.remove_link),
+                   @session.time_limit[:delete_vapp]) do |task|
+        Config.logger.info "vApp #{vapp_name} deleted."
+        return nil
+      end
+
+      fail ApiRequestError,
+           "Fail to delete vApp #{vapp_name}"
+    end
+
     private
 
     def add_item(item)

@@ -7,35 +7,16 @@ module VCloudSdk
     include Infrastructure
     include Powerable
 
+    extend Forwardable
+    def_delegator :entity_xml, :name
+
     def initialize(session, link)
       @session = session
       @link = link
     end
 
-    def name
-      entity_xml.name
-    end
-
-    def delete
-      vapp = entity_xml
-      vapp_name = name
-
-      if is_status?(vapp, :POWERED_ON)
-        fail CloudError,
-             "vApp #{vapp_name} is powered on, power-off before deleting."
-      end
-
-      wait_for_running_tasks(vapp, "VApp #{vapp_name}")
-
-      Config.logger.info "Deleting vApp #{vapp_name}."
-      monitor_task(connection.delete(vapp.remove_link),
-                   @session.time_limit[:delete_vapp]) do |task|
-        Config.logger.info "vApp #{vapp_name} deleted."
-        return task
-      end
-
-      fail ApiRequestError,
-           "Fail to delete vApp #{vapp_name}"
+    def href
+      @link
     end
 
     def recompose_from_vapp_template(catalog_name, template_name)

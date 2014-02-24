@@ -15,7 +15,9 @@ describe VCloudSdk::VApp do
 
   after :all do
     subject.power_off
-    subject.delete
+    client = VCloudSdk::Client.new(url, username, password, {}, logger)
+    catalog = client.find_catalog_by_name(catalog_name)
+    catalog.delete_vapp_by_name(vdc_name, subject.name)
   end
 
   subject do
