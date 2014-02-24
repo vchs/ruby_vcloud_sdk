@@ -299,6 +299,13 @@ Copyright (c) VMware, Inc.
 
   VM
 
+     memory
+       returns: integer number, the size of memory in megabyte
+       throws:
+         'ApiError' when AllocationUnits of memory is in unexpected form
+         'CloudError' when size of memory is zero
+         'RestClient::BadRequest' for un-expected errors
+
      independent_disks
        returns: array of disk objects
        throws:
