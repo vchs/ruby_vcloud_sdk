@@ -166,4 +166,16 @@ describe VCloudSdk::VM do
       end
     end
   end
+
+  subject do
+    vdc = client.find_vdc_by_name(vdc_name)
+    vdc.vapps.first.vms.first
+  end
+
+  describe "#memory" do
+    it "returns memory in megabytes of VM" do
+      memory_mb = subject.memory
+      memory_mb.should > 0
+    end
+  end
 end

@@ -14,13 +14,15 @@ module VCloudSdk
       end
 
       def cpu
-        hardware.find { |h| h.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) ==
-          HARDWARE_TYPE[:CPU] }
+        hardware.find do |h|
+          h.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:CPU]
+        end
       end
 
       def memory
-        hardware.find { |h| h.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) ==
-          HARDWARE_TYPE[:MEMORY] }
+        hardware.find do |h|
+          h.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:MEMORY]
+        end
       end
 
       def scsi_controller

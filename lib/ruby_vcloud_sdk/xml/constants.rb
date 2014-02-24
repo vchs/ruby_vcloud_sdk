@@ -26,6 +26,8 @@ module VCloudSdk
         :CONNECTION => "Connection",
         :PARENT => "Parent",
         :ELEMENT_NAME => "ElementName",
+        :ALLOCATION_UNITS => "AllocationUnits",
+        :VIRTUAL_QUANTITY => "VirtualQuantity"
     }
 
     RESOURCE_SUB_TYPE = {

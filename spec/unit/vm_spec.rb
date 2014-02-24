@@ -40,6 +40,46 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#memory" do
+    it "returns memory in megabytes of VM" do
+      subject.memory.should eql 32
+    end
+
+    context "Allocation Unit is incorrect" do
+      it "raises CloudError" do
+        subject
+          .should_receive(:eval_memory_allocation_units)
+          .and_return 1
+
+        expect do
+          subject.memory
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Size of memory is less than 1 MB."
+      end
+    end
+  end
+
+  describe "#eval_memory_allocation_units" do
+    it "returns allocation_units in number of bytes" do
+      bytes = ["byte*3*2^20", "byte * 2^20", "byte * 2^10", "byte"].map do |allocation_units|
+        subject
+          .send(:eval_memory_allocation_units, allocation_units)
+      end
+
+      bytes.should eql [3 * 1024 * 1024, 1024 * 1024, 1024, 1]
+    end
+
+    context "allocation_units is in invalid form" do
+      it "raises ApiError" do
+        expect do
+          subject
+            .send(:eval_memory_allocation_units, "bit * 2^20")
+        end.to raise_exception VCloudSdk::ApiError,
+                               "Unexpected form of AllocationUnits of memory: 'bit * 2^20'"
+      end
+    end
+  end
+
   describe "#independent_disks" do
     context "vm has attached disk" do
       it "returns a collection of disks" do
@@ -469,7 +509,7 @@ describe VCloudSdk::VM do
             VCloudSdk::Test::ResponseMapping
               .set_option existing_media_state: :busy
             task = subject.eject_media(catalog_name,
-                                        media_name)
+                                       media_name)
             subject
               .send(:task_is_success, task)
               .should be_true
@@ -479,7 +519,7 @@ describe VCloudSdk::VM do
         context "media file has no running task" do
           it "ejects media file successfully" do
             task = subject.eject_media(catalog_name,
-                                        media_name)
+                                       media_name)
 
             subject
               .send(:task_is_success, task)
@@ -500,7 +540,7 @@ describe VCloudSdk::VM do
 
             expect do
               subject.eject_media(catalog_name,
-                                   media_name)
+                                  media_name)
             end.to raise_exception RestClient::BadRequest
           end
         end

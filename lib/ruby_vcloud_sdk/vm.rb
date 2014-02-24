@@ -19,6 +19,21 @@ module VCloudSdk
       @link
     end
 
+    # returns size of memory in megabytes
+    def memory
+      m = entity_xml
+            .hardware_section
+            .memory
+      allocation_units = m.get_rasd_content(Xml::RASD_TYPES[:ALLOCATION_UNITS])
+      bytes = eval_memory_allocation_units(allocation_units)
+
+      virtual_quantity = m.get_rasd_content(Xml::RASD_TYPES[:VIRTUAL_QUANTITY]).to_i
+      memory_mb = virtual_quantity * bytes / BYTES_PER_MEGABYTE
+      fail CloudError,
+           "Size of memory is less than 1 MB." if memory_mb == 0
+      memory_mb
+    end
+
     def independent_disks
       hardware_section = entity_xml.hardware_section
       disks = []
@@ -128,5 +143,21 @@ module VCloudSdk
         params.media_href = media.href
       end
     end
+
+    def eval_memory_allocation_units(allocation_units)
+      # allocation_units is in the form of "byte * modifier * base ^ exponent" such as "byte * 2^20"
+      # "modifier", "base" and "exponent" are positive integers and optional.
+      # "base" and "exponent" must be present together.
+      # Parsing logic: remove starting "byte" and first char "*" and replace power "^" with ruby-understandable "**"
+      bytes = allocation_units.sub(/byte\s*(\*)?/, "").sub(/\^/, "**")
+      return 1 if bytes.empty? # allocation_units is "byte" without "modifier", "base" or "exponent"
+      fail unless bytes =~ /(\d+\s*\*)?(\d+\s*\*\*\s*\d+)?/
+      eval bytes
+    rescue
+      raise ApiError,
+            "Unexpected form of AllocationUnits of memory: '#{allocation_units}'"
+    end
+
+    BYTES_PER_MEGABYTE = 1_048_576 # 1048576 = 1024 * 1024 = 2^20
   end
 end
