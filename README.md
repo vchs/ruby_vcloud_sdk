@@ -293,6 +293,11 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
   VM
+     vcpu:
+       returns: number of virtual cpus of VM
+       throws:
+         'CloudError' when information of number of virtual cpus of VM is unavailable
+         'RestClient::BadRequest' for un-expected errors
 
      memory
        returns: integer number, the size of memory in megabyte

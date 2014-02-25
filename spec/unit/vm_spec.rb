@@ -59,6 +59,32 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#vcpu" do
+    it "returns number of virtual cpus of VM" do
+      subject.vcpu.should eql 1
+    end
+
+    context "information of number of virtual cpus of VM is unavailable" do
+      it "raises CloudError" do
+        cpus = double("cpus")
+        VCloudSdk::Xml::VirtualHardwareSection
+          .any_instance
+          .should_receive(:cpu)
+          .and_return cpus
+        cpus
+          .should_receive(:get_rasd_content)
+          .with(VCloudSdk::Xml::RASD_TYPES[:VIRTUAL_QUANTITY])
+          .and_return nil
+
+        expect do
+          subject.vcpu
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Uable to retrieve number of virtual cpus of VM #{vm_name}"
+
+      end
+    end
+  end
+
   describe "#eval_memory_allocation_units" do
     it "returns allocation_units in number of bytes" do
       bytes = ["byte*3*2^20", "byte * 2^20", "byte * 2^10", "byte"].map do |allocation_units|
