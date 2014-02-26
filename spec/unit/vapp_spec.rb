@@ -12,6 +12,7 @@ describe VCloudSdk::VApp do
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
   let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
+  let(:network_name) { VCloudSdk::Test::Response::ORG_NETWORK_NAME }
 
   subject do
     vdc_response = VCloudSdk::Xml::WrapperFactory.wrap_document(
@@ -380,6 +381,57 @@ describe VCloudSdk::VApp do
           subject.remove_vm_by_name VCloudSdk::Test::Response::VM_NAME
         end.to raise_exception VCloudSdk::CloudError
                 "VApp is in status of 'POWERED_OFF' and can not be recomposed"
+      end
+    end
+  end
+
+  describe "#add_network_by_name" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
+    end
+
+    it "adds the network to vapp" do
+      task = subject.add_network_by_name(network_name)
+      subject
+        .send(:task_is_success, task)
+        .should be_true
+    end
+
+    context "optional parameters are specified" do
+      it "adds the network to vapp" do
+        task = subject
+                 .add_network_by_name(network_name,
+                                      "new network",
+                                      VCloudSdk::Xml::FENCE_MODES[:ISOLATED])
+        subject
+          .send(:task_is_success, task)
+          .should be_true
+      end
+    end
+
+    context "network with the name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.add_network_by_name("dummy")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Network 'dummy' is not found"
+      end
+    end
+
+    context "error occurred in adding network request" do
+      it "raises the exception" do
+        subject
+          .send(:connection)
+          .stub(:put)
+          .with(anything,
+                anything,
+                VCloudSdk::Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.add_network_by_name(network_name)
+        end.to raise_exception RestClient::BadRequest
       end
     end
   end
