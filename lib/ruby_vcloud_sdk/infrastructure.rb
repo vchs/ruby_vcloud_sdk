@@ -14,6 +14,16 @@ module VCloudSdk
       VCloudSdk::VDC.new(@session, connection.get(vdc_link))
     end
 
+    def find_network_by_name(name)
+      @session.org.networks.each do |network_link|
+        if network_link.name == name
+          return VCloudSdk::Network.new(@session, network_link)
+        end
+      end
+
+      fail ObjectNotFoundError, "Network '#{name}' is not found"
+    end
+
     def catalogs
       @session.org.catalogs.map do |catalog_link|
         VCloudSdk::Catalog.new(@session, catalog_link)

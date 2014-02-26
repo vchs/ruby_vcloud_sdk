@@ -29,6 +29,8 @@ module VCloudSdk
 
     private_constant :BUS_TYPE, :BUS_SUB_TYPE
 
+    public :find_network_by_name
+
     def initialize(session, vdc_xml_obj)
       @session = session
       @vdc_xml_obj = vdc_xml_obj
@@ -94,16 +96,6 @@ module VCloudSdk
       @session.org.networks.map do |network_link|
         network_link.name
       end
-    end
-
-    def find_network_by_name(name)
-      @session.org.networks.each do |network_link|
-        if network_link.name == name
-          return VCloudSdk::Network.new(@session, network_link)
-        end
-      end
-
-      fail ObjectNotFoundError, "Network '#{name}' is not found"
     end
 
     def edge_gateways
