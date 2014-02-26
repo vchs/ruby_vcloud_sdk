@@ -385,6 +385,18 @@ describe VCloudSdk::VApp do
     end
   end
 
+  describe "#list_networks" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+      .set_option vapp_power_state: :off
+    end
+
+    it "returns a collection of network names" do
+      network_names = subject.list_networks
+      network_names.should eql([network_name])
+    end
+  end
+
   describe "#add_network_by_name" do
     before do
       VCloudSdk::Test::ResponseMapping

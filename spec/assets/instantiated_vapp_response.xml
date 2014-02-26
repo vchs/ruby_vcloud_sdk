@@ -32,16 +32,31 @@
     <NetworkConfigSection type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="%s" ovf:required="false">
         <ovf:Info>The configuration parameters for logical networks</ovf:Info>
         <Link rel="edit" type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="%s"/>
-        <NetworkConfig networkName="none">
-            <Description>This is a special place-holder used for disconnected network interfaces.</Description>
+        <NetworkConfig networkName="%s">
+            <Link rel="repair"
+                  href="https://10.146.21.135/api/admin/network/e498d38f-d75f-44b2-a146-0034e5f2ba00/action/reset"/>
+            <Description/>
             <Configuration>
+              <IpScopes>
                 <IpScope>
-                    <IsInherited>false</IsInherited>
-                    <Gateway>196.254.254.254</Gateway>
-                    <Netmask>255.255.0.0</Netmask>
-                    <Dns1>196.254.254.254</Dns1>
+                  <IsInherited>true</IsInherited>
+                  <Gateway>10.146.21.253</Gateway>
+                  <Netmask>255.255.255.128</Netmask>
+                  <Dns1>10.132.71.1</Dns1>
+                  <Dns2>10.132.71.2</Dns2>
+                  <IsEnabled>true</IsEnabled>
+                  <IpRanges>
+                    <IpRange>
+                      <StartAddress>10.146.21.150</StartAddress>
+                      <EndAddress>10.146.21.189</EndAddress>
+                    </IpRange>
+                  </IpRanges>
                 </IpScope>
-                <FenceMode>isolated</FenceMode>
+              </IpScopes>
+              <ParentNetwork name="tempest_vdc_network" id="339b4c6e-37f0-4ec5-a814-a3cb97a82855"
+                             href="https://10.146.21.135/api/admin/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+              <FenceMode>bridged</FenceMode>
+              <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
             </Configuration>
             <IsDeployed>false</IsDeployed>
         </NetworkConfig>
