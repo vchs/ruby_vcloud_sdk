@@ -4,11 +4,15 @@ require "nokogiri/diff"
 describe VCloudSdk::VM do
 
   let(:logger) { VCloudSdk::Test.logger }
-  let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
-  let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
-  let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
+  #let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
+  #let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
+  #let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
   let!(:client) { VCloudSdk::Client.new(url, username, password, {}, logger) }
-  let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
+  #let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
+  let(:url) { 'https://p2v1-vcd.vchs.vmware.com:443' }
+  let(:username) { 'justiny@vmware.com@164-935' }
+  let(:password) { 'Pa$$w0rd' }
+  let(:vdc_name) { "164-935" }
   let(:vapp_name) { ENV['VAPP_NAME'] ||  VCloudSdk::Test::DefaultSetting::VAPP_NAME }
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
   let(:vapp_template_name) { VCloudSdk::Test::DefaultSetting::EXISTING_VAPP_TEMPLATE_NAME }
@@ -176,6 +180,12 @@ describe VCloudSdk::VM do
     it "returns memory in megabytes of VM" do
       memory_mb = subject.memory
       memory_mb.should > 0
+    end
+  end
+
+  describe "#vcpu" do
+    it "returns number of virtual cpus of VM" do
+      subject.vcpu.should > 0
     end
   end
 end

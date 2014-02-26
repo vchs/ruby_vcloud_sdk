@@ -34,6 +34,18 @@ module VCloudSdk
       memory_mb
     end
 
+    # returns number of virtual cpus of VM
+    def vcpu
+      cpus = entity_xml
+              .hardware_section
+              .cpu
+              .get_rasd_content(Xml::RASD_TYPES[:VIRTUAL_QUANTITY])
+
+      fail CloudError,
+           "Uable to retrieve number of virtual cpus of VM #{name}" if cpus.nil?
+      cpus.to_i
+    end
+
     def independent_disks
       hardware_section = entity_xml.hardware_section
       disks = []
