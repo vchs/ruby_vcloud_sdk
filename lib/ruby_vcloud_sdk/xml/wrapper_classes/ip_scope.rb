@@ -1,6 +1,10 @@
 module VCloudSdk
   module Xml
     class IpScope < Wrapper
+      def ip_ranges
+        get_nodes(:IpRanges).first
+      end
+
       def is_inherited?
         get_nodes(:IsInherited).first.content
       end
