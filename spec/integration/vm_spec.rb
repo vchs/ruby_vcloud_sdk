@@ -178,4 +178,10 @@ describe VCloudSdk::VM do
       memory_mb.should > 0
     end
   end
+
+  describe "#vcpu" do
+    it "returns number of virtual cpus of VM" do
+      subject.vcpu.should > 0
+    end
+  end
 end
