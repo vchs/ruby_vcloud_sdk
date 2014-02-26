@@ -86,6 +86,13 @@ module VCloudSdk
       self
     end
 
+    def list_networks
+      entity_xml
+        .network_config_section
+        .network_configs
+        .map { |network_config| network_config.network_name }
+    end
+
     def add_network_by_name(
         network_name,
         vapp_net_name = nil,

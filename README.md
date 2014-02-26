@@ -292,6 +292,11 @@ Copyright (c) VMware, Inc.
          'CloudError' when VApp is in status of 'POWERED_ON' and can not be recomposed
          'RestClient::BadRequest' for un-expected errors
 
+     list_networks
+       returns: array of network names
+       throws:
+         'RestClient::BadRequest' for un-expected errors
+
      add_network_by_name
        parameters:
          network_name (String): name of network in vdc org to add to vapp
@@ -307,6 +312,7 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
   VM
+
      vcpu:
        returns: number of virtual cpus of VM
        throws:
