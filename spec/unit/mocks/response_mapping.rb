@@ -327,6 +327,11 @@ module VCloudSdk
                 set_option vapp_state: :ovf_uploaded
                 ""
               end,
+            Test::Response::INSTANTIATED_VAPP_NETWORK_CONFIG_SECTION_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::
+                  INSTANTIATED_VAPP_NETWORK_CONFIG_MODIFY_NETWORK_TASK_SUCCESS
+              end
           }
       }
 

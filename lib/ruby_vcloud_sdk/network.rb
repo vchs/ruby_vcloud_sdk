@@ -5,17 +5,22 @@ module VCloudSdk
   class Network
     include Infrastructure
 
+    extend Forwardable
+    def_delegator :entity_xml, :name
+
     def initialize(session, link)
       @session = session
       @link = link
     end
 
-    def name
-      entity_xml.name
+    def href
+      @link
     end
 
     def ip_ranges
-      entity_xml.ip_ranges
+      entity_xml
+        .ip_scope
+        .ip_ranges
         .ranges
         .reduce(IpRanges.new) do |result, i|
           result + IpRanges.new("#{i.start_address}-#{i.end_address}")

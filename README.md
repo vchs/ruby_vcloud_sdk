@@ -292,6 +292,20 @@ Copyright (c) VMware, Inc.
          'CloudError' when VApp is in status of 'POWERED_ON' and can not be recomposed
          'RestClient::BadRequest' for un-expected errors
 
+     add_network_by_name
+       parameters:
+         network_name (String): name of network in vdc org to add to vapp
+         vapp_net_name (String, optional): what to name the network of the vapp.
+         Default to network_name
+         fence_mode (String, optional): Fencing allows identical virtual machines in different
+         vApps to be powered on without conflict by isolating the MAC and IP addresses of the
+         virtual machines. Available options are "bridged", "isolated" and "natRouted". Default
+         to "bridged".
+       returns: task object
+       throws:
+        'ObjectNotFoundError' when network with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
+
   VM
      vcpu:
        returns: number of virtual cpus of VM

@@ -86,6 +86,24 @@ module VCloudSdk
       self
     end
 
+    def add_network_by_name(
+        network_name,
+        vapp_net_name = nil,
+        fence_mode = Xml::FENCE_MODES[:BRIDGED])
+      network = find_network_by_name(network_name)
+      new_vapp_net_name = vapp_net_name.nil? ? network.name : vapp_net_name
+      network_config_param = network_config_param(
+                               network,
+                               new_vapp_net_name,
+                               fence_mode)
+      payload = entity_xml.network_config_section
+      payload.add_network_config(network_config_param)
+      task = connection.put(payload.href,
+                            payload,
+                            Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+      monitor_task(task)
+    end
+
     private
 
     def recompose_from_vapp_template_param(template)
@@ -116,6 +134,26 @@ module VCloudSdk
         params.name = name
         params.all_eulas_accepted = true
         params.add_delete_item vm.href
+      end
+    end
+
+    def network_config_param(
+        network,
+        vapp_net_name,
+        fence_mode)
+      Xml::WrapperFactory.create_instance("NetworkConfig").tap do |params|
+        network_entity_xml = connection.get(network.href)
+        params.ip_scope.tap do |ip_scope|
+          net_ip_scope = network_entity_xml.ip_scope
+          ip_scope.is_inherited = net_ip_scope.is_inherited?
+          ip_scope.gateway = net_ip_scope.gateway
+          ip_scope.netmask = net_ip_scope.netmask
+          ip_scope.ip_ranges.add_ranges(net_ip_scope.ip_ranges.ranges)
+        end
+        params.fence_mode = fence_mode
+        params.parent_network["name"] = network_entity_xml["name"]
+        params.parent_network["href"] = network_entity_xml["href"]
+        params["networkName"] = vapp_net_name
       end
     end
   end
