@@ -420,6 +420,15 @@ describe VCloudSdk::VApp do
           .send(:task_is_success, task)
           .should be_true
       end
+
+      context "invalid fence mode is specified" do
+        it "raises CloudError" do
+          expect do
+            subject.add_network_by_name(network_name, "new network", "dummy")
+          end.to raise_exception VCloudSdk::CloudError,
+                                 "Invalid fence mode 'dummy'"
+        end
+      end
     end
 
     context "network with the name does not exist" do

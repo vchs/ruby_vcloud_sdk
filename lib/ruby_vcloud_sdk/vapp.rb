@@ -97,6 +97,10 @@ module VCloudSdk
         network_name,
         vapp_net_name = nil,
         fence_mode = Xml::FENCE_MODES[:BRIDGED])
+      fail CloudError,
+           "Invalid fence mode '#{fence_mode}'" unless Xml::FENCE_MODES
+                                                         .each_value
+                                                         .any? { |m| m == fence_mode }
       network = find_network_by_name(network_name)
       new_vapp_net_name = vapp_net_name.nil? ? network.name : vapp_net_name
       network_config_param = network_config_param(
