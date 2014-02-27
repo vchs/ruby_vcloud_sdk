@@ -308,6 +308,7 @@ Copyright (c) VMware, Inc.
          to "bridged".
        returns: task object
        throws:
+        'CloudError' when invalid fence mode is specified
         'ObjectNotFoundError' when network with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
