@@ -111,6 +111,25 @@ module VCloudSdk
       monitor_task(task)
     end
 
+    # There must be no NICs on the network when it is deleted.
+    # Otherwise the task will fail.
+    # Use set_nic_network to move NICs onto other network or
+    # the NONE network prior to deleting the network from the vApp.
+    def delete_network_by_name(name)
+      unless list_networks.any? { |network_name| network_name == name}
+        fail ObjectNotFoundError,
+             "Network '#{name}' is not found"
+      end
+
+      payload = entity_xml.network_config_section
+      payload.delete_network_config(name)
+      task = connection.put(payload.href,
+                            payload,
+                            Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+      monitor_task(task)
+      nil
+    end
+
     private
 
     def recompose_from_vapp_template_param(template)

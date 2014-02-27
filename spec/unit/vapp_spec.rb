@@ -447,4 +447,42 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "#delete_network_by_name" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+      .set_option vapp_power_state: :off
+    end
+
+    it "deletes the network from vapp" do
+      expect do
+        subject.delete_network_by_name(network_name)
+      end.to_not raise_error
+    end
+
+    context "network with the name does not exist" do
+      it "raises ObjectNotFoundError" do
+        expect do
+          subject.delete_network_by_name("dummy")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Network 'dummy' is not found"
+      end
+    end
+
+    context "error occurred in deleting network request" do
+      it "raises the exception" do
+        subject
+          .send(:connection)
+          .stub(:put)
+          .with(anything,
+                anything,
+                VCloudSdk::Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.delete_network_by_name(network_name)
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
+  end
 end

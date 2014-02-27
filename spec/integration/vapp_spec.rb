@@ -83,4 +83,18 @@ describe VCloudSdk::VApp do
       end
     end
   end
+
+  describe "network manipulation" do
+    it "adds the network to vapp and deletes it from vapp" do
+      client = VCloudSdk::Client.new(url, username, password, {}, logger)
+      vdc = client.find_vdc_by_name(vdc_name)
+      network = vdc.networks.first
+      network_name = network.name
+      subject.list_networks.should eql []
+      subject.add_network_by_name(network_name)
+      subject.list_networks.should eql [network_name]
+      subject.delete_network_by_name(network_name)
+      subject.list_networks.should eql []
+    end
+  end
 end

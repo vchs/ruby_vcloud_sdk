@@ -311,6 +311,14 @@ Copyright (c) VMware, Inc.
         'ObjectNotFoundError' when network with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
+     delete_network_by_name
+       parameters:
+         name (String): name of network to delete
+       returns: nil
+       throws:
+         'ObjectNotFoundError' when network with the name does not exist
+         'RestClient::BadRequest' for un-expected errors
+
   VM
 
      vcpu:
