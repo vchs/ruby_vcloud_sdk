@@ -335,6 +335,11 @@ Copyright (c) VMware, Inc.
          'CloudError' when size of memory is zero
          'RestClient::BadRequest' for un-expected errors
 
+    list_networks
+      returns: array of network names
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
      independent_disks
        returns: array of disk objects
        throws:
@@ -390,6 +395,20 @@ Copyright (c) VMware, Inc.
          'ObjectNotFoundError' if when catalog with the name does not exist
          'ObjectNotFoundError' if when media with the name does not exist
          'RestClient::BadRequest' for un-expected errors
+
+     add_nic
+        parameters:
+          network_name (String): name of network to add NIC
+          ip_addressing_mode (String, optional): available options are "NONE", "MANUAL",
+          "POOL" and "DHCP". Default to "POOL"
+          ip (String, optional): IP address for "MANUAL" IP Mode
+        return: task object
+        throws:
+          'CloudError' if when ip_addressing_mode is invalid
+          'CloudError' if ip is not specified in "MANUAL" ip_addressing_mode
+          'CloudError' if vm is powered on
+          'ObjectNotFoundError' if network is not added to VM's parent VApp
+          'RestClient::BadRequest' for un-expected errors
 
   VdcStorageProfile
   

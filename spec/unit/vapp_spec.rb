@@ -388,7 +388,7 @@ describe VCloudSdk::VApp do
   describe "#list_networks" do
     before do
       VCloudSdk::Test::ResponseMapping
-      .set_option vapp_power_state: :off
+        .set_option vapp_power_state: :off
     end
 
     it "returns a collection of network names" do
