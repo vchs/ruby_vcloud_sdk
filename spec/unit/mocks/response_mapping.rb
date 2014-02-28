@@ -19,6 +19,14 @@ module VCloudSdk
               lambda do |url, headers|
                 Test::Response::VDC_RESPONSE
               end,
+            Test::Response::EMPTY_VDC_LINK =>
+              lambda do |url, headers|
+                Test::Response::EMPTY_VDC_RESPONSE
+              end,
+            Test::Response::VDC_WITH_TWO_DISKS_LINK =>
+              lambda do |url, headers|
+                Test::Response::VDC_WITH_TWO_DISKS_RESPONSE
+              end,
             Test::Response::ORG_VDC_STORAGE_PROFILE_LINK =>
               lambda do |url, headers|
                 case (options[:storage_profile])
