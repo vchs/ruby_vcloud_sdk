@@ -290,6 +290,10 @@ module VCloudSdk
               lambda do |url, data, headers|
                 Test::Response::INSTANTIATED_VM_EJECT_MEDIA_TASK_DONE
               end,
+            Test::Response::RECONFIGURE_VM_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::RECONFIGURE_VM_TASK
+              end
           },
           delete: {
             Test::Response::CATALOG_DELETE_LINK =>
