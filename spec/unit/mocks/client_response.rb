@@ -12,6 +12,8 @@ module VCloudSdk
         CATALOG_ID = "cfab326c-ab71-445c-bc0b-abf15239de8b"
         CATALOG_NAME = "cloudfoundry"
         VDC_ID = "7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"
+        EMPTY_VDC_ID = "00000000-c1eb-42b6-8a7b-bf62c504c33b"
+        VDC_WITH_TWO_DISKS_ID = "22222222-c1eb-42b6-8a7b-bf62c504c33b"
         URL = vcd["url"]
         URLN = URI.parse(vcd["url"]).normalize.to_s
         VAPP_TEMPLATE_NAME = "test_vapp_template"
@@ -124,6 +126,10 @@ module VCloudSdk
 
         VDC_LINK = "#{URL}/api/vdc/#{VDC_ID}"
 
+        EMPTY_VDC_LINK = "#{URL}/api/vdc/#{EMPTY_VDC_ID}"
+
+        VDC_WITH_TWO_DISKS_LINK = "#{URL}/api/vdc/#{VDC_WITH_TWO_DISKS_ID}"
+
         MEDIA_UPLOAD_LINK  = "#{URL}/api/vdc/#{VDC_ID}/media"
 
         VDC_INDY_DISKS_LINK = "#{URL}/api/vdc/#{VDC_ID}/disk"
@@ -155,6 +161,12 @@ module VCloudSdk
           [OVDC, VDC_ID, URL, VDC_ID, URL, URL, URL, VDC_ID, URL, VDC_ID,
            MEDIA_UPLOAD_LINK, URL, VDC_ID, URL, VDC_ID, URL, VDC_ID, URL, VDC_ID,
            URL, VDC_ID, URL, VDC_ID, VDC_INDY_DISKS_LINK, ORG_NETWORK_NAME, ORG_NETWORK_LINK]).strip
+
+        VDC_WITH_TWO_DISKS_RESPONSE = (File.read(Test.spec_asset("VDC_WITH_TWO_DISKS_RESPONSE.xml")) %
+          [OVDC, EMPTY_VDC_ID, URL, EMPTY_VDC_ID, URL, URL, URL, EMPTY_VDC_ID, URL, EMPTY_VDC_ID,
+          MEDIA_UPLOAD_LINK, URL, EMPTY_VDC_ID, URL, EMPTY_VDC_ID, URL, EMPTY_VDC_ID, URL, EMPTY_VDC_ID,
+          URL, EMPTY_VDC_ID, URL, EMPTY_VDC_ID, VDC_INDY_DISKS_LINK, INDY_DISK_NAME, INDY_DISK_URL,
+          INDY_DISK_NAME, INDY_DISK_URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK]).strip
 
         VDC_VAPP_UPLOAD_LINK = "#{URL}/api/vdc/#{VDC_ID}/action/uploadVAppTemplate"
 
