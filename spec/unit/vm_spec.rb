@@ -19,9 +19,11 @@ describe VCloudSdk::VM do
                         disk_link)
   end
 
+  let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
   let(:vm_name) { VCloudSdk::Test::Response::VM_NAME }
   let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
   let(:media_name) { VCloudSdk::Test::Response::EXISTING_MEDIA_NAME }
+  let(:network_name) { VCloudSdk::Test::Response::ORG_NETWORK_NAME }
 
   subject do
     described_class.new(VCloudSdk::Test.mock_session(logger, url),
@@ -82,6 +84,13 @@ describe VCloudSdk::VM do
                                "Uable to retrieve number of virtual cpus of VM #{vm_name}"
 
       end
+    end
+  end
+
+  describe "#list_networks" do
+    it "returns a collection of network names" do
+      network_names = subject.list_networks
+      network_names.should eql ["none"]
     end
   end
 
@@ -572,5 +581,60 @@ describe VCloudSdk::VM do
         end
       end
     end
+  end
+
+  describe "#add_nic" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
+    end
+
+    it "adds nic to VM" do
+      task = subject.add_nic(network_name)
+      subject
+        .send(:task_is_success, task)
+        .should be_true
+    end
+
+    context "ip_addressing_mode is invalid" do
+      it "raises CloudError" do
+        expect do
+          subject.add_nic(network_name, "dummy")
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid IP_ADDRESSING_MODE 'dummy'"
+      end
+    end
+
+    context "ip is not specified in 'MANUAL' ip_addressing_mode" do
+      it "raises CloudError" do
+        expect do
+          subject.add_nic(network_name, "MANUAL")
+        end.to raise_exception VCloudSdk::CloudError,
+                               "IP is missing for MANUAL IP_ADDRESSING_MODE"
+      end
+    end
+
+    context "VM is powered on" do
+      it "raises CloudError" do
+        subject
+          .should_receive(:is_status?)
+          .with(anything, :POWERED_ON)
+          .and_return true
+        expect do
+          subject.add_nic(network_name)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "VM #{vm_name} is powered-on and cannot add NIC."
+      end
+    end
+
+    context "Network is not added to VApp" do
+      it "raises CloudError" do
+        expect do
+          subject.add_nic("dummy")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Network dummy is not added to parent VApp #{vapp_name}"
+      end
+    end
+
   end
 end

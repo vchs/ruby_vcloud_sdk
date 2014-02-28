@@ -140,6 +140,86 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "network manipulation" do
+    it "adds nic to VM" do
+      begin
+        vapp_name = SecureRandom.uuid
+        catalog = client.find_catalog_by_name(catalog_name)
+        vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                                 vdc_name,
+                                                 vapp_name)
+        vm = vapp.vms.first
+        vdc = client.find_vdc_by_name(vdc_name)
+        network = vdc.networks.first
+        network_name = network.name
+        vapp.add_network_by_name(network_name)
+        vm.list_networks.should eql []
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:POOL])
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:NONE])
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:DHCP])
+        vm.list_networks.size.should eql 3
+      ensure
+        vapp.power_off
+        vapp.delete
+      end
+    end
+
+    context "VM is powered on" do
+      it "raises CloudError" do
+        begin
+          vapp_name = SecureRandom.uuid
+          catalog = client.find_catalog_by_name(catalog_name)
+          vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                                   vdc_name,
+                                                   vapp_name)
+          vm = vapp.vms.first
+          vdc = client.find_vdc_by_name(vdc_name)
+          network = vdc.networks.first
+          network_name = network.name
+          vapp.add_network_by_name(network_name)
+          vm.list_networks.should eql []
+          vm.power_on
+          expect do
+            vm.add_nic(network_name,
+                       VCloudSdk::Xml::IP_ADDRESSING_MODE[:POOL])
+          end.to raise_exception VCloudSdk::CloudError,
+                                 "VM #{vm.name} is powered-on and cannot add NIC."
+        ensure
+          vapp.power_off
+          vapp.delete
+        end
+      end
+    end
+
+    context "Network is not added to VApp" do
+      it "raises CloudError" do
+        begin
+          vapp_name = SecureRandom.uuid
+          catalog = client.find_catalog_by_name(catalog_name)
+          vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                                   vdc_name,
+                                                   vapp_name)
+          vm = vapp.vms.first
+          vdc = client.find_vdc_by_name(vdc_name)
+          network = vdc.networks.first
+          network_name = network.name
+          vm.list_networks.should eql []
+          expect do
+            vm.add_nic(network_name,
+                       VCloudSdk::Xml::IP_ADDRESSING_MODE[:POOL])
+          end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                                 "Network #{network_name} is not added to parent VApp #{vapp.name}"
+        ensure
+          vapp.power_off
+          vapp.delete
+        end
+      end
+    end
+  end
+
   subject do
     vdc = client.find_vdc_by_name(vdc_name)
     vdc.vapps.first.vms.first
