@@ -9,19 +9,15 @@ describe VCloudSdk::VDC do
   let(:logger) { VCloudSdk::Test.logger }
   let(:url) { VCloudSdk::Test::Response::URL }
   let(:disk_name) { VCloudSdk::Test::Response::INDY_DISK_NAME }
+  let(:vdc_link) { VCloudSdk::Test::Response::VDC_LINK }
 
   subject do
-    described_class.new(VCloudSdk::Test.mock_session(logger, url),
-                        vdc_response)
+    session = VCloudSdk::Test.mock_session(logger, url)
+    described_class.new(session, vdc_link)
   end
 
   describe "#storage_profiles" do
     context "vdc has storage profiles" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       before do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
       end
@@ -48,11 +44,6 @@ describe VCloudSdk::VDC do
     end
 
     context "vdc has no storage profile" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
-
       before do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :empty
       end
@@ -63,11 +54,6 @@ describe VCloudSdk::VDC do
 
   describe "#list_storage_profiles" do
     context "vdc has storage profiles" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       before do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
       end
@@ -76,11 +62,6 @@ describe VCloudSdk::VDC do
     end
 
     context "vdc has no storage profile" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
-
       before do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :empty
       end
@@ -90,11 +71,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_storage_profile_by_name" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     context "storage profile with given name exists" do
       it "return a storage profile given targeted name" do
         VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
@@ -117,11 +93,6 @@ describe VCloudSdk::VDC do
 
   describe "#vapps" do
     context "vdc has vapps" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns array of VApp objects" do
         subject.vapps.should have(1).item
         subject.vapps.first.should be_an_instance_of VCloudSdk::VApp
@@ -129,10 +100,7 @@ describe VCloudSdk::VDC do
     end
 
     context "vdc has no vapps" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
+      let(:vdc_link) { VCloudSdk::Test::Response::EMPTY_VDC_LINK }
 
       it "returns empty array" do
         subject.vapps.should eql []
@@ -143,11 +111,6 @@ describe VCloudSdk::VDC do
 
   describe "#list_vapps" do
     context "vdc has vapps" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns a collection of vapp names" do
         vapp_names = subject.list_vapps
         vapp_names.should eql([VCloudSdk::Test::Response::VAPP_NAME])
@@ -155,10 +118,7 @@ describe VCloudSdk::VDC do
     end
 
     context "vdc has no vapp" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
+      let(:vdc_link) { VCloudSdk::Test::Response::EMPTY_VDC_LINK }
 
       it "returns empty array" do
         subject.list_vapps.should eql []
@@ -167,11 +127,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_vapp_by_name" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     before do
       VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :on
     end
@@ -195,21 +150,13 @@ describe VCloudSdk::VDC do
 
   describe "#resources" do
     context "Cpu clock speed limit is greater than 0" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-            VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns limit - used" do
         subject.resources.cpu.available_cores.should eq 4
       end
     end
 
     context "Cpu clock speed limit is 0" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-            VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
+      let(:vdc_link) { VCloudSdk::Test::Response::EMPTY_VDC_LINK }
 
       it "returns -1" do
         subject.resources.cpu.available_cores.should eq(-1)
@@ -217,21 +164,13 @@ describe VCloudSdk::VDC do
     end
 
     context "Memory limit is greater than 0" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-            VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns limit - used" do
         subject.resources.memory.available_mb.should eq 4096
       end
     end
 
     context "limit cpu clock speed is 0" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-            VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
+      let(:vdc_link) { VCloudSdk::Test::Response::EMPTY_VDC_LINK }
 
       it "returns -1" do
         subject.resources.memory.available_mb.should eq(-1)
@@ -240,11 +179,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#networks" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     it "returns array of Network objects" do
       networks = subject.networks
       networks.should have(2).items
@@ -256,11 +190,6 @@ describe VCloudSdk::VDC do
 
   describe "#list_networks" do
     context "vdc has networks" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns a collection of network names" do
         network_names = subject.list_networks
         network_names.should eql(["164-935-default-isolated",
@@ -270,11 +199,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_network_by_name" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     context "network with given name exists" do
       it "returns a network given targeted name" do
         network = subject
@@ -297,11 +221,6 @@ describe VCloudSdk::VDC do
 
   describe "#disks" do
     context "vdc has disks" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns a collection of disks" do
         disks = subject.disks
         disks.should have(1).item
@@ -312,10 +231,7 @@ describe VCloudSdk::VDC do
     end
 
     context "vdc has no disk" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
+      let(:vdc_link) { VCloudSdk::Test::Response::EMPTY_VDC_LINK }
 
       it "returns empty array" do
         subject.disks.should eql []
@@ -325,11 +241,6 @@ describe VCloudSdk::VDC do
 
   describe "#list_disks" do
     context "vdc has disks" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns a collection of disk names" do
         disk_names = subject.list_disks
         disk_names.should eql [disk_name]
@@ -337,10 +248,7 @@ describe VCloudSdk::VDC do
     end
 
     context "vdc has no disk" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::EMPTY_VDC_RESPONSE)
-      end
+      let(:vdc_link) { VCloudSdk::Test::Response::EMPTY_VDC_LINK }
 
       it "returns empty array" do
         subject.list_disks.should eql []
@@ -349,11 +257,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#find_disks_by_name" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     context "there is one disk with given name" do
       it "returns array containing one disk" do
         disks = subject.find_disks_by_name(disk_name)
@@ -365,13 +268,8 @@ describe VCloudSdk::VDC do
     end
 
     context "there are two disks with given name" do
+      let(:vdc_link) { VCloudSdk::Test::Response::VDC_WITH_TWO_DISKS_LINK }
       it "returns array containing two disks" do
-        vdc_xml_obj = subject.instance_variable_get(:@vdc_xml_obj)
-        disk_link = vdc_xml_obj.disks[0]
-        vdc_xml_obj
-          .should_receive(:disks)
-          .and_return [disk_link, disk_link]
-
         disks = subject.find_disks_by_name(disk_name)
         disks.should have(2).item
         disks.each do |disk|
@@ -392,11 +290,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#disk_exists?" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     context "disk with matching name exists" do
       it "returns true" do
         subject.disk_exists? disk_name
@@ -411,11 +304,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#create_disk" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     let(:disk_name_to_create) { disk_name }
 
     context "input parameter size is negative" do
@@ -478,6 +366,11 @@ describe VCloudSdk::VDC do
     end
 
     context "create disk with vm locality" do
+      let(:vdc_response) do
+        VCloudSdk::Xml::WrapperFactory.wrap_document(
+            VCloudSdk::Test::Response::VDC_RESPONSE)
+      end
+
       it "creates an independent disk successfully" do
         VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :off
         vapp = VCloudSdk::VApp.new(VCloudSdk::Test.mock_session(logger, url),
@@ -490,11 +383,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#delete_disk_by_name" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     context "disk matching the name does not exist" do
       it "raises ObjectNotFoundError" do
         expect do
@@ -558,11 +446,6 @@ describe VCloudSdk::VDC do
   end
 
   describe "#delete_all_disks_by_name" do
-    let(:vdc_response) do
-      VCloudSdk::Xml::WrapperFactory.wrap_document(
-        VCloudSdk::Test::Response::VDC_RESPONSE)
-    end
-
     context "one disk matching the name exists" do
       before do
         VCloudSdk::Test::ResponseMapping
@@ -628,11 +511,6 @@ describe VCloudSdk::VDC do
 
   describe "#edge_gateways" do
     context "vdc has edge gateways" do
-      let(:vdc_response) do
-        VCloudSdk::Xml::WrapperFactory.wrap_document(
-          VCloudSdk::Test::Response::VDC_RESPONSE)
-      end
-
       it "returns a collection of edge gateways" do
         edge_gateways = subject.edge_gateways
         edge_gateways.should have(1).item
