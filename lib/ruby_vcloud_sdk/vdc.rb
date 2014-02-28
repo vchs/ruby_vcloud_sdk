@@ -15,7 +15,7 @@ module VCloudSdk
     include Infrastructure
 
     extend Forwardable
-    def_delegators :@vdc_xml_obj,
+    def_delegators :entity_xml,
                    :name, :upload_link, :upload_media_link,
                    :instantiate_vapp_template_link
 
@@ -31,9 +31,9 @@ module VCloudSdk
 
     public :find_network_by_name
 
-    def initialize(session, vdc_xml_obj)
+    def initialize(session, link)
       @session = session
-      @vdc_xml_obj = vdc_xml_obj
+      @link = link
     end
 
     def storage_profiles
@@ -59,19 +59,19 @@ module VCloudSdk
     end
 
     def vapps
-      @vdc_xml_obj.vapps.map do |vapp_link|
+      entity_xml.vapps.map do |vapp_link|
         VCloudSdk::VApp.new(@session, vapp_link)
       end
     end
 
     def list_vapps
-      @vdc_xml_obj.vapps.map do |vapp_link|
+      entity_xml.vapps.map do |vapp_link|
         vapp_link.name
       end
     end
 
     def find_vapp_by_name(name)
-      @vdc_xml_obj.vapps.each do |vapp_link|
+      entity_xml.vapps.each do |vapp_link|
         if vapp_link.name == name
           return VCloudSdk::VApp.new(@session, vapp_link)
         end
@@ -81,8 +81,8 @@ module VCloudSdk
     end
 
     def resources
-      cpu = VCloudSdk::CPU.new(@vdc_xml_obj.available_cpu_cores)
-      memory = VCloudSdk::Memory.new(@vdc_xml_obj.available_memory_mb)
+      cpu = VCloudSdk::CPU.new(entity_xml.available_cpu_cores)
+      memory = VCloudSdk::Memory.new(entity_xml.available_memory_mb)
       VCloudSdk::Resources.new(cpu, memory)
     end
 
@@ -100,7 +100,7 @@ module VCloudSdk
 
     def edge_gateways
       connection
-        .get(@vdc_xml_obj.edge_gateways_link)
+        .get(entity_xml.edge_gateways_link)
         .edge_gateway_records
         .map do |edge_gateway_link|
         VCloudSdk::EdgeGateway.new(@session, edge_gateway_link.href)
@@ -108,19 +108,19 @@ module VCloudSdk
     end
 
     def disks
-      @vdc_xml_obj.disks.map do |disk_link|
+      entity_xml.disks.map do |disk_link|
         VCloudSdk::Disk.new(@session, disk_link)
       end
     end
 
     def list_disks
-      @vdc_xml_obj.disks.map do |disk_link|
+      entity_xml.disks.map do |disk_link|
         disk_link.name
       end
     end
 
     def find_disks_by_name(name)
-      disks = @vdc_xml_obj
+      disks = entity_xml
                 .disks
                 .select { |disk_link| disk_link.name == name }
                 .map { |disk_link| VCloudSdk::Disk.new(@session, disk_link.href) }
@@ -160,7 +160,7 @@ module VCloudSdk
         .logger
         .info "Creating independent disk #{name} of #{size_mb}MB."
 
-      disk = connection.post(@vdc_xml_obj.add_disk_link,
+      disk = connection.post(entity_xml.add_disk_link,
                              disk_create_params(name, size_mb, bus_type, bus_sub_type, vm),
                              Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
 
@@ -198,7 +198,7 @@ module VCloudSdk
     def storage_profile_xml_node(name)
       return nil if name.nil?
 
-      storage_profile = @vdc_xml_obj.storage_profile(name)
+      storage_profile = entity_xml.storage_profile(name)
       unless storage_profile
         fail ObjectNotFoundError,
              "Storage profile '#{name}' does not exist"
