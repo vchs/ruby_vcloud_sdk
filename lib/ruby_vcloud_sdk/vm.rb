@@ -46,6 +46,13 @@ module VCloudSdk
       cpus.to_i
     end
 
+    def list_networks
+      entity_xml
+        .network_connection_section
+        .network_connections
+        .map { |network_connection| network_connection.network }
+    end
+
     def independent_disks
       hardware_section = entity_xml.hardware_section
       disks = []
@@ -135,6 +142,59 @@ module VCloudSdk
       monitor_task(task)
     end
 
+    def add_nic(
+          network_name,
+          ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL],
+          ip = nil)
+      fail CloudError,
+           "Invalid IP_ADDRESSING_MODE '#{ip_addressing_mode}'" unless Xml::IP_ADDRESSING_MODE
+                                                                       .each_value
+                                                                       .any? { |m| m == ip_addressing_mode }
+
+      fail CloudError,
+           "IP is missing for MANUAL IP_ADDRESSING_MODE" if ip_addressing_mode == Xml::IP_ADDRESSING_MODE[:MANUAL] &&
+                                                              ip.nil?
+
+      fail ObjectNotFoundError,
+           "Network #{network_name} is not added to parent VApp #{vapp.name}" unless vapp
+                                                                                       .list_networks
+                                                                                       .any? { |n| n == network_name }
+
+      payload = entity_xml
+      if is_status?(payload, :POWERED_ON)
+        fail CloudError,
+             "VM #{name} is powered-on and cannot add NIC."
+      end
+
+      nic_index = list_networks.size # nic index begins with 0
+
+      Config.logger
+        .info("Adding NIC #{nic_index}, network #{network_name} using mode '#{ip_addressing_mode}' #{ip.nil? ? "" : "IP: #{ip}"}")
+
+      # Add NIC
+      payload
+        .hardware_section
+        .add_item(nic_params(payload.hardware_section,
+                             nic_index,
+                             network_name,
+                             ip_addressing_mode,
+                             ip))
+
+      # Connect NIC
+      payload
+        .network_connection_section
+        .add_item(network_connection_params(payload.network_connection_section,
+                                            nic_index,
+                                            network_name,
+                                            ip_addressing_mode,
+                                            ip))
+
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+    end
+
     private
 
     def disk_attach_or_detach_params(disk)
@@ -168,6 +228,33 @@ module VCloudSdk
     rescue
       raise ApiError,
             "Unexpected form of AllocationUnits of memory: '#{allocation_units}'"
+    end
+
+    def nic_params(section, nic_index, network_name, addressing_mode, ip)
+      is_primary = section.nics.empty?
+      item = Xml::WrapperFactory
+               .create_instance("Item", nil, section.doc_namespaces)
+
+      Xml::NicItemWrapper
+        .new(item)
+        .tap do |params|
+          params.nic_index = nic_index
+          params.network = network_name
+          params.set_ip_addressing_mode(addressing_mode, ip)
+          params.is_primary = is_primary
+      end
+    end
+
+    def network_connection_params(section, nic_index, network_name, addressing_mode, ip)
+      Xml::WrapperFactory
+        .create_instance("NetworkConnection", nil, section.doc_namespaces)
+        .tap do |params|
+          params.network_connection_index = nic_index
+          params.network = network_name
+          params.ip_address_allocation_mode = addressing_mode
+          params.ip_address = ip unless ip.nil?
+          params.is_connected = true
+      end
     end
 
     BYTES_PER_MEGABYTE = 1_048_576 # 1048576 = 1024 * 1024 = 2^20
