@@ -25,14 +25,14 @@
     </ovf:StartupSection>
     <ovf:NetworkSection xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" vcloud:href="%s/api/vApp/vapp-%s/networkSection/" vcloud:type="application/vnd.vmware.vcloud.networkSection+xml">
         <ovf:Info>The list of logical networks</ovf:Info>
-        <ovf:Network ovf:name="none">
+        <ovf:Network ovf:name="%s">
             <ovf:Description>This is a special place-holder used for disconnected network interfaces.</ovf:Description>
         </ovf:Network>
     </ovf:NetworkSection>
     <NetworkConfigSection type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="%s" ovf:required="false">
         <ovf:Info>The configuration parameters for logical networks</ovf:Info>
         <Link rel="edit" type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="%s"/>
-        <NetworkConfig networkName="none">
+        <NetworkConfig networkName="%s">
             <Description>This is a special place-holder used for disconnected network interfaces.</Description>
             <Configuration>
                 <IpScope>
