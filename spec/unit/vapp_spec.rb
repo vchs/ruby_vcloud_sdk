@@ -478,6 +478,19 @@ describe VCloudSdk::VApp do
       end
     end
 
+    context "network is being used by one or more VMs" do
+      let(:vm1) { double("vm1", name: "vm1") }
+
+      it "raises CloudError" do
+        vm1.should_receive(:list_networks) { ["#{network_name}"] }
+        subject.should_receive(:vms) { [vm1] }
+        expect do
+          subject.delete_network_by_name(network_name)
+        end.to raise_exception VCloudSdk::CloudError,
+                               /.+Network '#{network_name}' is being used by one or more VMs.+/
+      end
+    end
+
     context "error occurred in deleting network request" do
       it "raises the exception" do
         subject
