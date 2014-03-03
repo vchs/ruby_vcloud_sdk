@@ -11,9 +11,9 @@ describe VCloudSdk::Catalog do
   let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
   let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
   let(:vapp_template_name) { VCloudSdk::Test::DefaultSetting::EXISTING_VAPP_TEMPLATE_NAME }
+  let!(:client) { VCloudSdk::Client.new(url, username, password, {}, logger) }
 
   subject do
-    client = VCloudSdk::Client.new(url, username, password, {}, logger)
     client.find_catalog_by_name(catalog_name)
   end
 
@@ -41,9 +41,14 @@ describe VCloudSdk::Catalog do
       vapp.name.should eq vapp_name
     end
 
-    xit "starts vapp that targeted vapp template with disk locality" do
+    it "starts vapp that targeted vapp template with disk locality" do
+      new_disk_name = "independent_disk"
+      vdc = client.find_vdc_by_name(vdc_name)
+      new_disk = vdc.create_disk(new_disk_name, 1024)
+      new_disk.name.should eql new_disk_name
+
       vapp_name = SecureRandom.uuid
-      disk_locality = nil
+      disk_locality = [new_disk.href]
       vapp = subject.instantiate_vapp_template(vapp_template_name, vdc_name,
                                                vapp_name, "with_disk_locality", disk_locality)
       vapp.should_not be_nil
