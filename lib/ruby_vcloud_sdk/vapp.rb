@@ -115,15 +115,18 @@ module VCloudSdk
       monitor_task(task)
     end
 
-    # There must be no NICs on the network when it is deleted.
-    # Otherwise the task will fail.
-    # Use set_nic_network to move NICs onto other network or
-    # the NONE network prior to deleting the network from the vApp.
     def delete_network_by_name(name)
       unless list_networks.any? { |network_name| network_name == name}
         fail ObjectNotFoundError,
              "Network '#{name}' is not found"
       end
+
+      fail CloudError,
+           %Q{
+               Network '#{name}' is being used by one or more VMs.
+               Please remove the NIC(s) in VM(s) that are in use of the network.
+               Check logs for details.
+             } if network_in_use?(name)
 
       payload = entity_xml.network_config_section
       payload.delete_network_config(name)
@@ -185,6 +188,20 @@ module VCloudSdk
         params.parent_network["href"] = network_entity_xml["href"]
         params["networkName"] = vapp_net_name
       end
+    end
+
+    def network_in_use?(network_name)
+      network_in_use = false
+      vms.each do |vm|
+        vm.list_networks.each do |net_name|
+          if net_name == network_name
+            network_in_use = true
+            Config.logger.error "VM #{vm.name} is using network #{network_name}"
+          end
+        end
+      end
+
+      network_in_use
     end
   end
 end
