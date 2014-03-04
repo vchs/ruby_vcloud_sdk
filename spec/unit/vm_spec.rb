@@ -19,6 +19,23 @@ describe VCloudSdk::VM do
                         disk_link)
   end
 
+  let(:properties) do
+    [{
+       "type" => "string",
+       "key" => "CRM_Database_Username",
+       "value" => "dbuser",
+       "password" => "false"
+     },
+     {
+       "type" => "string",
+       "key" => "CRM_Database_Host",
+       "value" => "CRM.example.com",
+       "password" => "false",
+       "Label" => "CRM Database Host"
+     }
+    ]
+  end
+
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
   let(:vm_name) { VCloudSdk::Test::Response::VM_NAME }
   let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
@@ -636,5 +653,55 @@ describe VCloudSdk::VM do
       end
     end
 
+  end
+
+  describe "#product_section_properties" do
+    it "returns array of hash values representing properties of product section of VM" do
+      subject.product_section_properties.should eql properties
+    end
+
+    context "VM does not have product section" do
+      it "returns empty array" do
+        subject.stub_chain("entity_xml.product_section")
+        subject.product_section_properties.should eql []
+      end
+    end
+  end
+
+  describe "#product_section_properties=" do
+    it "updates product section of VM" do
+      subject
+        .send(:connection)
+        .should_receive(:put)
+        .with(VCloudSdk::Test::Response::INSTANTIATED_VM_PRODUCT_SECTION_LINK,
+              an_instance_of(VCloudSdk::Xml::ProductSectionList),
+              VCloudSdk::Xml::MEDIA_TYPE[:PRODUCT_SECTIONS])
+        .and_call_original
+
+      subject
+        .should_receive(:monitor_task)
+        .with(an_instance_of(VCloudSdk::Xml::Task))
+        .and_call_original
+
+      expect do
+        subject.product_section_properties = properties
+      end.to_not raise_exception
+    end
+
+    context "error occurs when updating product section" do
+      it "raises the exception" do
+        subject
+          .send(:connection)
+          .stub(:put)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VM_PRODUCT_SECTION_LINK,
+                an_instance_of(VCloudSdk::Xml::ProductSectionList),
+                VCloudSdk::Xml::MEDIA_TYPE[:PRODUCT_SECTIONS])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.product_section_properties = properties
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
   end
 end
