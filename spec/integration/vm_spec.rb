@@ -220,6 +220,49 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#set_product_section!" do
+    let(:properties) do
+      [{
+         "type" => "string",
+         "key" => "CRM_Database_Host",
+         "value" => "CRM.example.com",
+         "password" => "true",
+         "Label" => "CRM Database Host"
+       },
+       {
+         "type" => "string",
+         "key" => "CRM_Database_Username",
+         "value" => "dbuser",
+         "password" => "false"
+       },
+       {
+         "type" => "string",
+         "key" => "admin_password",
+         "value" => "tempest",
+         "password" => "false"
+       }
+      ]
+    end
+
+    it "updates VM product section" do
+      begin
+        vapp_name = SecureRandom.uuid
+        catalog = client.find_catalog_by_name(catalog_name)
+        vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                                 vdc_name,
+                                                 vapp_name)
+        vm = vapp.vms.first
+        vm.set_product_section!(properties)
+        vm.power_off
+        vm.power_on
+        vm.product_section_properties.should eql properties
+      ensure
+        vapp.power_off
+        vapp.delete
+      end
+    end
+  end
+
   subject do
     vdc = client.find_vdc_by_name(vdc_name)
     vdc.vapps.first.vms.first
