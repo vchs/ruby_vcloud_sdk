@@ -19,6 +19,22 @@ describe VCloudSdk::VM do
                         disk_link)
   end
 
+  let(:properties) do
+    [{
+       "type" => "string",
+       "key" => "CRM_Database_Username",
+       "value" => "dbuser",
+       "password" => "true"
+     },
+     {
+       "type" => "string",
+       "key" => "CRM_Database_Host",
+       "value" => "CRM.example.com",
+       "Label" => "CRM Database Host"
+     }
+    ]
+  end
+
   let(:vapp_name) { VCloudSdk::Test::Response::VAPP_NAME }
   let(:vm_name) { VCloudSdk::Test::Response::VM_NAME }
   let(:catalog_name) { VCloudSdk::Test::Response::CATALOG_NAME }
@@ -636,5 +652,42 @@ describe VCloudSdk::VM do
       end
     end
 
+  end
+
+  describe "#product_section_properties" do
+    it "returns array of hash values representing properties of product section of VM" do
+      subject.product_section_properties.should eql properties
+    end
+
+    context "VM does not have product section" do
+      it "returns empty array" do
+        subject.stub_chain("entity_xml.product_section")
+        subject.product_section_properties.should eql []
+      end
+    end
+  end
+
+  describe "#set_product_section!" do
+    it "updates product section of VM" do
+      task = subject.set_product_section!(properties)
+      subject.send(:task_is_success, task)
+        .should be_true
+    end
+
+    context "error occurs when updating product section" do
+      it "raises the exception" do
+        subject
+          .send(:connection)
+          .stub(:put)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VM_PRODUCT_SECTION_LINK,
+                anything,
+                VCloudSdk::Xml::MEDIA_TYPE[:PRODUCT_SECTIONS])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.set_product_section!(properties)
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
   end
 end
