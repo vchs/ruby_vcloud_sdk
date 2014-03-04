@@ -343,6 +343,11 @@ module VCloudSdk
               lambda do |url, data, headers|
                 Test::Response::
                   INSTANTIATED_VAPP_NETWORK_CONFIG_MODIFY_NETWORK_TASK_SUCCESS
+              end,
+            Test::Response::INSTANTIATED_VM_PRODUCT_SECTION_LINK =>
+              lambda do |url, data, headers|
+                Test::Response::
+                  INSTANTIATED_VM_MODIFY_TASK_SUCCESS
               end
           }
       }
