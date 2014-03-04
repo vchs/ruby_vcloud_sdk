@@ -316,6 +316,15 @@ module VCloudSdk
                                            namespace_href)
         node.namespace = ns
       end
+
+      def ovf_namespace_prefix
+        return @ovf_namespace_prefix if @ovf_namespace_prefix
+        namespace = namespace_definitions.find { |ns| ns.href == OVF }
+        fail VCloudSdk::CloudError,
+             "Namespace of href '#{OVF}' is not found" if namespace.nil?
+
+        @ovf_namespace_prefix = namespace.prefix
+      end
     end
   end
 end

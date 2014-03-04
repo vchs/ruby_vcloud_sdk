@@ -13,6 +13,13 @@ module VCloudSdk
                   .first
       end
 
+      def product_sections_link
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:PRODUCT_SECTIONS] },
+                  true)
+                  .first
+      end
+
       def attach_disk_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "disk:attach",
@@ -79,6 +86,10 @@ module VCloudSdk
       def network_connection_section
         get_nodes("NetworkConnectionSection",
                   type: MEDIA_TYPE[:NETWORK_CONNECTION_SECTION]).first
+      end
+
+      def product_section
+        get_nodes("ProductSection", nil, true, OVF).first
       end
 
       # hardware modification methods

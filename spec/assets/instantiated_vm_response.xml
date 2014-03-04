@@ -7,6 +7,7 @@
     <Link rel="edit" type="application/vnd.vmware.vcloud.vm+xml" href="%s/api/vApp/vm-%s"/>
     <Link rel="remove" href="%s/api/vApp/vm-%s"/>
     <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="%s/api/vApp/vm-%s/metadata"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.productSections+xml" href="%s"/>
     <Link rel="screen:thumbnail" href="%s/api/vApp/vm-%s/screen"/>
     <Link rel="media:insertMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml" href="%s"/>
     <Link rel="media:ejectMedia" type="application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml" href="%s"/>
@@ -142,9 +143,14 @@
         <ComputerName>vm1-001</ComputerName>
         <Link rel="edit" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="%s/api/vApp/vm-%s/guestCustomizationSection/"/>
     </GuestCustomizationSection>
-    <ovf:ProductSection ovf:instance="" ovf:class="" ovf:required="true">
-        <ovf:Info>Information about the installed software</ovf:Info>
-        <ovf:Product>UnOS</ovf:Product>
+    <ovf:ProductSection ovf:required="true">
+      <ovf:Info>Information about the installed software</ovf:Info>
+      <ovf:Property ovf:value="dbuser" ovf:userConfigurable="false" ovf:type="string" ovf:password="false"
+                    ovf:key="CRM_Database_Username"/>
+      <ovf:Property ovf:value="CRM.example.com" ovf:userConfigurable="false" ovf:type="string" ovf:password="false"
+                    ovf:key="CRM_Database_Host">
+        <ovf:Label>CRM Database Host</ovf:Label>
+      </ovf:Property>
     </ovf:ProductSection>
     <RuntimeInfoSection xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" vcloud:href="%s/api/vApp/vm-%s/runtimeInfoSection" vcloud:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml">
         <ovf:Info>Specifies Runtime info</ovf:Info>
