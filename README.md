@@ -410,6 +410,22 @@ Copyright (c) VMware, Inc.
           'ObjectNotFoundError' if network is not added to VM's parent VApp
           'RestClient::BadRequest' for un-expected errors
 
+     product_section_properties
+        returns:
+          array of hash values representing properties of product section of VM
+          empty array if VM does not have product section
+        throws:
+          'RestClient::BadRequest' for un-expected errors
+
+     set_product_section!
+        parameters:
+          properties (array of hash values): properties of product section of VM
+        returns: task object
+        throws:
+          'RestClient::BadRequest' for un-expected errors
+        note:
+          Rebooting VM is needed to reflect product section changes
+
   VdcStorageProfile
   
      available_storage

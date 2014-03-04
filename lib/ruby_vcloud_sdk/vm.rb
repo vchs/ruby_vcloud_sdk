@@ -193,6 +193,22 @@ module VCloudSdk
       monitor_task(task)
     end
 
+    def product_section_properties
+      product_section = entity_xml.product_section
+      return [] if product_section.nil?
+
+      product_section.properties
+    end
+
+    def set_product_section!(properties)
+      Config.logger
+        .info("Updating VM #{name} production sections with properties: #{properties.pretty_inspect}")
+      task = connection.put(entity_xml.product_sections_link.href,
+                            product_section_list_params(properties),
+                            Xml::MEDIA_TYPE[:PRODUCT_SECTIONS])
+      monitor_task(task)
+    end
+
     private
 
     def disk_attach_or_detach_params(disk)
@@ -252,6 +268,14 @@ module VCloudSdk
           params.ip_address_allocation_mode = addressing_mode
           params.ip_address = ip unless ip.nil?
           params.is_connected = true
+      end
+    end
+
+    def product_section_list_params(properties)
+      Xml::WrapperFactory.create_instance("ProductSectionList").tap do |params|
+        properties.each do |property|
+          params.add_property(property)
+        end
       end
     end
 
