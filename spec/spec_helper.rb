@@ -98,6 +98,18 @@ module VCloudSdk
                          vdc_name,
                          SecureRandom.uuid)
       end
+
+      def safe_remove_vapp(vdc, vapp_name)
+        if vapp_name
+          begin
+            vapp = vdc.find_vapp_by_name vapp_name
+          rescue VCloudSdk::ObjectNotFoundError
+          end
+          if vapp
+            vapp.delete
+          end
+        end
+      end
     end
 
     module DefaultSetting
