@@ -5,12 +5,14 @@ require 'securerandom'
 describe VCloudSdk::Catalog do
 
   let(:logger) { VCloudSdk::Test.logger }
-  let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
-  let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
-  let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
-  let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
-  let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
-  let(:vapp_template_name) { VCloudSdk::Test::DefaultSetting::EXISTING_VAPP_TEMPLATE_NAME }
+  let(:url) { ENV['VCLOUD_URL'] || raise("Missing environment variable VCLOUD_URL") }
+  let(:username) { ENV['VCLOUD_USERNAME'] || raise("Missing environment variable VCLOUD_USERNAME") }
+  let(:password) { ENV['VCLOUD_PWD'] || raise("Missing environment variable VCLOUD_PWD") }
+  let(:vdc_name) { ENV['VDC_NAME'] || raise("Missing environment variable VCLOUD_URL") }
+  let(:catalog_name) { ENV['CATALOG_NAME'] || raise("Missing environment variable CATALOG_NAME") }
+  let(:vapp_template_name) do
+    ENV['EXISTING_VAPP_TEMPLATE_NAME'] || raise("Missing environment variable EXISTING_VAPP_TEMPLATE_NAME")
+  end
   let!(:client) { VCloudSdk::Client.new(url, username, password, {}, logger) }
   let!(:vdc) { client.find_vdc_by_name(vdc_name) }
 

@@ -5,14 +5,14 @@ require 'securerandom'
 describe VCloudSdk::Client do
 
   let(:logger) { VCloudSdk::Test.logger }
-  let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
-  let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
-  let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
-  let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
-  let(:catalog_name) { ENV['CATALOG_NAME'] || VCloudSdk::Test::DefaultSetting::CATALOG_NAME }
-  let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] ||  VCloudSdk::Test::DefaultSetting::STORAGE_PROFILE_NAME }
-  let(:vapp_template_dir) { ENV['VAPP_TEMPLATE_DIR'] || "Fake path of vapp template directory" }
-  let(:media_file) { ENV['MEDIA_FILE'] || "Fake path of media file" }
+  let(:url) { ENV['VCLOUD_URL'] || raise("Missing environment variable VCLOUD_URL") }
+  let(:username) { ENV['VCLOUD_USERNAME'] || raise("Missing environment variable VCLOUD_USERNAME") }
+  let(:password) { ENV['VCLOUD_PWD'] || raise("Missing environment variable VCLOUD_PWD") }
+  let(:vdc_name) { ENV['VDC_NAME'] || raise("Missing environment variable VDC_NAME") }
+  let(:catalog_name) { ENV['CATALOG_NAME'] || raise("Missing environment variable CATALOG_NAME") }
+  let(:storage_profile_name) { ENV['STORAGE_PROFILE_NAME'] || raise("Missing environment variable STORAGE_PROFILE_NAME") }
+  let(:vapp_template_dir) { ENV['VAPP_TEMPLATE_DIR'] || raise("Missing environment variable VAPP_TEMPLATE_DIR") }
+  let(:media_file) { ENV['MEDIA_FILE'] || raise("Missing environment variable MEDIA_FILE") }
 
   describe "#initialize" do
     it "set up connection successfully" do
