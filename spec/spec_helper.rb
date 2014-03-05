@@ -109,19 +109,6 @@ module VCloudSdk
         end
       end
     end
-
-    module DefaultSetting
-      VCLOUD_URL = "https://10.146.21.135"
-      VCLOUD_USERNAME = "dev_mgr@dev"
-      VCLOUD_PWD = "vmware"
-      VDC_NAME = "tempest"
-      CATALOG_NAME = "ruby_vcloud_sdk_integration_test"
-      STORAGE_PROFILE_NAME = "large"
-      CATALOG_NAME_TO_CREATE = "dev test catalog"
-      VAPP_NAME = "PCF vApp"
-      NETWORK_NAME = "tempest_vdc_network"
-      EXISTING_VAPP_TEMPLATE_NAME = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
-    end
   end
 
   module Xml

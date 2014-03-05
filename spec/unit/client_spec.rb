@@ -126,7 +126,7 @@ describe VCloudSdk::Client, :min, :all do
 
     it "creates target catalog successfully" do
       VCloudSdk::Test::ResponseMapping.set_option catalog_created: true
-      catalog = subject.create_catalog(VCloudSdk::Test::DefaultSetting::CATALOG_NAME_TO_CREATE)
+      catalog = subject.create_catalog(VCloudSdk::Test::Response::CATALOG_NAME_TO_CREATE)
       catalog.should be_an_instance_of VCloudSdk::Catalog
     end
 

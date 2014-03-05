@@ -11,6 +11,7 @@ module VCloudSdk
         VAPP_CATALOG_NAME = vcd["entities"]["vapp_catalog"]
         CATALOG_ID = "cfab326c-ab71-445c-bc0b-abf15239de8b"
         CATALOG_NAME = "cloudfoundry"
+        CATALOG_NAME_TO_CREATE = "dev test catalog"
         VDC_ID = "7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"
         EMPTY_VDC_ID = "00000000-c1eb-42b6-8a7b-bf62c504c33b"
         VDC_WITH_TWO_DISKS_ID = "22222222-c1eb-42b6-8a7b-bf62c504c33b"
@@ -106,7 +107,7 @@ module VCloudSdk
 
         ORG_NEW_CATALOG_CREATED_RESPONSE = (File.read(Test.spec_asset("org_new_catalog_created_response.xml")) %
           [ORGANIZATION, ORG_ID, URL, ORG_ID, OVDC, URL, URL, CATALOG_NAME, URL, CATALOG_ID,
-           DefaultSetting::CATALOG_NAME_TO_CREATE, URL, URL, URL, URL, URL, URL, URL, URL, URL,
+           CATALOG_NAME_TO_CREATE, URL, URL, URL, URL, URL, URL, URL, URL, URL,
            URL, ORG_NETWORK_NAME, ORG_NETWORK_LINK, URL, URL, ORGANIZATION]).strip
 
         ADMIN_VCLOUD_LINK = "#{URL}/api/admin/"
@@ -259,7 +260,7 @@ module VCloudSdk
           URL, CATALOG_ID, URL, CATALOG_ID, URL]).strip
 
         CATALOG_CREATE_RESPONSE = (File.read(Test.spec_asset("catalog_create_response.xml")) %
-          [DefaultSetting::CATALOG_NAME_TO_CREATE]).strip
+          [CATALOG_NAME_TO_CREATE]).strip
 
         CATALOG_ADD_VAPP_REQUEST = (File.read(Test.spec_asset(
           "catalog_add_vapp_request.xml")) % [VAPP_TEMPLATE_NAME,

@@ -4,10 +4,10 @@ require "nokogiri/diff"
 describe VCloudSdk::EdgeGateway do
 
   let(:logger) { VCloudSdk::Test.logger }
-  let(:url) { ENV['VCLOUD_URL'] || VCloudSdk::Test::DefaultSetting::VCLOUD_URL }
-  let(:username) { ENV['VCLOUD_USERNAME'] || VCloudSdk::Test::DefaultSetting::VCLOUD_USERNAME }
-  let(:password) { ENV['VCLOUD_PWD'] || VCloudSdk::Test::DefaultSetting::VCLOUD_PWD }
-  let(:vdc_name) { ENV['VDC_NAME'] || VCloudSdk::Test::DefaultSetting::VDC_NAME }
+  let(:url) { ENV['VCLOUD_URL'] || raise("Missing environment variable VCLOUD_URL") }
+  let(:username) { ENV['VCLOUD_USERNAME'] || raise("Missing environment variable VCLOUD_USERNAME") }
+  let(:password) { ENV['VCLOUD_PWD'] || raise("Missing environment variable VCLOUD_PWD") }
+  let(:vdc_name) { ENV['VDC_NAME'] || raise("Missing environment variable VDC_NAME") }
 
   subject do
     client = VCloudSdk::Client.new(url, username, password, {}, logger)
