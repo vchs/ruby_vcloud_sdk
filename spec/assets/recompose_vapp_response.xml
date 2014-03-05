@@ -10,14 +10,14 @@
       name="task"
       id="urn:vcloud:task:73a19861-3dd9-4a3f-b1f4-bf4a470fcf8e"
       type="application/vnd.vmware.vcloud.task+xml"
-      href="https://10.146.21.135/api/task/73a19861-3dd9-4a3f-b1f4-bf4a470fcf8e"
-      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+      href="https://10.147.0.0/api/task/73a19861-3dd9-4a3f-b1f4-bf4a470fcf8e"
+      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.147.0.0/api/v1.5/schema/master.xsd">
   <Owner type="application/vnd.vmware.vcloud.vApp+xml" name="6ae80aa4-9250-4c56-8f9e-e0a83e96e6d6"
-         href="https://10.146.21.135/api/vApp/vapp-a60eee22-5e70-4c1b-8c49-dea309346b58"/>
+         href="https://10.147.0.0/api/vApp/vapp-a60eee22-5e70-4c1b-8c49-dea309346b58"/>
   <User type="application/vnd.vmware.admin.user+xml" name="dev_mgr"
-        href="https://10.146.21.135/api/admin/user/1db91e2d-3e0e-4678-b39b-a23716a6480a"/>
+        href="https://10.147.0.0/api/admin/user/1db91e2d-3e0e-4678-b39b-a23716a6480a"/>
   <Organization type="application/vnd.vmware.vcloud.org+xml" name="dev"
-                href="https://10.146.21.135/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
+                href="https://10.147.0.0/api/org/a3783d64-0b9b-42d6-93cf-23bb08ec5520"/>
   <Progress>100</Progress>
   <Details/>
 </Task>

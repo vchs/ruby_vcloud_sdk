@@ -1,18 +1,18 @@
 <EdgeGateway xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" status="1"
              name="164-935" id="urn:vcloud:gateway:903c42ae-1682-456a-af1d-bc867e8dabbf"
              type="application/vnd.vmware.admin.edgeGateway+xml"
-             href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf"
-             xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://p2v1-vcd.vchs.vmware.com:443/api/v1.5/schema/master.xsd">
+             href="https://10.147.0.0:8443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf"
+             xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.147.0.0:8443/api/v1.5/schema/master.xsd">
   <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml"
-        href="https://p2v1-vcd.vchs.vmware.com:443/api/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"/>
+        href="https://10.147.0.0:8443/api/vdc/7ab770bd-c1eb-42b6-8a7b-bf62c504c33b"/>
   <Link rel="edgeGateway:redeploy"
-        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/redeploy"/>
+        href="https://10.147.0.0:8443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/redeploy"/>
   <Link rel="edgeGateway:configureServices" type="application/vnd.vmware.admin.edgeGatewayServiceConfiguration+xml"
-        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/configureServices"/>
+        href="https://10.147.0.0:8443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/configureServices"/>
   <Link rel="edgeGateway:reapplyServices"
-        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/reapplyServices"/>
+        href="https://10.147.0.0:8443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/reapplyServices"/>
   <Link rel="edgeGateway:syncSyslogSettings"
-        href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/syncSyslogServerSettings"/>
+        href="https://10.147.0.0:8443/api/admin/edgeGateway/903c42ae-1682-456a-af1d-bc867e8dabbf/action/syncSyslogServerSettings"/>
   <Configuration>
     <GatewayBackingConfig>compact</GatewayBackingConfig>
     <GatewayInterfaces>
@@ -20,7 +20,7 @@
         <Name>164-935-default-routed</Name>
         <DisplayName>164-935-default-routed</DisplayName>
         <Network type="application/vnd.vmware.admin.network+xml" name="164-935-default-routed"
-                 href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/b00a5e85-34aa-459f-a129-ac722c7b630f"/>
+                 href="https://10.147.0.0:8443/api/admin/network/b00a5e85-34aa-459f-a129-ac722c7b630f"/>
         <InterfaceType>internal</InterfaceType>
         <SubnetParticipation>
           <Gateway>192.168.109.1</Gateway>
@@ -34,7 +34,7 @@
         <Name>d0p2-ext</Name>
         <DisplayName>d0p2-ext</DisplayName>
         <Network type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                 href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                 href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
         <InterfaceType>uplink</InterfaceType>
         <SubnetParticipation>
           <Gateway>192.240.155.1</Gateway>
@@ -135,7 +135,7 @@
           <Id>65537</Id>
           <GatewayNatRule>
             <Interface type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                       href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                       href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
             <OriginalIp>192.168.109.2</OriginalIp>
             <TranslatedIp>192.240.155.232</TranslatedIp>
           </GatewayNatRule>
@@ -146,7 +146,7 @@
           <Id>65538</Id>
           <GatewayNatRule>
             <Interface type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                       href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                       href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
             <OriginalIp>192.240.155.232</OriginalIp>
             <OriginalPort>22</OriginalPort>
             <TranslatedIp>192.168.109.2</TranslatedIp>
@@ -161,7 +161,7 @@
           <Id>65539</Id>
           <GatewayNatRule>
             <Interface type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                       href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                       href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
             <OriginalIp>192.168.109.10</OriginalIp>
             <TranslatedIp>192.240.155.231</TranslatedIp>
           </GatewayNatRule>
@@ -172,7 +172,7 @@
           <Id>65540</Id>
           <GatewayNatRule>
             <Interface type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                       href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                       href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
             <OriginalIp>192.240.155.231</OriginalIp>
             <OriginalPort>22</OriginalPort>
             <TranslatedIp>192.168.109.10</TranslatedIp>
@@ -187,7 +187,7 @@
           <Id>65541</Id>
           <GatewayNatRule>
             <Interface type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                       href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                       href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
             <OriginalIp>192.168.109.0/24</OriginalIp>
             <TranslatedIp>192.240.155.233</TranslatedIp>
           </GatewayNatRule>
@@ -198,7 +198,7 @@
           <Id>65542</Id>
           <GatewayNatRule>
             <Interface type="application/vnd.vmware.admin.network+xml" name="d0p2-ext"
-                       href="https://p2v1-vcd.vchs.vmware.com:443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
+                       href="https://10.147.0.0:8443/api/admin/network/7dbd6395-6a9a-4d29-9691-0fbcb2a26df7"/>
             <OriginalIp>192.240.155.233</OriginalIp>
             <OriginalPort>any</OriginalPort>
             <TranslatedIp>192.168.109.5</TranslatedIp>

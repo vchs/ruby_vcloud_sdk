@@ -11,7 +11,7 @@
       id="urn:vcloud:task:%s"
       type="application/vnd.vmware.vcloud.task+xml"
       href="%s"
-      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+      xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.147.0.0/api/v1.5/schema/master.xsd">
   <Link rel="task:cancel" href="%s/api/task/%s/action/cancel"/>
   <Owner type="application/vnd.vmware.vcloud.vm+xml" name="%s"
          href="%s/api/vApp/vm-b2ee6bb6-d70f-4c54-8789-c2fd123c6491"/>

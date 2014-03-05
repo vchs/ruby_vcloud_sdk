@@ -34,7 +34,7 @@
         <Link rel="edit" type="application/vnd.vmware.vcloud.networkConfigSection+xml" href="%s"/>
         <NetworkConfig networkName="%s">
             <Link rel="repair"
-                  href="https://10.146.21.135/api/admin/network/e498d38f-d75f-44b2-a146-0034e5f2ba00/action/reset"/>
+                  href="https://10.147.0.0/api/admin/network/e498d38f-d75f-44b2-a146-0034e5f2ba00/action/reset"/>
             <Description/>
             <Configuration>
               <IpScopes>
@@ -54,7 +54,7 @@
                 </IpScope>
               </IpScopes>
               <ParentNetwork name="tempest_vdc_network" id="339b4c6e-37f0-4ec5-a814-a3cb97a82855"
-                             href="https://10.146.21.135/api/admin/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
+                             href="https://10.147.0.0/api/admin/network/339b4c6e-37f0-4ec5-a814-a3cb97a82855"/>
               <FenceMode>bridged</FenceMode>
               <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
             </Configuration>

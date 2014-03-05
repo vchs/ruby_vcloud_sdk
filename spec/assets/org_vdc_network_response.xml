@@ -5,9 +5,9 @@
                id="urn:vcloud:network:%s"
                type="application/vnd.vmware.vcloud.orgVdcNetwork+xml"
                href="%s"
-               xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.146.21.135/api/v1.5/schema/master.xsd">
+               xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://10.147.0.0/api/v1.5/schema/master.xsd">
   <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml"
-        href="https://10.146.21.135/api/vdc/fe7f554e-16f6-4724-b75d-9bfb04c72427"/>
+        href="https://10.147.0.0/api/vdc/fe7f554e-16f6-4724-b75d-9bfb04c72427"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml"
         href="%s/api/network/%s/metadata"/>
   <Link rel="down" type="application/vnd.vmware.vcloud.allocatedNetworkAddress+xml"

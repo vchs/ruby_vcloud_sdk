@@ -142,7 +142,7 @@ module VCloudSdk
             }
             @login_url = default_login_url
           else
-            # Typically url_content is the full URL such as "https://10.146.21.135/api/sessions"
+            # Typically url_content is the full URL such as "https://10.147.0.0/api/sessions"
             # In this case we need to trim the beginning of the url string
             @login_url = get_nested_resource(url_node.login_url.content)
           end
