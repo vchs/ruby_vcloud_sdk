@@ -9,7 +9,7 @@ module VCloudSdk
     extend Forwardable
     def_delegators :entity_xml,
                    :name, :bus_type, :bus_sub_type,
-                   :size_mb, :status
+                   :capacity, :status
 
     def initialize(session, link)
       @session = session

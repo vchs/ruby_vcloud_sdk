@@ -39,9 +39,9 @@ describe VCloudSdk::Disk do
     end
   end
 
-  describe "#size_mb" do
+  describe "#capacity" do
     it "returns the size in mb of disk" do
-      subject.size_mb.should eql VCloudSdk::Test::Response::INDY_DISK_SIZE
+      subject.capacity.should eql VCloudSdk::Test::Response::INDY_DISK_SIZE
     end
   end
 

@@ -19,16 +19,6 @@ module VCloudSdk
                    :name, :upload_link, :upload_media_link,
                    :instantiate_vapp_template_link
 
-    BUS_TYPE = {
-      "scsi" => Xml::HARDWARE_TYPE[:SCSI_CONTROLLER]
-    }
-
-    BUS_SUB_TYPE = {
-      "lsilogic" => Xml::BUS_SUB_TYPE[:LSILOGIC]
-    }
-
-    private_constant :BUS_TYPE, :BUS_SUB_TYPE
-
     public :find_network_by_name
 
     def initialize(session, link)
@@ -140,28 +130,28 @@ module VCloudSdk
 
     def create_disk(
           name,
-          size_mb,
+          capacity,
           vm = nil,
           bus_type = "scsi",
           bus_sub_type = "lsilogic")
 
       fail(CloudError,
-           "Invalid size in MB #{size_mb}") if size_mb <= 0
+           "Invalid size in MB #{capacity}") if capacity <= 0
 
-      bus_type = BUS_TYPE[bus_type.downcase]
+      bus_type = Xml::BUS_TYPE_NAMES[bus_type.downcase]
       fail(CloudError,
            "Invalid bus type!") unless bus_type
 
-      bus_sub_type = BUS_SUB_TYPE[bus_sub_type.downcase]
+      bus_sub_type = Xml::BUS_SUB_TYPE_NAMES[bus_sub_type.downcase]
       fail(CloudError,
            "Invalid bus sub type!") unless bus_sub_type
 
       Config
         .logger
-        .info "Creating independent disk #{name} of #{size_mb}MB."
+        .info "Creating independent disk #{name} of #{capacity}MB."
 
       disk = connection.post(entity_xml.add_disk_link,
-                             disk_create_params(name, size_mb, bus_type, bus_sub_type, vm),
+                             disk_create_params(name, capacity, bus_type, bus_sub_type, vm),
                              Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
 
       wait_for_running_tasks(disk, "Disk #{name}")
@@ -215,10 +205,10 @@ module VCloudSdk
         .org_vdc_storage_profile_records
     end
 
-    def disk_create_params(name, size_mb, bus_type, bus_sub_type, vm)
+    def disk_create_params(name, capacity, bus_type, bus_sub_type, vm)
       Xml::WrapperFactory.create_instance("DiskCreateParams").tap do |params|
         params.name = name
-        params.size_bytes = size_mb * 1024 * 1024 # VCD expects bytes
+        params.size_bytes = capacity * 1024 * 1024 # VCD expects bytes
         params.bus_type = bus_type
         params.bus_sub_type = bus_sub_type
         params.add_locality(connection.get(vm.href)) if vm # Use xml form of vm

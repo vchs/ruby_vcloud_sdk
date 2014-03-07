@@ -17,7 +17,7 @@ module VCloudSdk
         @root["busSubType"] = value.to_s
       end
 
-      def size_mb
+      def capacity
         @root["size"].to_i / 1024 / 1024
       end
 
