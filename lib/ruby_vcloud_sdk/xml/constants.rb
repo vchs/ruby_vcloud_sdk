@@ -62,6 +62,14 @@ module VCloudSdk
         :BUS_TYPE => "busType"
     }
 
+    BUS_TYPE_NAMES = {
+        "scsi" => Xml::HARDWARE_TYPE[:SCSI_CONTROLLER]
+    }
+
+    BUS_SUB_TYPE_NAMES = {
+        "lsilogic" => Xml::BUS_SUB_TYPE[:LSILOGIC]
+    }
+
     TASK_STATUS = {
         :QUEUED => "queued",
         :RUNNING => "running",

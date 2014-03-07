@@ -153,6 +153,65 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#create_internal_disk" do
+    context "input parameter size is negative" do
+      it "raises an exception" do
+        expect do
+          subject.create_internal_disk(-1)
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid size in MB -1"
+      end
+    end
+
+    context "bus_type specified is invalid" do
+      it "raises an error" do
+        expect do
+          subject.create_internal_disk(100, "xxx", "lsilogic")
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid bus type!"
+      end
+    end
+
+    context "bus_sub_type specified is invalid" do
+      it "raises an error" do
+        expect do
+          subject.create_internal_disk(100, "scsi", "xxx")
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid bus sub type!"
+      end
+    end
+
+    context "create disk with valid parameters" do
+      it "creates an independent disk successfully" do
+        task = subject.create_internal_disk(100)
+        subject
+          .send(:task_is_success, task)
+          .should be_true
+      end
+    end
+
+    context "bus_type and bus_sub_type are specified" do
+      it "creates an independent disk successfully" do
+        task = subject.create_internal_disk(100)
+        subject
+          .send(:task_is_success, task)
+          .should be_true
+      end
+    end
+  end
+
+  describe "#internal_disks" do
+    context "vm has internal disk(s)" do
+      it "returns disk(s)" do
+        disks = subject.internal_disks
+        disks.should have_at_least(1).item
+        disk = disks[0]
+        disk.should be_an_instance_of VCloudSdk::InternalDisk
+        disk.size_mb.should eql 200
+      end
+    end
+  end
+
   describe "#list_disks" do
     context "vm has attached disk" do
       before do

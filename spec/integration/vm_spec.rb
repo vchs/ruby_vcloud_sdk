@@ -48,6 +48,22 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "internal disk manipulation" do
+    it "adds and lists the disk successfully" do
+      catalog = client.find_catalog_by_name(catalog_name)
+      vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                               vdc_name,
+                                               vapp_name)
+      vm = vapp.vms.first
+      vm.internal_disks.size.should eql 1
+
+      vm.create_internal_disk(1024)
+      internal_disks = vm.internal_disks
+      internal_disks.size.should eq 2
+      internal_disks[1].size_mb.should eq 1024
+    end
+  end
+
   describe "vm manipulation" do
     it "powers on/off vm successfully" do
       catalog = client.find_catalog_by_name(catalog_name)
