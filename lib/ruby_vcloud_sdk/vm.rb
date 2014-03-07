@@ -35,6 +35,25 @@ module VCloudSdk
       memory_mb
     end
 
+    # sets size of memory in megabytes
+    def memory=(size)
+      fail(CloudError,
+           "Invalid vm memory size #{size}MB") if size <= 0
+
+      Config
+        .logger
+        .info "Changing the vm memory to #{size}MB."
+
+      payload = entity_xml
+      payload.change_memory(size)
+
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
+    end
+
     # returns number of virtual cpus of VM
     def vcpu
       cpus = entity_xml
@@ -45,6 +64,25 @@ module VCloudSdk
       fail CloudError,
            "Uable to retrieve number of virtual cpus of VM #{name}" if cpus.nil?
       cpus.to_i
+    end
+
+    # sets number of virtual cpus of VM
+    def vcpu=(count)
+      fail(CloudError,
+           "Invalid virtual CPU count #{count}") if count <= 0
+
+      Config
+        .logger
+        .info "Changing the virtual CPU count to #{count}."
+
+      payload = entity_xml
+      payload.change_cpu_count(count)
+
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
     end
 
     def list_networks

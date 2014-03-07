@@ -292,9 +292,41 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#memory=" do
+    it "sets memory in megabytes of VM" do
+      catalog = client.find_catalog_by_name(catalog_name)
+      vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                               vdc_name,
+                                               vapp_name)
+      vm = vapp.vms.first
+
+      memory_mb = vm.memory
+      target_memory_mb = memory_mb + 1024
+      vm.memory = target_memory_mb
+      memory_mb = vm.memory
+      memory_mb.should eq target_memory_mb
+    end
+  end
+
   describe "#vcpu" do
     it "returns number of virtual cpus of VM" do
       subject.vcpu.should > 0
+    end
+  end
+
+  describe "#vcpu=" do
+    it "sets vm vCPU count" do
+      catalog = client.find_catalog_by_name(catalog_name)
+      vapp = catalog.instantiate_vapp_template(vapp_template_name,
+                                               vdc_name,
+                                               vapp_name)
+      vm = vapp.vms.first
+
+      cpu_count = vm.vcpu
+      target_cpu_count = cpu_count + 1
+      vm.vcpu = target_cpu_count
+      cpu_count = vm.vcpu
+      cpu_count.should eq target_cpu_count
     end
   end
 end

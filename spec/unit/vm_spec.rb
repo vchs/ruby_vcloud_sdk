@@ -78,6 +78,54 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#memory=" do
+    context "input parameter size is negative" do
+      it "raises an exception" do
+        expect do
+          subject.memory = -1
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid vm memory size -1MB"
+      end
+    end
+
+    context "change memory with valid parameters" do
+      it "change memory successfully" do
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+
+        subject
+          .should_receive(:monitor_task)
+          .with(an_instance_of(VCloudSdk::Xml::Task))
+          .and_call_original
+
+        expect do
+          subject.memory = 1024
+        end.to_not raise_exception
+      end
+    end
+
+    context "error occurs when changing memory" do
+      it "raises the exception" do
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.memory = 1024
+        end.to raise_exception RestClient::BadRequest
+      end
+    end
+  end
+
   describe "#vcpu" do
     it "returns number of virtual cpus of VM" do
       subject.vcpu.should eql 1
@@ -100,6 +148,54 @@ describe VCloudSdk::VM do
         end.to raise_exception VCloudSdk::CloudError,
                                "Uable to retrieve number of virtual cpus of VM #{vm_name}"
 
+      end
+    end
+  end
+
+  describe "#vcpu=" do
+    context "input parameter size is negative" do
+      it "raises an exception" do
+        expect do
+          subject.vcpu = -1
+        end.to raise_exception VCloudSdk::CloudError,
+                               "Invalid virtual CPU count -1"
+      end
+    end
+
+    context "changes vcpu count with valid parameters" do
+      it "changes vcpu count successfully" do
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+
+        subject
+          .should_receive(:monitor_task)
+          .with(an_instance_of(VCloudSdk::Xml::Task))
+          .and_call_original
+
+        expect do
+          subject.vcpu = 2
+        end.to_not raise_exception
+      end
+    end
+
+    context "error occurs when changing memory" do
+      it "raises the exception" do
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_raise RestClient::BadRequest
+
+        expect do
+          subject.vcpu = 2
+        end.to raise_exception RestClient::BadRequest
       end
     end
   end
