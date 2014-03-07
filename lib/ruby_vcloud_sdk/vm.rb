@@ -1,6 +1,7 @@
 require "forwardable"
 require_relative "infrastructure"
 require_relative "powerable"
+require_relative "internal_disk"
 
 module VCloudSdk
   class VM
@@ -208,6 +209,47 @@ module VCloudSdk
                             Xml::MEDIA_TYPE[:PRODUCT_SECTIONS])
       monitor_task(task)
       self
+    end
+
+    def internal_disks
+      hardware_section = entity_xml.hardware_section
+      internal_disks = []
+      hardware_section.hard_disks.each do |disk|
+        disk_link = disk.host_resource.attribute("disk")
+        if disk_link.nil?
+          internal_disks << VCloudSdk::InternalDisk.new(disk)
+        end
+      end
+      internal_disks
+    end
+
+    def create_internal_disk(
+          capacity,
+          bus_type = "scsi",
+          bus_sub_type = "lsilogic")
+
+      fail(CloudError,
+           "Invalid size in MB #{capacity}") if capacity <= 0
+
+      bus_type = Xml::BUS_TYPE_NAMES[bus_type.downcase]
+      fail(CloudError,
+           "Invalid bus type!") unless bus_type
+
+      bus_sub_type = Xml::BUS_SUB_TYPE_NAMES[bus_sub_type.downcase]
+      fail(CloudError,
+           "Invalid bus sub type!") unless bus_sub_type
+
+      Config
+        .logger
+        .info "Creating internal disk #{name} of #{capacity}MB."
+
+      payload = entity_xml
+      payload.add_hard_disk(capacity, bus_type, bus_sub_type)
+
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
     end
 
     private

@@ -94,12 +94,8 @@ module VCloudSdk
 
       # hardware modification methods
 
-      def add_hard_disk(size_mb)
+      def add_hard_disk(capacity, bus_type, bus_sub_type)
         section = hardware_section
-        scsi_controller = section.scsi_controller
-        unless scsi_controller
-          fail ObjectNotFoundError, "No SCSI controller found for VM #{name}"
-        end
         # Create a RASD item
         new_disk = WrapperFactory
                      .create_instance("Item",
@@ -114,12 +110,11 @@ module VCloudSdk
         new_disk.set_rasd(rt, HARDWARE_TYPE[:HARD_DISK])
         host_resource = new_disk.get_rasd(RASD_TYPES[:HOST_RESOURCE])
         host_resource[new_disk.create_qualified_name(
-          "capacity", VCLOUD_NAMESPACE)] = size_mb.to_s
+          "capacity", VCLOUD_NAMESPACE)] = capacity.to_s
         host_resource[new_disk.create_qualified_name(
-          "busSubType", VCLOUD_NAMESPACE)] = scsi_controller.get_rasd_content(
-            RASD_TYPES[:RESOURCE_SUB_TYPE])
+          "busSubType", VCLOUD_NAMESPACE)] = bus_sub_type
         host_resource[new_disk.create_qualified_name(
-          "busType", VCLOUD_NAMESPACE)] = HARDWARE_TYPE[:SCSI_CONTROLLER]
+          "busType", VCLOUD_NAMESPACE)] = bus_type
       end
 
       def change_cpu_count(quantity)
