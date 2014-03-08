@@ -328,12 +328,28 @@ Copyright (c) VMware, Inc.
          'CloudError' when information of number of virtual cpus of VM is unavailable
          'RestClient::BadRequest' for un-expected errors
 
+     vcpu=
+       parameters:
+         The virtual cpu count.
+       returns: VM object
+       throws:
+         'CloudError' when the cpu count is less than or equal to 0
+         'RestClient::BadRequest' for un-expected errors
+
      memory
        returns: integer number, the size of memory in megabyte
        throws:
          'ApiError' when AllocationUnits of memory is in unexpected form
          'CloudError' when size of memory is zero
          'RestClient::BadRequest' for un-expected errors
+
+     memory=
+        parameters:
+          The size of memory in megabyte.
+        returns: VM object
+        throws:
+          'CloudError' when the memory size is less than or equal to 0
+          'RestClient::BadRequest' for un-expected errors
 
     list_networks
       returns: array of network names
@@ -425,6 +441,23 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
         note:
           Rebooting VM is needed to reflect product section changes
+
+     internal_disks
+       returns: array of internal disk objects
+       throws:
+         'RestClient::BadRequest' for un-expected errors
+
+     create_internal_disk
+       parameters:
+         capcity (Integer): disk size in megabyte
+         bus_type (String, optional): bus type of disk, defaults to "scsi"
+         bus_sub_type (String, optional): bus sub type of disk, defaults to "lsilogic"
+       returns: InternalDisk object created
+       throws:
+         'CloudError' when capcity is less than or equal to 0
+         'CloudError' when bus_type is invalid
+         'CloudError' when bus_sub_type is invalid
+         'RestClient::BadRequest' for un-expected errors
 
   VdcStorageProfile
   
