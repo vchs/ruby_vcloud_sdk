@@ -1,0 +1,8 @@
+Verified+1: CI Master <cf-ci@rbcon.com>
+Code-Review+2: Justin Yu <justiny@vmware.com>
+Code-Review+2: Yin Ding <yding@vmware.com>
+Submitted-by: Yin Ding <yding@vmware.com>
+Submitted-at: Mon, 10 Mar 2014 17:30:23 +0000
+Reviewed-on: http://tempest-reviews.eng.vmware.com/2320
+Project: ruby_vcloud_sdk
+Branch: refs/heads/master
