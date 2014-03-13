@@ -304,6 +304,7 @@ describe VCloudSdk::VM do
         disk = disks[0]
         disk.should be_an_instance_of VCloudSdk::InternalDisk
         disk.capacity.should eql 200
+        disk.name.should eql "Hard disk 1"
       end
     end
   end

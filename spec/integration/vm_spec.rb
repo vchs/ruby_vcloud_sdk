@@ -61,6 +61,8 @@ describe VCloudSdk::VM do
       internal_disks = vm.internal_disks
       internal_disks.size.should eq 2
       internal_disks[1].capacity.should eq 1024
+      internal_disks[0].name.should eq "Hard disk 1"
+      internal_disks[1].name.should eq "Hard disk 2"
     end
   end
 
