@@ -290,6 +290,19 @@ module VCloudSdk
       monitor_task(task)
     end
 
+    def delete_internal_disk_by_name(name)
+      payload = entity_xml
+
+      unless payload.delete_hard_disk?(name)
+        fail ObjectNotFoundError, "Internal disk '#{name}' is not found"
+      end
+
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+    end
+
     private
 
     def disk_attach_or_detach_params(disk)

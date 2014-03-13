@@ -296,6 +296,26 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#delete_internal_disk_by_name" do
+    context "the given disk is not found" do
+      it "raises an exception" do
+        expect do
+          subject.delete_internal_disk_by_name("Invalid disk name")
+        end.to raise_exception VCloudSdk::ObjectNotFoundError,
+                               "Internal disk 'Invalid disk name' is not found"
+      end
+    end
+
+    context "deletes disk with valid parameters" do
+      it "deletes the disk successfully" do
+        task = subject.delete_internal_disk_by_name("Hard disk 1")
+        subject
+          .send(:task_is_success, task)
+          .should be_true
+      end
+    end
+  end
+
   describe "#internal_disks" do
     context "vm has internal disk(s)" do
       it "returns disk(s)" do
