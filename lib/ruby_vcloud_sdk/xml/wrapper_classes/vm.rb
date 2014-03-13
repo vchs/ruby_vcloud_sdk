@@ -117,6 +117,17 @@ module VCloudSdk
           "busType", VCLOUD_NAMESPACE)] = bus_type
       end
 
+      def delete_hard_disk?(disk_name)
+        hardware_section.hard_disks.each do |disk|
+          if disk.element_name == disk_name
+            disk.node.remove
+            return true
+          end
+        end
+
+        return false
+      end
+
       def change_cpu_count(quantity)
         @logger.debug("Updating CPU count on vm #{name} to #{quantity} ")
         item = hardware_section.cpu
