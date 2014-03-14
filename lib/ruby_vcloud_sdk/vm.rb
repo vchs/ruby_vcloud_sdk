@@ -122,10 +122,10 @@ module VCloudSdk
       task = connection.post(entity_xml.attach_disk_link.href,
                              disk_attach_or_detach_params(disk),
                              Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
-      task = monitor_task(task)
+      monitor_task(task)
 
       Config.logger.info "Disk '#{disk.name}' is attached to VM '#{name}'"
-      task
+      self
     end
 
     def detach_disk(disk)
@@ -143,10 +143,10 @@ module VCloudSdk
       task = connection.post(entity_xml.detach_disk_link.href,
                              disk_attach_or_detach_params(disk),
                              Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
-      task = monitor_task(task)
+      monitor_task(task)
 
       Config.logger.info "Disk '#{disk.name}' is detached from VM '#{name}'"
-      task
+      self
     end
 
     def insert_media(catalog_name, media_file_name)
@@ -163,6 +163,7 @@ module VCloudSdk
                              media_insert_or_eject_params(media),
                              Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
       monitor_task(task)
+      self
     end
 
     def eject_media(catalog_name, media_file_name)
@@ -179,6 +180,7 @@ module VCloudSdk
                              media_insert_or_eject_params(media),
                              Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
       monitor_task(task)
+      self
     end
 
     def add_nic(
@@ -230,6 +232,7 @@ module VCloudSdk
                              payload,
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
+      self
     end
 
     def product_section_properties
@@ -288,6 +291,7 @@ module VCloudSdk
                              payload,
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
+      self
     end
 
     def delete_internal_disk_by_name(name)
@@ -301,6 +305,7 @@ module VCloudSdk
                              payload,
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
+      self
     end
 
     private
