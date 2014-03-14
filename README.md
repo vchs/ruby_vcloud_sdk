@@ -367,13 +367,13 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      attach_disk
-       returns: task object
+       returns: VM object
        throws:
          'CloudError' if disk is already attached
          'RestClient::BadRequest' for un-expected errors
 
      detach_disk
-       returns: task object
+       returns: VM object
        throws:
          'VmSuspendedError' if containing vApp is suspended
          'CloudError' if disk is not attached or attached to other VM
@@ -399,14 +399,14 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      insert_media
-       returns: task object
+       returns: VM object
        throws:
          'ObjectNotFoundError' if when catalog with the name does not exist
          'ObjectNotFoundError' if when media with the name does not exist
          'RestClient::BadRequest' for un-expected errors
 
      eject_media
-       returns: task object
+       returns: VM object
        throws:
          'ObjectNotFoundError' if when catalog with the name does not exist
          'ObjectNotFoundError' if when media with the name does not exist
@@ -418,7 +418,7 @@ Copyright (c) VMware, Inc.
           ip_addressing_mode (String, optional): available options are "NONE", "MANUAL",
           "POOL" and "DHCP". Default to "POOL"
           ip (String, optional): IP address for "MANUAL" IP Mode
-        return: task object
+        return: VM object
         throws:
           'CloudError' if when ip_addressing_mode is invalid
           'CloudError' if ip is not specified in "MANUAL" ip_addressing_mode
@@ -452,11 +452,19 @@ Copyright (c) VMware, Inc.
          capcity (Integer): disk size in megabyte
          bus_type (String, optional): bus type of disk, defaults to "scsi"
          bus_sub_type (String, optional): bus sub type of disk, defaults to "lsilogic"
-       returns: InternalDisk object created
+       returns: VM object
        throws:
          'CloudError' when capcity is less than or equal to 0
          'CloudError' when bus_type is invalid
          'CloudError' when bus_sub_type is invalid
+         'RestClient::BadRequest' for un-expected errors
+
+     delete_internal_disk_by_name
+       parameters:
+         name (String): name of disk
+       returns: VM object
+       throws:
+         'ObjectNotFoundError' if no disk matching the given name
          'RestClient::BadRequest' for un-expected errors
 
   VdcStorageProfile

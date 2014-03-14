@@ -279,19 +279,43 @@ describe VCloudSdk::VM do
 
     context "create disk with valid parameters" do
       it "creates an independent disk successfully" do
-        task = subject.create_internal_disk(100)
         subject
-          .send(:task_is_success, task)
-          .should be_true
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+
+        subject
+          .should_receive(:monitor_task)
+          .with(an_instance_of(VCloudSdk::Xml::Task))
+          .and_call_original
+
+        expect do
+          subject.create_internal_disk(100)
+        end.to_not raise_exception
       end
     end
 
     context "bus_type and bus_sub_type are specified" do
       it "creates an independent disk successfully" do
-        task = subject.create_internal_disk(100)
         subject
-          .send(:task_is_success, task)
-          .should be_true
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+
+        subject
+          .should_receive(:monitor_task)
+          .with(an_instance_of(VCloudSdk::Xml::Task))
+          .and_call_original
+
+        expect do
+          subject.create_internal_disk(100)
+        end.to_not raise_exception
       end
     end
   end
@@ -308,10 +332,22 @@ describe VCloudSdk::VM do
 
     context "deletes disk with valid parameters" do
       it "deletes the disk successfully" do
-        task = subject.delete_internal_disk_by_name("Hard disk 1")
         subject
-          .send(:task_is_success, task)
-          .should be_true
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                an_instance_of(VCloudSdk::Xml::Vm),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+
+        subject
+          .should_receive(:monitor_task)
+          .with(an_instance_of(VCloudSdk::Xml::Task))
+          .and_call_original
+
+        expect do
+          subject.delete_internal_disk_by_name("Hard disk 1")
+        end.to_not raise_exception
       end
     end
   end
@@ -366,10 +402,23 @@ describe VCloudSdk::VM do
       end
 
       it "attaches the disk successfully" do
-        attach_task = subject.attach_disk(disk)
         subject
-          .send(:task_is_success, attach_task)
-          .should be_true
+          .send(:connection)
+          .should_receive(:post)
+          .once
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VM_ATTACH_DISK_LINK,
+                anything,
+                VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
+          .and_call_original
+
+        subject
+          .should_receive(:monitor_task)
+          .with(an_instance_of(VCloudSdk::Xml::Task))
+          .and_call_original
+
+        expect do
+          subject.attach_disk(disk)
+        end.to_not raise_exception
       end
 
       context "error occurs when attaching disk" do
@@ -453,10 +502,23 @@ describe VCloudSdk::VM do
         end
 
         it "detaches the disk successfully" do
-          detach_task = subject.detach_disk(disk)
           subject
-            .send(:task_is_success, detach_task)
-            .should be_true
+            .send(:connection)
+            .should_receive(:post)
+            .once
+            .with(VCloudSdk::Test::Response::INSTANTIATED_VM_DETACH_DISK_LINK,
+                  anything,
+                  VCloudSdk::Xml::MEDIA_TYPE[:DISK_ATTACH_DETACH_PARAMS])
+            .and_call_original
+
+          subject
+            .should_receive(:monitor_task)
+            .with(an_instance_of(VCloudSdk::Xml::Task))
+            .and_call_original
+
+          expect do
+            subject.detach_disk(disk)
+          end.to_not raise_exception
         end
 
         context "error occurs when attaching disk" do
@@ -661,22 +723,45 @@ describe VCloudSdk::VM do
           it "inserts media file successfully" do
             VCloudSdk::Test::ResponseMapping
               .set_option existing_media_state: :busy
-            task = subject.insert_media(catalog_name,
-                                        media_name)
+
             subject
-              .send(:task_is_success, task)
-              .should be_true
+              .send(:connection)
+              .should_receive(:post)
+              .with(VCloudSdk::Test::Response::INSTANTIATED_VM_INSERT_MEDIA_LINK,
+                    anything,
+                    VCloudSdk::Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+              .and_call_original
+
+            subject
+              .should_receive(:monitor_task)
+              .twice
+              .with(an_instance_of(VCloudSdk::Xml::Task))
+              .and_call_original
+
+            expect do
+              subject.insert_media(catalog_name, media_name)
+            end.to_not raise_exception
           end
         end
 
         context "media file has no running task" do
           it "inserts media file successfully" do
-            task = subject.insert_media(catalog_name,
-                                        media_name)
+            subject
+              .send(:connection)
+              .should_receive(:post)
+              .with(VCloudSdk::Test::Response::INSTANTIATED_VM_INSERT_MEDIA_LINK,
+                    anything,
+                    VCloudSdk::Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+              .and_call_original
 
             subject
-              .send(:task_is_success, task)
-              .should be_true
+              .should_receive(:monitor_task)
+              .with(an_instance_of(VCloudSdk::Xml::Task))
+              .and_call_original
+
+            expect do
+              subject.insert_media(catalog_name, media_name)
+            end.to_not raise_exception
           end
         end
 
@@ -736,22 +821,47 @@ describe VCloudSdk::VM do
           it "ejects media file successfully" do
             VCloudSdk::Test::ResponseMapping
               .set_option existing_media_state: :busy
-            task = subject.eject_media(catalog_name,
-                                       media_name)
+
             subject
-              .send(:task_is_success, task)
-              .should be_true
+              .send(:connection)
+              .should_receive(:post)
+              .once
+              .with(VCloudSdk::Test::Response::INSTANTIATED_VM_EJECT_MEDIA_LINK,
+                    anything,
+                    VCloudSdk::Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+              .and_call_original
+
+            subject
+              .should_receive(:monitor_task)
+              .twice
+              .with(an_instance_of(VCloudSdk::Xml::Task))
+              .and_call_original
+
+            expect do
+              subject.eject_media(catalog_name, media_name)
+            end.to_not raise_exception
           end
         end
 
         context "media file has no running task" do
           it "ejects media file successfully" do
-            task = subject.eject_media(catalog_name,
-                                       media_name)
+            subject
+              .send(:connection)
+              .should_receive(:post)
+              .once
+              .with(VCloudSdk::Test::Response::INSTANTIATED_VM_EJECT_MEDIA_LINK,
+                    anything,
+                    VCloudSdk::Xml::MEDIA_TYPE[:MEDIA_INSERT_EJECT_PARAMS])
+              .and_call_original
 
             subject
-              .send(:task_is_success, task)
-              .should be_true
+              .should_receive(:monitor_task)
+              .with(an_instance_of(VCloudSdk::Xml::Task))
+              .and_call_original
+
+            expect do
+              subject.eject_media(catalog_name, media_name)
+            end.to_not raise_exception
           end
         end
 
@@ -783,10 +893,22 @@ describe VCloudSdk::VM do
     end
 
     it "adds nic to VM" do
-      task = subject.add_nic(network_name)
       subject
-        .send(:task_is_success, task)
-        .should be_true
+        .send(:connection)
+        .should_receive(:post)
+        .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+              an_instance_of(VCloudSdk::Xml::Vm),
+              VCloudSdk::Xml::MEDIA_TYPE[:VM])
+        .and_call_original
+
+      subject
+        .should_receive(:monitor_task)
+        .with(an_instance_of(VCloudSdk::Xml::Task))
+        .and_call_original
+
+      expect do
+        subject.add_nic(network_name)
+      end.to_not raise_exception
     end
 
     context "ip_addressing_mode is invalid" do
