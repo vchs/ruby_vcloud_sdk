@@ -200,13 +200,6 @@ describe VCloudSdk::VM do
     end
   end
 
-  describe "#list_networks" do
-    it "returns a collection of network names" do
-      network_names = subject.list_networks
-      network_names.should eql ["none"]
-    end
-  end
-
   describe "#nics" do
     it "returns a collection of NIC objects" do
       nics = subject.nics

@@ -213,7 +213,7 @@ module VCloudSdk
       fail CloudError,
            "VM #{name} is powered-on and cannot add NIC." if is_status?(payload, :POWERED_ON)
 
-      nic_index = list_networks.size # nic index begins with 0
+      nic_index = nics.size # nic index begins with 0
 
       Config.logger
         .info("Adding NIC #{nic_index}, network #{network_name} using mode '#{ip_addressing_mode}' #{ip.nil? ? "" : "IP: #{ip}"}")

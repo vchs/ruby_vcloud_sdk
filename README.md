@@ -351,11 +351,6 @@ Copyright (c) VMware, Inc.
           'CloudError' when the memory size is less than or equal to 0
           'RestClient::BadRequest' for un-expected errors
 
-    list_networks
-      returns: array of network names
-      throws:
-        'RestClient::BadRequest' for un-expected errors
-
     nics
       returns: array of NIC objects
       throws:
