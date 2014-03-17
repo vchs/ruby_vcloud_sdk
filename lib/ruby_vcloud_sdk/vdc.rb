@@ -123,8 +123,8 @@ module VCloudSdk
     end
 
     def disk_exists?(name)
-      disks.any? do |disk|
-        disk.name == name
+      list_disks.any? do |disk_name|
+        disk_name == name
       end
     end
 
