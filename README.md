@@ -356,6 +356,11 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
 
+    nics
+      returns: array of NIC objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
      independent_disks
        returns: array of disk objects
        throws:

@@ -207,6 +207,19 @@ describe VCloudSdk::VM do
     end
   end
 
+  describe "#nics" do
+    it "returns a collection of NIC objects" do
+      nics = subject.nics
+      nics.should have(1).item
+      nic = nics.first
+      nic.network_connection_index.should eql 0
+      nic.ip_address.should be_nil
+      nic.is_connected.should be_true
+      nic.ip_address_allocation_mode.should eql "NONE"
+      nic.mac_address.should eql "00:50:56:02:01:cb"
+    end
+  end
+
   describe "#eval_memory_allocation_units" do
     it "returns allocation_units in number of bytes" do
       bytes = ["byte*3*2^20", "byte * 2^20", "byte * 2^10", "byte"].map do |allocation_units|
