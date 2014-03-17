@@ -1,0 +1,7 @@
+Verified+1: CI Master <cf-ci@rbcon.com>
+Code-Review+2: Justin Yu <justiny@vmware.com>
+Submitted-by: Justin Yu <justiny@vmware.com>
+Submitted-at: Mon, 17 Mar 2014 22:10:17 +0000
+Reviewed-on: http://tempest-reviews.eng.vmware.com/2369
+Project: ruby_vcloud_sdk
+Branch: refs/heads/master
