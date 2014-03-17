@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class NetworkConnection < Wrapper
       def network
         @root["network"]
@@ -24,7 +23,9 @@ module VCloudSdk
       end
 
       def ip_address
-        get_nodes("IpAddress").first.content
+        ip_address_node = get_nodes("IpAddress").first
+        return if ip_address_node.nil?
+        ip_address_node.content
       end
 
       def ip_address=(value)
@@ -59,13 +60,13 @@ module VCloudSdk
       end
 
       def ip_address_allocation_mode=(value)
-        if !IP_ADDRESSING_MODE.values.include?(value)
-          raise ArgumentError, "Invalid IP addressing mode.  Valid modes " +
-              "are: #{IP_ADDRESSING_MODE.values.join(" ")}"
+        unless IP_ADDRESSING_MODE.values.include?(value)
+          fail ArgumentError,
+               "Invalid IP addressing mode.  Valid modes " +
+               "are: #{IP_ADDRESSING_MODE.values.join(" ")}"
         end
         get_nodes("IpAddressAllocationMode").first.content = value
       end
     end
-
   end
 end

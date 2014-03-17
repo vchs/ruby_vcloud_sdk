@@ -2,6 +2,7 @@ require "forwardable"
 require_relative "infrastructure"
 require_relative "powerable"
 require_relative "internal_disk"
+require_relative "nic"
 
 module VCloudSdk
   class VM
@@ -90,6 +91,15 @@ module VCloudSdk
         .network_connection_section
         .network_connections
         .map { |network_connection| network_connection.network }
+    end
+
+    def nics
+      entity_xml
+        .network_connection_section
+        .network_connections
+        .map do |network_connection|
+          VCloudSdk::NIC.new(network_connection)
+        end
     end
 
     def independent_disks
