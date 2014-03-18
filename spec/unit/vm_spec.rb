@@ -203,13 +203,25 @@ describe VCloudSdk::VM do
   describe "#nics" do
     it "returns a collection of NIC objects" do
       nics = subject.nics
-      nics.should have(1).item
-      nic = nics.first
+      nics.should have(3).item
+      nic = nics[0]
       nic.network_connection_index.should eql 0
       nic.ip_address.should be_nil
-      nic.is_connected.should be_true
+      nic.is_connected.should be_false
       nic.ip_address_allocation_mode.should eql "NONE"
       nic.mac_address.should eql "00:50:56:02:01:cb"
+      nic = nics[1]
+      nic.network_connection_index.should eql 1
+      nic.ip_address.should eql "10.146.21.151"
+      nic.is_connected.should be_true
+      nic.ip_address_allocation_mode.should eql "POOL"
+      nic.mac_address.should eql "00:50:56:02:00:30"
+      nic = nics[2]
+      nic.network_connection_index.should eql 2
+      nic.ip_address.should be_nil
+      nic.is_connected.should be_true
+      nic.ip_address_allocation_mode.should eql "DHCP"
+      nic.mac_address.should eql "00:50:56:02:00:2f"
     end
   end
 
@@ -959,6 +971,81 @@ describe VCloudSdk::VM do
 
   end
 
+  describe "#delete_nics" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+        .set_option vapp_power_state: :off
+    end
+
+    context "delete one nic" do
+      it "deletes nic from VM" do
+        nic = double("nic")
+        nic.should_receive(:nic_index) { 1 }
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                vm_nic_indexes([0,2]),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+        result = subject.delete_nics(nic)
+        result.should be_nil
+      end
+    end
+
+    context "delete two nics" do
+      it "deletes nic from VM" do
+        nic1 = double("nic1")
+        nic1.should_receive(:nic_index) { 1 }
+        nic2 = double("nic2")
+        nic2.should_receive(:nic_index) { 2 }
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                vm_nic_indexes([0]),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+        result = subject.delete_nics(nic1, nic2)
+        result.should be_nil
+      end
+    end
+
+    context "delete three nics" do
+      it "deletes nic from VM" do
+        nic0 = double("nic0")
+        nic0.should_receive(:nic_index) { 0 }
+        nic1 = double("nic1")
+        nic1.should_receive(:nic_index) { 1 }
+        nic2 = double("nic2")
+        nic2.should_receive(:nic_index) { 2 }
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::RECONFIGURE_VM_LINK,
+                vm_nic_indexes([]),
+                VCloudSdk::Xml::MEDIA_TYPE[:VM])
+          .and_call_original
+        result = subject.delete_nics(nic0, nic1, nic2)
+        result.should be_nil
+      end
+    end
+
+    context "VM is powered on" do
+      it "raises CloudError" do
+        subject
+          .should_receive(:is_status?)
+          .with(anything, :POWERED_ON)
+          .and_return true
+        expect do
+          subject.delete_nics(double("nic"))
+        end.to raise_exception VCloudSdk::CloudError,
+                               "VM #{vm_name} is powered-on and cannot delete NIC."
+      end
+    end
+
+  end
+
   describe "#product_section_properties" do
     it "returns array of hash values representing properties of product section of VM" do
       subject.product_section_properties.should eql properties
@@ -1005,6 +1092,34 @@ describe VCloudSdk::VM do
         expect do
           subject.product_section_properties = properties
         end.to raise_exception RestClient::BadRequest
+      end
+    end
+  end
+end
+
+module RSpec
+  module Mocks
+    module ArgumentMatchers
+      class VMNICIndexesMatcher
+        def initialize(nic_indexes)
+          @nic_indexes = nic_indexes
+        end
+
+        def ==(other)
+          other.instance_of?(VCloudSdk::Xml::Vm) &&
+          @nic_indexes == other.network_connection_section
+                               .network_connections
+                               .map { |n| n.network_connection_index.to_i }
+                               .sort
+        end
+
+        def description
+          "Check VM NIC indexes"
+        end
+      end
+
+      def vm_nic_indexes(nic_indexes)
+        VMNICIndexesMatcher.new(nic_indexes)
       end
     end
   end

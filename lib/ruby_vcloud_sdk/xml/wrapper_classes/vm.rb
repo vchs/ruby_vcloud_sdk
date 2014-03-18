@@ -125,7 +125,7 @@ module VCloudSdk
           end
         end
 
-        return false
+        false
       end
 
       def change_cpu_count(quantity)
@@ -143,7 +143,7 @@ module VCloudSdk
       # Deletes NIC from VM.  Accepts variable number of arguments for NICs.
       # To delete all NICs from VM use the splat operator
       # ex: delete_nic(vm, *vm.hardware_section.nics)
-      def delete_nic(*nics)
+      def delete_nics(*nics)
         # Trying to remove a NIC without removing the network connection
         # first will cause an error.  Removing the network connection of a NIC
         # in the NetworkConnectionSection will automatically delete the NIC.
@@ -152,8 +152,9 @@ module VCloudSdk
         nics.each do |nic|
           nic_index = nic.nic_index
           @logger.info("Removing NIC #{nic_index} from VM #{name}")
-          net_conn_section.remove_network_connection(nic_index)
+          primary_index = net_conn_section.remove_network_connection(nic_index)
           vhw_section.remove_nic(nic_index)
+          vhw_section.reconcile_primary_network(primary_index) if primary_index
         end
       end
 

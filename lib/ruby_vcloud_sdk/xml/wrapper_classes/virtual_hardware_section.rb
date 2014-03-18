@@ -35,8 +35,9 @@ module VCloudSdk
       end
 
       def nics
-        items = hardware.find_all {|h| h.get_rasd_content(
-          RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:NIC] }
+        items = hardware.select do |h|
+          h.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:NIC]
+        end
         items.map { |i| NicItemWrapper.new(i) }
       end
 
@@ -45,14 +46,29 @@ module VCloudSdk
       end
 
       def remove_hw(hw_type, index)
-        item = hardware.find { |h|
+        index = index.to_s
+        item = hardware.find do |h|
           h.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) == hw_type &&
-          h.get_rasd_content(RASD_TYPES[:ADDRESS_ON_PARENT]) == index }
+            h.get_rasd_content(RASD_TYPES[:ADDRESS_ON_PARENT]) == index
+        end
         if item
           item.node.remove
         else
-          raise ObjectNotFoundError,
-            "Cannot remove hw item #{hw_type}:#{index}, does not exist."
+          fail ObjectNotFoundError,
+               "Cannot remove hw item #{hw_type}:#{index}, does not exist."
+        end
+      end
+
+      def reconcile_primary_network(primary_index)
+        primary_index = primary_index.to_s
+        hardware.select do |item|
+          item.get_rasd_content(RASD_TYPES[:RESOURCE_TYPE]) == HARDWARE_TYPE[:NIC]
+        end.each do |item|
+          if item.get_rasd_content(RASD_TYPES[:ADDRESS_ON_PARENT]) == primary_index
+            item.get_rasd(RASD_TYPES[:CONNECTION]).attribute("primaryNetworkConnection").value = "true"
+          else
+            item.get_rasd(RASD_TYPES[:CONNECTION]).attribute("primaryNetworkConnection").value = "false"
+          end
         end
       end
 
