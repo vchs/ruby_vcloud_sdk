@@ -184,7 +184,21 @@ describe VCloudSdk::VM do
                    VCloudSdk::Xml::IP_ADDRESSING_MODE[:NONE])
         vm.add_nic(network_name,
                    VCloudSdk::Xml::IP_ADDRESSING_MODE[:DHCP])
-        vm.list_networks.size.should eql 3
+        nics = vm.nics
+        nics.size.should eql 3
+        3.times do
+          nic = vm.nics.first
+          vm.delete_nics(nic)
+        end
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:POOL])
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:NONE])
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:DHCP])
+        nics = vm.nics
+        nics.size.should eql 3
+        vm.delete_nics(*nics)
       ensure
         vapp.power_off
         vapp.delete

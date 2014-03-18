@@ -426,6 +426,15 @@ Copyright (c) VMware, Inc.
           'ObjectNotFoundError' if network is not added to VM's parent VApp
           'RestClient::BadRequest' for un-expected errors
 
+    delete_nics
+       parameters:
+         nics (splat NIC objects): NICs to delete
+       return: nil
+       throws:
+         'CloudError' if vm is powered on
+         'ObjectNotFoundError' if specified nic index does not exist
+         'RestClient::BadRequest' for un-expected errors
+
      product_section_properties
         returns:
           array of hash values representing properties of product section of VM
