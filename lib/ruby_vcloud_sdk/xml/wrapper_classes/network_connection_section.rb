@@ -1,6 +1,5 @@
 module VCloudSdk
   module Xml
-
     class NetworkConnectionSection < Wrapper
       def add_item(item)
         link_node = get_nodes("Link").first
@@ -12,10 +11,11 @@ module VCloudSdk
       end
 
       def network_connection(index)
-        net = network_connections.find {
-          |n| n.network_connection_index == index.to_s }
+        net = network_connections.find do |n|
+          n.network_connection_index == index.to_s
+        end
         unless net
-          raise ObjectNotFoundError, "Network connection #{index} does not exist."
+          fail ObjectNotFoundError, "Network connection #{index} does not exist."
         end
         net
       end
@@ -38,26 +38,27 @@ module VCloudSdk
         connection = network_connection(index)
         if connection
           connection.node.remove
-          reconcile_primary_network()
+          reconcile_primary_network
         else
-          raise ObjectNotFoundError,
-            "Cannot remove network connection #{index}: does not exist."
+          fail ObjectNotFoundError,
+               "Cannot remove network connection #{index}: does not exist."
         end
       end
 
       private
 
-      def reconcile_primary_network()
+      def reconcile_primary_network
         new_primary = network_connections.first
         if new_primary
-          self.primary_network_connection_index =
-            new_primary.network_connection_index
+          primary_index = new_primary.network_connection_index
+          self.primary_network_connection_index = primary_index
+          primary_index
         else
           primary = get_nodes("PrimaryNetworkConnectionIndex").first
           primary.node.remove if primary
+          nil
         end
       end
     end
-
   end
 end

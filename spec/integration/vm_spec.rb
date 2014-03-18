@@ -1,7 +1,20 @@
 require "spec_helper"
 require "nokogiri/diff"
+require "pp"
 
 describe VCloudSdk::VM do
+  before do
+    ENV['VCLOUD_URL'] = "https://10.146.21.135"
+    ENV['VCLOUD_USERNAME'] = "dev_mgr@dev"
+    ENV['VCLOUD_PWD'] = "vmware"
+    ENV['VDC_NAME'] = "tempest"
+    ENV['CATALOG_NAME'] = "ruby_vcloud_sdk_integration_test"
+    ENV['STORAGE_PROFILE_NAME'] = "large"
+    ENV['CATALOG_NAME_TO_CREATE'] = "dev test catalog"
+    ENV['VAPP_NAME'] = "PCF vApp"
+    ENV['NETWORK_NAME'] = "tempest_vdc_network"
+    ENV['EXISTING_VAPP_TEMPLATE_NAME'] = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
+  end
 
   let(:logger) { VCloudSdk::Test.logger }
   let(:url) { ENV['VCLOUD_URL'] || raise("Missing environment variable VCLOUD_URL") }
@@ -184,7 +197,21 @@ describe VCloudSdk::VM do
                    VCloudSdk::Xml::IP_ADDRESSING_MODE[:NONE])
         vm.add_nic(network_name,
                    VCloudSdk::Xml::IP_ADDRESSING_MODE[:DHCP])
-        vm.list_networks.size.should eql 3
+        nics = vm.nics
+        nics.size.should eql 3
+        3.times do
+          nic = vm.nics.first
+          vm.delete_nics(nic)
+        end
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:POOL])
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:NONE])
+        vm.add_nic(network_name,
+                   VCloudSdk::Xml::IP_ADDRESSING_MODE[:DHCP])
+        nics = vm.nics
+        nics.size.should eql 3
+        vm.delete_nics(*nics)
       ensure
         vapp.power_off
         vapp.delete
@@ -246,19 +273,20 @@ describe VCloudSdk::VM do
 
   describe "#product_section_properties=" do
     let(:properties) do
-      [{
-         "type" => "string",
-         "key" => "CRM_Database_Host",
-         "value" => "CRM.example.com",
-         "password" => "true",
-         "Label" => "CRM Database Host"
-       },
-       {
-         "type" => "string",
-         "key" => "CRM_Database_Username",
-         "value" => "dbuser",
-         "password" => "false"
-       },
+      [
+       # {
+       #  "type" => "string",
+       #  "key" => "CRM_Database_Host",
+       #  "value" => "CRM.example.com",
+       #  "password" => "true",
+       #  "Label" => "CRM Database Host"
+       #},
+       #{
+       #  "type" => "string",
+       #  "key" => "CRM_Database_Username",
+       #  "value" => "dbuser",
+       #  "password" => "false"
+       #},
        {
          "type" => "string",
          "key" => "admin_password",
@@ -271,6 +299,10 @@ describe VCloudSdk::VM do
     it "updates VM product section" do
       begin
         vapp_name = SecureRandom.uuid
+        #vdc  = client.find_vdc_by_name("tempest")
+        #vapp = vdc.find_vapp_by_name("PCF Deployer")
+        #vm = vapp.vms.first
+        #puts vm.product_section_properties
         catalog = client.find_catalog_by_name(catalog_name)
         vapp = catalog.instantiate_vapp_template(vapp_template_name,
                                                  vdc_name,

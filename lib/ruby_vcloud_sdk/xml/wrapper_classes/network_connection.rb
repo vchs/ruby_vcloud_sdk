@@ -15,11 +15,12 @@ module VCloudSdk
       end
 
       def network_connection_index=(value)
-        unless get_nodes("NetworkConnectionIndex").first
+        index_node = get_nodes("NetworkConnectionIndex").first
+        if index_node.nil?
           index_node = create_child("NetworkConnectionIndex")
           add_child(index_node)
         end
-        get_nodes("NetworkConnectionIndex").first.content = value
+        index_node.content = value
       end
 
       def ip_address

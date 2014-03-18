@@ -245,6 +245,19 @@ module VCloudSdk
       self
     end
 
+    def delete_nics(*nics)
+      payload = entity_xml
+      fail CloudError,
+           "VM #{name} is powered-on and cannot delete NIC." if is_status?(payload, :POWERED_ON)
+
+      payload.delete_nics(*nics)
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      nil
+    end
+
     def product_section_properties
       product_section = entity_xml.product_section
       return [] if product_section.nil?
