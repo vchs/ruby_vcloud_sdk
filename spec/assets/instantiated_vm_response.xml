@@ -29,11 +29,37 @@
             <rasd:Address>00:50:56:02:01:cb</rasd:Address>
             <rasd:AddressOnParent>0</rasd:AddressOnParent>
             <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
-            <rasd:Connection vcloud:primaryNetworkConnection="true" vcloud:ipAddressingMode="NONE">none</rasd:Connection>
+            <rasd:Connection vcloud:primaryNetworkConnection="false" vcloud:ipAddressingMode="NONE">none</rasd:Connection>
             <rasd:Description>VMXNET3 ethernet adapter</rasd:Description>
             <rasd:ElementName>Network adapter 0</rasd:ElementName>
             <rasd:InstanceID>1</rasd:InstanceID>
             <rasd:ResourceSubType>VMXNET3</rasd:ResourceSubType>
+            <rasd:ResourceType>10</rasd:ResourceType>
+        </ovf:Item>
+        <ovf:Item>
+            <rasd:Address>00:50:56:02:00:30</rasd:Address>
+            <rasd:AddressOnParent>1</rasd:AddressOnParent>
+            <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+            <rasd:Connection ns12:ipAddress="10.146.21.151" ns12:primaryNetworkConnection="true" ns12:ipAddressingMode="POOL">
+              none
+            </rasd:Connection>
+            <rasd:Description>E1000 ethernet adapter on "tempest_vdc_network"</rasd:Description>
+            <rasd:ElementName>Network adapter 0</rasd:ElementName>
+            <rasd:InstanceID>1</rasd:InstanceID>
+            <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+            <rasd:ResourceType>10</rasd:ResourceType>
+        </ovf:Item>
+        <ovf:Item>
+            <rasd:Address>00:50:56:02:00:2f</rasd:Address>
+            <rasd:AddressOnParent>2</rasd:AddressOnParent>
+            <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+            <rasd:Connection ns12:primaryNetworkConnection="false" ns12:ipAddressingMode="DHCP">
+              none
+            </rasd:Connection>
+            <rasd:Description>E1000 ethernet adapter on "tempest_vdc_network"</rasd:Description>
+            <rasd:ElementName>Network adapter 2</rasd:ElementName>
+            <rasd:InstanceID>2</rasd:InstanceID>
+            <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
             <rasd:ResourceType>10</rasd:ResourceType>
         </ovf:Item>
         <ovf:Item>
@@ -121,12 +147,25 @@
     </ovf:OperatingSystemSection>
     <NetworkConnectionSection type="application/vnd.vmware.vcloud.networkConnectionSection+xml" href="%s" ovf:required="false">
         <ovf:Info>Specifies the available VM network connections</ovf:Info>
-        <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+        <PrimaryNetworkConnectionIndex>1</PrimaryNetworkConnectionIndex>
         <NetworkConnection network="none" needsCustomization="true">
             <NetworkConnectionIndex>0</NetworkConnectionIndex>
             <IsConnected>false</IsConnected>
             <MACAddress>00:50:56:02:01:cb</MACAddress>
             <IpAddressAllocationMode>NONE</IpAddressAllocationMode>
+        </NetworkConnection>
+        <NetworkConnection network="none" needsCustomization="true">
+            <NetworkConnectionIndex>1</NetworkConnectionIndex>
+            <IpAddress>10.146.21.151</IpAddress>
+            <IsConnected>true</IsConnected>
+            <MACAddress>00:50:56:02:00:30</MACAddress>
+            <IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+        </NetworkConnection>
+        <NetworkConnection network="none" needsCustomization="true">
+            <NetworkConnectionIndex>2</NetworkConnectionIndex>
+            <IsConnected>true</IsConnected>
+            <MACAddress>00:50:56:02:00:2f</MACAddress>
+            <IpAddressAllocationMode>DHCP</IpAddressAllocationMode>
         </NetworkConnection>
         <Link rel="edit" type="application/vnd.vmware.vcloud.networkConnectionSection+xml" href="%s"/>
     </NetworkConnectionSection>
