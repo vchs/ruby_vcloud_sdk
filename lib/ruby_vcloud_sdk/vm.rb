@@ -215,7 +215,7 @@ module VCloudSdk
       fail CloudError,
            "VM #{name} is powered-on and cannot add NIC." if is_status?(payload, :POWERED_ON)
 
-      nic_index = nics.size # nic index begins with 0
+      nic_index = add_nic_index
 
       Config.logger
         .info("Adding NIC #{nic_index}, network #{network_name} using mode '#{ip_addressing_mode}' #{ip.nil? ? "" : "IP: #{ip}"}")
@@ -332,6 +332,16 @@ module VCloudSdk
     end
 
     private
+
+    def add_nic_index
+      # nic index begins with 0
+      i = 0
+      nic_indexes = nics.map { |n| n.nic_index }
+      while (nic_indexes.include?(i))
+        i += 1
+      end
+      i
+    end
 
     def disk_attach_or_detach_params(disk)
       Xml::WrapperFactory
