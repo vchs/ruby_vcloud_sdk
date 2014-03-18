@@ -19,10 +19,10 @@ module VCloudSdk
       def properties
         get_nodes("Property", nil, true, OVF).map do |property_node|
           property = {}
-          property["type"] = property_node.attribute("type").content
-          property["key"] = property_node.attribute("key").content
-          property["value"] = property_node.attribute("value").content
-          property["password"] = property_node.attribute("password").content
+          %w[type key value password].each do |k|
+            attr = property_node.attribute(k)
+            property[k] = attr.content unless attr.nil?
+          end
 
           label_node = property_node.get_nodes("Label", nil, true, OVF).first
           property["Label"] = label_node.content unless label_node.nil?
