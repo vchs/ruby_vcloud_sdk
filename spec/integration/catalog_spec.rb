@@ -49,6 +49,25 @@ describe VCloudSdk::Catalog do
       vapp.name.should eq vapp_name
     end
 
+    it "starts vapp that targeted vapp template with network" do
+
+      vdc = client.find_vdc_by_name(vdc_name)
+      network = vdc.networks.first
+      network_name = network.name
+
+      network_config = VCloudSdk::NetworkConfig.new(network_name)
+      vapp = subject.instantiate_vapp_template(vapp_template_name,
+                                               vdc_name,
+                                               vapp_name,
+                                               "with_network_config",
+                                               nil,
+                                               network_config)
+      vapp.should_not be_nil
+      vapp.name.should eq vapp_name
+
+      vapp.list_networks.should eql [network_name]
+    end
+
     it "starts vapp that targeted vapp template with disk locality" do
       begin
         new_disk_name = "independent_disk"

@@ -60,6 +60,28 @@ module VCloudSdk
         end
       end
 
+      def set_network_config(vapp_network_name, vdc_netowrk_href, fence_mode)
+        instantiation_param = get_nodes("InstantiationParams").first
+
+        net_config_section = add_child("NetworkConfigSection", nil, nil, instantiation_param.node)
+
+        ovf_info = add_child("Info", "ovf", OVF, net_config_section)
+        ovf_info.content = "Configuration parameters for logical networks"
+
+        network_config = create_child("NetworkConfig")
+        ovf_info.after(network_config)
+        network_config["networkName"] = vapp_network_name
+
+        configuration = add_child("Configuration", nil, nil, network_config)
+
+        parent_network = add_child("ParentNetwork", nil, nil, configuration)
+        parent_network["href"] = vdc_netowrk_href
+
+        fence_node = create_child("FenceMode")
+        parent_network.after(fence_node)
+        fence_node.content = fence_mode
+      end
+
       private
 
       def is_source_delete

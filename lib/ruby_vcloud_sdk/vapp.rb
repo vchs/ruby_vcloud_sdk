@@ -1,6 +1,7 @@
 require_relative "infrastructure"
 require_relative "powerable"
 require_relative "vm"
+require_relative "network_config"
 
 module VCloudSdk
   class VApp
