@@ -20,19 +20,61 @@ describe VCloudSdk::VM do
   end
 
   let(:properties) do
-    [{
-       "type" => "string",
-       "key" => "CRM_Database_Username",
-       "value" => "dbuser",
-       "password" => "false"
-     },
-     {
-       "type" => "string",
-       "key" => "CRM_Database_Host",
-       "value" => "CRM.example.com",
-       "password" => "false",
-       "Label" => "CRM Database Host"
-     }
+    [
+      {
+        "type" => "string",
+        "key" => "gateway",
+        "value" => "10.146.21.253",
+        "password" => "false",
+        "userConfigurable" => "true",
+        "Label" => "Default Gateway",
+        "Description" => "The default gateway address for the Pivotal Ops Manager's network. Leave blank if DHCP is desired."
+      },
+      {
+        "type" => "string",
+        "key" => "DNS",
+        "value" => "10.20.144.1",
+        "password" => "false",
+        "userConfigurable" => "true",
+        "Label" => "DNS",
+        "Description" => "The domain name servers for the Pivotal Ops Manager (comma separated). Leave blank if DHCP is desired."
+      },
+      {
+        "type" => "string",
+        "key" => "ntp_servers",
+        "value" => "10.20.144.1",
+        "password" => "false",
+        "userConfigurable" => "true",
+        "Label" => "NTP Servers",
+        "Description" => "Comma-delimited list of NTP servers"
+      },
+      {
+        "type" => "password",
+        "key" => "admin_password",
+        "value" => "dummy",
+        "password" => "false",
+        "userConfigurable" => "true",
+        "Label" => "Admin Password",
+        "Description" => "This password is used to SSH into the Pivotal Ops Manager. The username is 'tempest'."
+      },
+      {
+        "type" => "string",
+        "key" => "ip0",
+        "value" => "10.146.21.142",
+        "password" => "false",
+        "userConfigurable" => "true",
+        "Label" => "IP Address",
+        "Description" => "The IP address for the Pivotal Ops Manager. Leave blank if DHCP is desired."
+      },
+      {
+        "type" => "string",
+        "key" => "netmask0",
+        "value" => "255.255.255.128",
+        "password" => "false",
+        "userConfigurable" => "true",
+        "Label" => "Netmask",
+        "Description" => "The netmask for the Pivotal Ops Manager's network. Leave blank if DHCP is desired."
+      }
     ]
   end
 

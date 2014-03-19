@@ -184,11 +184,38 @@
     </GuestCustomizationSection>
     <ovf:ProductSection ovf:required="true">
       <ovf:Info>Information about the installed software</ovf:Info>
-      <ovf:Property ovf:value="dbuser" ovf:userConfigurable="false" ovf:type="string" ovf:password="false"
-                    ovf:key="CRM_Database_Username"/>
-      <ovf:Property ovf:value="CRM.example.com" ovf:userConfigurable="false" ovf:type="string" ovf:password="false"
-                    ovf:key="CRM_Database_Host">
-        <ovf:Label>CRM Database Host</ovf:Label>
+      <ovf:Product>Pivotal Ops Manager</ovf:Product>
+      <ovf:Vendor>Pivotal</ovf:Vendor>
+      <ovf:Version>1.1.0.0</ovf:Version>
+      <ovf:Property ovf:userConfigurable="true" ovf:type="string" ovf:password="false" ovf:key="gateway">
+        <ovf:Label>Default Gateway</ovf:Label>
+        <ovf:Description>The default gateway address for the Pivotal Ops Manager's network. Leave blank if DHCP is desired.</ovf:Description>
+        <ovf:Value ovf:value="10.146.21.253"/>
+      </ovf:Property>
+      <ovf:Property ovf:userConfigurable="true" ovf:type="string" ovf:password="false" ovf:key="DNS">
+        <ovf:Label>DNS</ovf:Label>
+        <ovf:Description>The domain name servers for the Pivotal Ops Manager (comma separated). Leave blank if DHCP is desired.</ovf:Description>
+        <ovf:Value ovf:value="10.20.144.1"/>
+      </ovf:Property>
+      <ovf:Property ovf:userConfigurable="true" ovf:type="string" ovf:password="false" ovf:key="ntp_servers">
+        <ovf:Label>NTP Servers</ovf:Label>
+        <ovf:Description>Comma-delimited list of NTP servers</ovf:Description>
+        <ovf:Value ovf:value="10.20.144.1"/>
+      </ovf:Property>
+      <ovf:Property ovf:userConfigurable="true" ovf:type="password" ovf:password="false" ovf:key="admin_password">
+        <ovf:Label>Admin Password</ovf:Label>
+        <ovf:Description>This password is used to SSH into the Pivotal Ops Manager. The username is 'tempest'.</ovf:Description>
+        <ovf:Value ovf:value="dummy"/>
+      </ovf:Property>
+      <ovf:Property ovf:userConfigurable="true" ovf:type="string" ovf:password="false" ovf:key="ip0">
+        <ovf:Label>IP Address</ovf:Label>
+        <ovf:Description>The IP address for the Pivotal Ops Manager. Leave blank if DHCP is desired.</ovf:Description>
+        <ovf:Value ovf:value="10.146.21.142"/>
+      </ovf:Property>
+      <ovf:Property ovf:userConfigurable="true" ovf:type="string" ovf:password="false" ovf:key="netmask0">
+        <ovf:Label>Netmask</ovf:Label>
+        <ovf:Description>The netmask for the Pivotal Ops Manager's network. Leave blank if DHCP is desired.</ovf:Description>
+        <ovf:Value ovf:value="255.255.255.128"/>
       </ovf:Property>
     </ovf:ProductSection>
     <RuntimeInfoSection xmlns:vcloud="http://www.vmware.com/vcloud/v1.5" vcloud:href="%s/api/vApp/vm-%s/runtimeInfoSection" vcloud:type="application/vnd.vmware.vcloud.virtualHardwareSection+xml">
