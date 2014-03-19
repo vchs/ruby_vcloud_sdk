@@ -247,19 +247,25 @@ describe VCloudSdk::VM do
       nics = subject.nics
       nics.should have(3).item
       nic = nics[0]
-      nic.network_connection_index.should eql 0
+      nic.nic_index.should eql 0
+      nic.network.should eql "none"
+      nic.is_primary.should be_false
       nic.ip_address.should be_nil
       nic.is_connected.should be_false
       nic.ip_address_allocation_mode.should eql "NONE"
       nic.mac_address.should eql "00:50:56:02:01:cb"
       nic = nics[1]
-      nic.network_connection_index.should eql 1
+      nic.nic_index.should eql 1
+      nic.network.should eql "none"
+      nic.is_primary.should be_true
       nic.ip_address.should eql "10.146.21.151"
       nic.is_connected.should be_true
       nic.ip_address_allocation_mode.should eql "POOL"
       nic.mac_address.should eql "00:50:56:02:00:30"
       nic = nics[2]
-      nic.network_connection_index.should eql 2
+      nic.nic_index.should eql 2
+      nic.network.should eql "none"
+      nic.is_primary.should be_false
       nic.ip_address.should be_nil
       nic.is_connected.should be_true
       nic.ip_address_allocation_mode.should eql "DHCP"

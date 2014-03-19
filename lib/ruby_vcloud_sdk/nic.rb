@@ -4,10 +4,13 @@ module VCloudSdk
 
     def_delegators :@entity_xml,
                    :ip_address, :is_connected, :mac_address,
-                   :ip_address_allocation_mode
+                   :ip_address_allocation_mode, :network
 
-    def initialize(entity_xml)
+    attr_reader :is_primary
+
+    def initialize(entity_xml, is_primary)
       @entity_xml = entity_xml
+      @is_primary = is_primary
     end
 
     def network_connection_index

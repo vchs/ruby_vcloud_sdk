@@ -94,11 +94,15 @@ module VCloudSdk
     end
 
     def nics
+      primary_index = entity_xml
+                        .network_connection_section
+                        .primary_network_connection_index
       entity_xml
         .network_connection_section
         .network_connections
         .map do |network_connection|
-          VCloudSdk::NIC.new(network_connection)
+          VCloudSdk::NIC.new(network_connection,
+                             network_connection.network_connection_index == primary_index)
         end
     end
 
