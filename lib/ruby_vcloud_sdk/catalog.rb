@@ -137,10 +137,10 @@ module VCloudSdk
     end
 
     def instantiate_vapp_template(template_name, vdc_name, vapp_name,
-        description = nil, disk_locality = nil)
+        description = nil, disk_locality = nil, network_config = nil)
 
       instantiate_vapp_params = create_instantiate_vapp_params(
-          template_name, vapp_name, description, disk_locality)
+          template_name, vapp_name, description, disk_locality, network_config)
 
       vdc = find_vdc_by_name vdc_name
 
@@ -330,7 +330,7 @@ module VCloudSdk
     end
 
     def create_instantiate_vapp_params(template_name,
-        vapp_name, description, disk_locality)
+        vapp_name, description, disk_locality, network_config)
 
       source_vapp_template = retrieve_vapp_template_xml_node(template_name)
 
@@ -338,6 +338,9 @@ module VCloudSdk
           "InstantiateVAppTemplateParams")
       instantiate_vapp_params.name = vapp_name
       instantiate_vapp_params.description = description
+
+      set_vapp_network_config_param(instantiate_vapp_params, network_config)
+
       instantiate_vapp_params.source = source_vapp_template
       instantiate_vapp_params.all_eulas_accepted = true
       instantiate_vapp_params.linked_clone = false
@@ -377,6 +380,20 @@ module VCloudSdk
       incomplete_file = media.incomplete_files.pop
       connection.put_file(incomplete_file.upload_link, media_file)
       connection.get(media)
+    end
+
+    private
+
+    def set_vapp_network_config_param(instantiate_vapp_params, network_config)
+      return unless network_config
+
+      network = find_network_by_name(network_config.network_name)
+      target_vapp_net_name = network_config.vapp_net_name.nil? ?
+                             network.name : network_config.vapp_net_name
+
+      instantiate_vapp_params.set_network_config(target_vapp_net_name,
+                                                 network.href["href"].to_s,
+                                                 network_config.fence_mode.to_s)
     end
   end
 end
