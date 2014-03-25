@@ -270,8 +270,8 @@ module VCloudSdk
     end
 
     def product_section_properties=(properties)
-      Config.logger
-        .info("Updating VM #{name} production sections with properties: #{properties.pretty_inspect}")
+      Config.logger.info(
+        "Updating VM #{name} production sections with properties: #{properties.inspect}")
       task = connection.put(entity_xml.product_sections_link.href,
                             product_section_list_params(properties),
                             Xml::MEDIA_TYPE[:PRODUCT_SECTIONS])
