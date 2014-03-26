@@ -40,7 +40,7 @@
             <rasd:Address>00:50:56:02:00:30</rasd:Address>
             <rasd:AddressOnParent>1</rasd:AddressOnParent>
             <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
-            <rasd:Connection ns12:ipAddress="10.146.21.151" ns12:primaryNetworkConnection="true" ns12:ipAddressingMode="POOL">
+            <rasd:Connection vcloud:ipAddress="10.146.21.151" vcloud:primaryNetworkConnection="true" vcloud:ipAddressingMode="POOL">
               none
             </rasd:Connection>
             <rasd:Description>E1000 ethernet adapter on "tempest_vdc_network"</rasd:Description>
@@ -53,7 +53,7 @@
             <rasd:Address>00:50:56:02:00:2f</rasd:Address>
             <rasd:AddressOnParent>2</rasd:AddressOnParent>
             <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
-            <rasd:Connection ns12:primaryNetworkConnection="false" ns12:ipAddressingMode="DHCP">
+            <rasd:Connection vcloud:primaryNetworkConnection="false" vcloud:ipAddressingMode="DHCP">
               none
             </rasd:Connection>
             <rasd:Description>E1000 ethernet adapter on "tempest_vdc_network"</rasd:Description>
