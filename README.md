@@ -11,6 +11,11 @@ Copyright (c) VMware, Inc.
         'ObjectNotFoundError' when VDC with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
+    vdc_exists?
+      returns: boolean
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
     catalogs
       returns: array of catalog objects
       throws:
@@ -59,6 +64,11 @@ Copyright (c) VMware, Inc.
       throws:
         'ObjectNotFoundError' when storage profile with the name does not exist
         'RestClient::BadRequest' for un-expected errors
+
+    storage_profile_exists?
+      returns: boolean
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
     vapps
       returns: array of vapp objects
@@ -75,6 +85,11 @@ Copyright (c) VMware, Inc.
         vapp object matching name
       throws:
         'ObjectNotFoundError' when vapp with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
+
+    vapp_exists?
+      returns: boolean
+      throws:
         'RestClient::BadRequest' for un-expected errors
 
     resources
@@ -96,6 +111,11 @@ Copyright (c) VMware, Inc.
         'ObjectNotFoundError' when network with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
+    network_exists?
+      returns: boolean
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
     disks
       returns: array of disk objects
       throws:
@@ -111,6 +131,11 @@ Copyright (c) VMware, Inc.
         array of disk objects matching name
       throws:
         'ObjectNotFoundError' when disk with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
+
+    disk_exists?
+      returns: boolean
+      throws:
         'RestClient::BadRequest' for un-expected errors
 
     create_disk
@@ -284,6 +309,11 @@ Copyright (c) VMware, Inc.
        throws:
          'ObjectNotFoundError' when VM with the name does not exist
          'RestClient::BadRequest' for un-expected errors
+
+     vm_exists?
+      returns: boolean
+      throws:
+        'RestClient::BadRequest' for un-expected errors
 
      remove_vm_by_name
        returns: parent VApp object

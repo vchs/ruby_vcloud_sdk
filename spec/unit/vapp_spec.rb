@@ -317,6 +317,25 @@ describe VCloudSdk::VApp do
     end
   end
 
+  describe "#vm_exists?" do
+    before do
+      VCloudSdk::Test::ResponseMapping
+      .set_option vapp_power_state: :on
+    end
+
+    context "VM matching name exists" do
+      it "returns true" do
+        subject.vm_exists?(VCloudSdk::Test::Response::VM_NAME).should be_true
+      end
+    end
+
+    context "VM matching name does not exist" do
+      it "returns false" do
+        subject.vm_exists?("xxx").should be_false
+      end
+    end
+  end
+
   describe "#status" do
     context "vApp is powered on" do
       it "returns status POWERED_ON" do
