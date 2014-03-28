@@ -91,6 +91,24 @@ describe VCloudSdk::VDC do
     end
   end
 
+  describe "storage_profile_exists?" do
+    before do
+      VCloudSdk::Test::ResponseMapping.set_option storage_profile: :non_empty
+    end
+
+    context "storage profile with matching name exists" do
+      it "returns true" do
+        subject.storage_profile_exists? VCloudSdk::Test::Response::STORAGE_PROFILE_NAME
+      end
+    end
+
+    context "storage profile with matching name does not exist" do
+      it "returns false" do
+        subject.storage_profile_exists? "xxx"
+      end
+    end
+  end
+
   describe "#vapps" do
     context "vdc has vapps" do
       it "returns array of VApp objects" do
@@ -144,6 +162,24 @@ describe VCloudSdk::VDC do
           subject.find_vapp_by_name("xxxx")
         end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                "VApp 'xxxx' is not found"
+      end
+    end
+  end
+
+  describe "vapp_exists?" do
+    before do
+      VCloudSdk::Test::ResponseMapping.set_option vapp_power_state: :on
+    end
+
+    context "vapp with matching name exists" do
+      it "returns true" do
+        subject.vapp_exists? VCloudSdk::Test::Response::VAPP_NAME
+      end
+    end
+
+    context "vapp with matching name does not exist" do
+      it "returns false" do
+        subject.vapp_exists? "xxx"
       end
     end
   end
@@ -215,6 +251,20 @@ describe VCloudSdk::VDC do
             .find_network_by_name("xxx")
         end.to raise_exception VCloudSdk::ObjectNotFoundError,
                                "Network 'xxx' is not found"
+      end
+    end
+  end
+
+  describe "#network_exists?" do
+    context "network with matching name exists" do
+      it "returns true" do
+        subject.network_exists? VCloudSdk::Test::Response::ORG_NETWORK_NAME
+      end
+    end
+
+    context "network with matching name does not exist" do
+      it "returns false" do
+        subject.network_exists? "xxx"
       end
     end
   end

@@ -67,6 +67,12 @@ module VCloudSdk
       end
     end
 
+    def vm_exists?(name)
+      entity_xml.vms.any? do |vm|
+        vm.name == name
+      end
+    end
+
     def find_vm_by_name(name)
       entity_xml.vms.each do |vm|
         return VCloudSdk::VM.new(@session, vm.href) if vm.name == name
