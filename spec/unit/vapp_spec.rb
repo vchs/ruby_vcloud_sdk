@@ -153,9 +153,20 @@ describe VCloudSdk::VApp do
       end
 
       it "powers off target vApp successfully" do
-        power_off_task = subject.power_off
-        subject.send(:task_is_success, power_off_task)
-          .should be_true
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_POWER_OFF_LINK,
+                nil)
+          .and_call_original
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_UNDEPLOY_LINK,
+                an_instance_of(VCloudSdk::Xml::Wrapper))
+        .and_call_original
+        result = subject.power_off
+        result.should be_an_instance_of(VCloudSdk::VApp)
       end
 
       context "request to power off vApp times out" do

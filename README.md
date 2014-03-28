@@ -280,7 +280,7 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
      
      power_off
-        returns: task object
+        returns: VApp object
         throws:
           'CloudError' if power_off_link of VApp is missing
           'VappSuspendedError' if VApp is suspended
@@ -422,7 +422,7 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      power_off
-       returns: task object
+       returns: VM object
        throws:
          'CloudError' if power_off_link of VM is missing
          'VmSuspendedError' if VM is suspended

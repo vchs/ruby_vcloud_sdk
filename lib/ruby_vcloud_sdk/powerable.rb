@@ -54,11 +54,12 @@ module VCloudSdk
         fail CloudError, "#{class_name} #{target.name} is not in a state that could be powered off."
       end
 
-      task = connection.post(power_off_link, nil)
+      task = connection.post(power_off_link.href, nil)
       monitor_task task, @session.time_limit[:power_off]
       Config.logger.info "#{class_name} #{target.name} is powered off."
 
       undeploy(target, class_name)
+      self
     end
 
     private
@@ -69,7 +70,7 @@ module VCloudSdk
 
     def undeploy(target, class_name)
       params = Xml::WrapperFactory.create_instance("UndeployVAppParams") # Even for VM it's called UndeployVappParams
-      task = connection.post(target.undeploy_link, params)
+      task = connection.post(target.undeploy_link.href, params)
       task = monitor_task(task, @session.time_limit[:undeploy])
       Config.logger.info "#{class_name} #{target.name} is undeployed."
       task
