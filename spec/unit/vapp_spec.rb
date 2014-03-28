@@ -42,9 +42,13 @@ describe VCloudSdk::VApp do
 
       context "vApp has no running_tasks" do
         it "deletes target vApp successfully" do
-          deletion_task = subject.delete
-          subject.send(:task_is_success, deletion_task)
-            .should be_true
+          subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_LINK)
+            .and_call_original
+          result = subject.delete
+          result.should be_nil
         end
 
         it "fails to delete vApp" do
@@ -71,9 +75,8 @@ describe VCloudSdk::VApp do
             .twice
             .and_return(running_tasks)
 
-          deletion_task = subject.delete
-          subject.send(:task_is_success, deletion_task)
-            .should be_true
+          result = subject.delete
+          result.should be_nil
         end
       end
     end

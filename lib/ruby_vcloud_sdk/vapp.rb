@@ -29,10 +29,10 @@ module VCloudSdk
       wait_for_running_tasks(vapp, "VApp #{vapp_name}")
 
       Config.logger.info "Deleting vApp #{vapp_name}."
-      monitor_task(connection.delete(vapp.remove_link),
+      monitor_task(connection.delete(vapp.remove_link.href),
                    @session.time_limit[:delete_vapp]) do |task|
         Config.logger.info "vApp #{vapp_name} deleted."
-        return task
+        return
       end
 
       fail ApiRequestError,
@@ -123,7 +123,7 @@ module VCloudSdk
     end
 
     def delete_network_by_name(name)
-      unless list_networks.any? { |network_name| network_name == name}
+      unless list_networks.any? { |network_name| network_name == name }
         fail ObjectNotFoundError,
              "Network '#{name}' is not found"
       end

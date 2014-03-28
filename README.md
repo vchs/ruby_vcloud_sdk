@@ -268,7 +268,7 @@ Copyright (c) VMware, Inc.
   VApp
   
      delete
-        returns: task object
+        returns: nil
         throws:
           'CloudError' if VApp is powered on
           'RestClient::BadRequest' for un-expected errors
