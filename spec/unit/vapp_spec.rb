@@ -442,21 +442,36 @@ describe VCloudSdk::VApp do
     end
 
     it "adds the network to vapp" do
-      task = subject.add_network_by_name(network_name)
       subject
-        .send(:task_is_success, task)
-        .should be_true
+        .send(:connection)
+        .should_receive(:put)
+        .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_NETWORK_CONFIG_SECTION_LINK,
+              an_instance_of(VCloudSdk::Xml::NetworkConfigSection),
+              VCloudSdk::Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+        .and_call_original
+
+      result = subject
+                 .add_network_by_name(network_name,
+                                      "new network",
+                                      VCloudSdk::Xml::FENCE_MODES[:ISOLATED])
+      result.should be_an_instance_of(VCloudSdk::VApp)
     end
 
     context "optional parameters are specified" do
       it "adds the network to vapp" do
-        task = subject
+        subject
+          .send(:connection)
+          .should_receive(:put)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_NETWORK_CONFIG_SECTION_LINK,
+                an_instance_of(VCloudSdk::Xml::NetworkConfigSection),
+                VCloudSdk::Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+          .and_call_original
+
+        result = subject
                  .add_network_by_name(network_name,
                                       "new network",
                                       VCloudSdk::Xml::FENCE_MODES[:ISOLATED])
-        subject
-          .send(:task_is_success, task)
-          .should be_true
+        result.should be_an_instance_of(VCloudSdk::VApp)
       end
 
       context "invalid fence mode is specified" do
@@ -498,7 +513,7 @@ describe VCloudSdk::VApp do
   describe "#delete_network_by_name" do
     before do
       VCloudSdk::Test::ResponseMapping
-      .set_option vapp_power_state: :off
+        .set_option vapp_power_state: :off
     end
 
     it "deletes the network from vapp" do

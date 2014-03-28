@@ -336,7 +336,7 @@ Copyright (c) VMware, Inc.
          vApps to be powered on without conflict by isolating the MAC and IP addresses of the
          virtual machines. Available options are "bridged", "isolated" and "natRouted". Default
          to "bridged".
-       returns: task object
+       returns: VApp object
        throws:
         'CloudError' when invalid fence mode is specified
         'ObjectNotFoundError' when network with the name does not exist
