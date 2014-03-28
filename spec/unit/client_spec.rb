@@ -50,6 +50,22 @@ describe VCloudSdk::Client, :min, :all do
     end
   end
 
+  describe "#vdc_exists?" do
+    subject { initialize_client }
+
+    context "vdc with matching name exists" do
+      it "returns true" do
+        subject.vdc_exists?(VCloudSdk::Test::Response::OVDC).should be true
+      end
+    end
+
+    context "vdc with matching name does not exist" do
+      it "returns false" do
+        subject.vdc_exists?("xxx").should be false
+      end
+    end
+  end
+
   describe "#catalogs" do
     subject { initialize_client }
 
@@ -93,13 +109,13 @@ describe VCloudSdk::Client, :min, :all do
 
     context "catalog with matching name exists" do
       it "returns true" do
-        subject.catalog_exists? catalog_name
+        subject.catalog_exists?(catalog_name).should be true
       end
     end
 
     context "catalog with matching name does not exist" do
       it "returns false" do
-        subject.catalog_exists? "xxx"
+        subject.catalog_exists?("xxx").should be false
       end
     end
   end

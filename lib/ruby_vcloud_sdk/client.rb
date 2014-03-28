@@ -12,7 +12,8 @@ module VCloudSdk
     VCLOUD_VERSION_NUMBER = "5.1"
 
     public :find_vdc_by_name, :catalogs, :list_catalogs,
-           :catalog_exists?, :find_catalog_by_name
+           :catalog_exists?, :find_catalog_by_name,
+           :vdc_exists?
 
     def initialize(url, username, password, options = {}, logger = nil)
       @url = url

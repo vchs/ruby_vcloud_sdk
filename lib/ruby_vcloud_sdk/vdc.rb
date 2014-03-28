@@ -19,7 +19,7 @@ module VCloudSdk
                    :name, :upload_link, :upload_media_link,
                    :instantiate_vapp_template_link
 
-    public :find_network_by_name
+    public :find_network_by_name, :network_exists?
 
     def initialize(session, link)
       @session = session
@@ -48,6 +48,12 @@ module VCloudSdk
       fail ObjectNotFoundError, "Storage profile '#{name}' is not found"
     end
 
+    def storage_profile_exists?(name)
+      storage_profile_records.any? do |storage_profile|
+        storage_profile.name == name
+      end
+    end
+
     def vapps
       entity_xml.vapps.map do |vapp_link|
         VCloudSdk::VApp.new(@session, vapp_link)
@@ -68,6 +74,12 @@ module VCloudSdk
       end
 
       fail ObjectNotFoundError, "VApp '#{name}' is not found"
+    end
+
+    def vapp_exists?(name)
+      entity_xml.vapps.any? do |vapp|
+        vapp.name == name
+      end
     end
 
     def resources

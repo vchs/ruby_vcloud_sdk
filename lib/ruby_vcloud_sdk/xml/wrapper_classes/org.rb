@@ -1,6 +1,12 @@
 module VCloudSdk
   module Xml
     class Org < Wrapper
+      def vdcs
+        get_nodes(XML_TYPE[:LINK],
+                  { type: MEDIA_TYPE[:VDC] },
+                  true)
+      end
+
       def vdc_link(name)
         get_nodes(XML_TYPE[:LINK],
                   { type: MEDIA_TYPE[:VDC],
