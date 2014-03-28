@@ -104,9 +104,14 @@ describe VCloudSdk::VApp do
       end
 
       it "powers on target vApp successfully" do
-        power_on_task = subject.power_on
-        subject.send(:task_is_success, power_on_task)
-          .should be_true
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_POWER_ON_LINK,
+                nil)
+          .and_call_original
+        result = subject.power_on
+        result.should be_an_instance_of(VCloudSdk::VApp)
       end
 
       context "request to power on vApp times out" do

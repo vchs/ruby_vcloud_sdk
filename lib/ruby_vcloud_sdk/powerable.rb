@@ -28,10 +28,10 @@ module VCloudSdk
       end
 
       Config.logger.info "Powering on #{class_name} #{target.name}."
-      task = connection.post(power_on_link, nil)
+      task = connection.post(power_on_link.href, nil)
       task = monitor_task task, @session.time_limit[:power_on]
       Config.logger.info "#{class_name} #{target.name} is powered on."
-      task
+      self
     end
 
     # Power off VApp or VM

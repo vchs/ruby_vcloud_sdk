@@ -649,9 +649,14 @@ describe VCloudSdk::VM do
       end
 
       it "powers on target VM successfully" do
-        power_on_task = subject.power_on
-        subject.send(:task_is_success, power_on_task)
-          .should be_true
+        subject
+          .send(:connection)
+          .should_receive(:post)
+          .with(VCloudSdk::Test::Response::INSTANTIATED_VM_POWER_ON_LINK,
+                nil)
+          .and_call_original
+        result = subject.power_on
+        result.should be_an_instance_of(VCloudSdk::VM)
       end
 
       context "request to power on VM times out" do

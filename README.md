@@ -274,7 +274,7 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
      
      power_on
-        returns: task object
+        returns: VApp object
         throws:
           'CloudError' if power_on_link of VApp is missing
           'RestClient::BadRequest' for un-expected errors
@@ -416,7 +416,7 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      power_on
-       returns: task object
+       returns: VM object
        throws:
          'CloudError' if power_on_link of VM is missing
          'RestClient::BadRequest' for un-expected errors
