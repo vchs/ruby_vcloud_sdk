@@ -120,6 +120,7 @@ module VCloudSdk
                             payload,
                             Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
       monitor_task(task)
+      self
     end
 
     def delete_network_by_name(name)
