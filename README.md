@@ -6,12 +6,16 @@ Copyright (c) VMware, Inc.
   Client
   
     find_vdc_by_name
+      parameters:
+        name (String): name of VDC
       returns: VDC object matching name
       throws:
         'ObjectNotFoundError' when VDC with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
     vdc_exists?
+      parameters:
+        name (String): name of VDC
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
@@ -45,6 +49,11 @@ Copyright (c) VMware, Inc.
       throws:
         'ObjectNotFoundError' when catalog with the name does not exist
         'RestClient::BadRequest' for un-expected errors
+
+    right_records
+      returns: array of RightRecord objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
   VDC
     
@@ -59,6 +68,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
     
     find_storage_profile_by_name
+      parameters:
+        name (String): name of storage profile
       returns:
         storage profile object matching name
       throws:
@@ -66,6 +77,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     storage_profile_exists?
+      parameters:
+        name (String): name of storage profile
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
@@ -81,6 +94,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
     
     find_vapp_by_name
+      parameters:
+        name (String): name of vapp
       returns:
         vapp object matching name
       throws:
@@ -88,11 +103,21 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     vapp_exists?
+      parameters:
+        name (String): name of vapp
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
 
+    edge_gateways
+      returns: array of EdgeGateway objects
+      throws:
+        'RestClient::BadRequest' for un-expected errors
+
     resources
+      returns: Resources object
+      throws:
+        'RestClient::BadRequest' for un-expected errors
     
     networks
       returns: array of network objects
@@ -105,6 +130,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
     
     find_network_by_name
+      parameters:
+        name (String): name of network
       returns:
         network object matching name
       throws:
@@ -112,6 +139,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     network_exists?
+      parameters:
+        name (String): name of network
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
@@ -127,6 +156,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     find_disks_by_name
+      parameters:
+        name (String): name of disk
       returns:
         array of disk objects matching name
       throws:
@@ -134,6 +165,8 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
     disk_exists?
+      parameters:
+        name (String): name of disk
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
