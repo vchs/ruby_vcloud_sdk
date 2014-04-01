@@ -214,16 +214,23 @@ Copyright (c) VMware, Inc.
        throws:
          'RestClient::BadRequest' for un-expected errors
      
-     find_item
-        returns: catalog item matching name and type
-        throws:
-          'ObjectNotFoundError' when an item matching the name and type is not found
-          'RestClient::BadRequest' for un-expected errors
+    find_item
+      parameters:
+        name (String): name of item
+        type (String, optional): type of item - "application/vnd.vmware.vcloud.vAppTemplate+xml" or "application/vnd.vmware.vcloud.media+xml"
+      returns: catalog item matching name and type
+      throws:
+        'ObjectNotFoundError' when an item matching the name and type is not found
+        'RestClient::BadRequest' for un-expected errors
 
-     item_exists?
-        returns: boolean
-        throws:
-          'RestClient::BadRequest' for un-expected errors
+    item_exists?
+      parameters:
+        name (String): name of item
+        type (String, optional): type of item - "application/vnd.vmware.vcloud.vAppTemplate+xml" or "application/vnd.vmware.vcloud.media+xml"
+
+      returns: boolean
+      throws:
+        'RestClient::BadRequest' for un-expected errors
      
      delete_item_by_name_and_type
         parameters:
@@ -239,12 +246,18 @@ Copyright (c) VMware, Inc.
         throws:
           'RestClient::BadRequest' for un-expected errors
 
-     upload_media
-        returns: catalog item uploaded
-        throws:
-          'CloudError' when media file matching name already exists
-          'ObjectNotFoundError' when storage profile with the name does not exist
-          'RestClient::BadRequest' for un-expected errors
+    upload_media
+      parameters:
+        vdc_name (String): name of vdc
+        media_name (String): name of media
+        file (String): path of media file
+        storage_profile_name (String, optional): name of storage profile to upload vapp template to
+        image_type (String, optional): type of image file
+      returns: catalog item uploaded
+      throws:
+        'CloudError' when media file matching name already exists
+        'ObjectNotFoundError' when storage profile with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
 
      find_media_by_name
         parameters:
@@ -320,6 +333,9 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
 
      recompose_from_vapp_template
+        parameters:
+          catalog_name (String): name of catalog
+          template_name (String): name of vapp template
         returns: recomposed vapp
         throws:
           'CloudError' when vapp is powered on
@@ -344,11 +360,15 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      vm_exists?
+      parameters:
+        name (String): name of vm
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
 
      remove_vm_by_name
+      parameters:
+        name (String): name of vm
        returns: parent VApp object
        throws:
          'ObjectNotFoundError' when VM with the name does not exist
@@ -430,22 +450,20 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      attach_disk
+       parameters:
+         disk: The disk object.
        returns: VM object
        throws:
          'CloudError' if disk is already attached
          'RestClient::BadRequest' for un-expected errors
 
      detach_disk
+       parameters:
+         disk: The disk object.
        returns: VM object
        throws:
          'VmSuspendedError' if containing vApp is suspended
          'CloudError' if disk is not attached or attached to other VM
-         'RestClient::BadRequest' for un-expected errors
-
-     status
-       returns: string object
-       throws:
-         'CloudError' if status code is invalid
          'RestClient::BadRequest' for un-expected errors
 
      power_on
@@ -462,6 +480,9 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      insert_media
+       parameters:
+         catalog_name (String): name of catalog
+         media_file_name (String): name of media file
        returns: VM object
        throws:
          'ObjectNotFoundError' if when catalog with the name does not exist
@@ -469,6 +490,9 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
      eject_media
+       parameters:
+         catalog_name (String): name of catalog
+         media_file_name (String): name of media file
        returns: VM object
        throws:
          'ObjectNotFoundError' if when catalog with the name does not exist
@@ -552,4 +576,22 @@ Copyright (c) VMware, Inc.
        returns: IpRanges object
        throws:
          'RestClient::BadRequest' for un-expected errors
+
+
+## Example
+  VCloud_SDK is straightforward to use. Here is an example of creating vApp from vApp template.
   
+    1. Create vCloud client object
+        
+       client = VCloudSdk::Client.new(url, username, password)
+
+       Note that the parameter 'username' should be the VDC user_name@organization_name. For example,
+	   the VDC user name is admin, the organization name is myorg, then the 'username' parameter 
+       here should be admin@myorg. 
+	    
+    2. Find the catalog where the vapp template is stored
+       catalog = client.find_catalog_by_name(catalog_name)
+
+    3. Create vApp from that vapp template
+	   vapp = instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
+       
