@@ -197,7 +197,7 @@ Copyright (c) VMware, Inc.
     delete_all_disks_by_name
       parameters:
         name (String): name of disk
-      returns: nil
+      returns: VDC object
       throws:
         'CloudError' when any disk deletion failure occurs
         'RestClient::BadRequest' for un-expected errors

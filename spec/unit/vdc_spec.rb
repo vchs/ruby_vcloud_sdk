@@ -508,9 +508,13 @@ describe VCloudSdk::VDC do
       end
 
       it "deletes the disk successfully" do
-        expect do
-          subject.delete_all_disks_by_name(disk_name)
-        end.to_not raise_error
+        subject
+          .send(:connection)
+          .should_receive(:delete)
+          .with(VCloudSdk::Test::Response::INDY_DISK_URL)
+          .and_call_original
+        result = subject.delete_all_disks_by_name(disk_name)
+        result.should be_an_instance_of(VCloudSdk::VDC)
       end
 
       context "error occurs when deleting disk" do
@@ -540,9 +544,9 @@ describe VCloudSdk::VDC do
         subject
           .should_receive(:delete_single_disk)
           .twice
-        expect do
-          subject.delete_all_disks_by_name(disk_name)
-        end.to_not raise_error
+
+        result = subject.delete_all_disks_by_name(disk_name)
+        result.should be_an_instance_of(VCloudSdk::VDC)
       end
 
       context "error occurs when deleting disks" do

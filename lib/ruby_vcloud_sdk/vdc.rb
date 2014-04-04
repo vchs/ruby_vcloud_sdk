@@ -194,7 +194,7 @@ module VCloudSdk
 
       fail CloudError,
            "Failed to delete one or more of the disks with name '#{name}'. Check logs for details." unless success
-      nil
+      self
     end
 
     def storage_profile_xml_node(name)
