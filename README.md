@@ -45,7 +45,7 @@ Copyright (c) VMware, Inc.
     delete_catalog_by_name
       parameters:
         name (String): name of catalog
-      returns: nil
+      returns: Client object
       throws:
         'ObjectNotFoundError' when catalog with the name does not exist
         'RestClient::BadRequest' for un-expected errors

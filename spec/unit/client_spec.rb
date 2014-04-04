@@ -187,8 +187,8 @@ describe VCloudSdk::Client, :min, :all do
       subject.should_receive(:find_catalog_by_name)
         .with(catalog_name).once.and_return(catalog)
 
-      response = subject.delete_catalog_by_name(catalog_name)
-      response.should be_nil
+      result = subject.delete_catalog_by_name(catalog_name)
+      result.should be_an_instance_of(VCloudSdk::Client)
     end
   end
 

@@ -37,7 +37,7 @@ module VCloudSdk
       catalog = find_catalog_by_name(name)
       catalog.delete_all_items
       connection.delete("/api/admin/catalog/#{catalog.id}")
-      nil
+      self
     end
 
     def right_records

@@ -89,7 +89,7 @@ describe VCloudSdk::Client do
           catalog.name.should eql catalog_name_to_create
 
           result = subject.delete_catalog_by_name(catalog_name_to_create)
-          result.should be_nil
+          result.should be_an_instance_of(VCloudSdk::Client)
           expect { subject.find_catalog_by_name(catalog_name_to_create) }
             .to raise_exception VCloudSdk::ObjectNotFoundError,
                                 "Catalog '#{catalog_name_to_create}' is not found"
