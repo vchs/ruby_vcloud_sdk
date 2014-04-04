@@ -177,7 +177,7 @@ module VCloudSdk
            "#{disks.size} disks with name #{name} were found" if disks.size > 1
 
       delete_single_disk(disks.first)
-      nil
+      self
     end
 
     def delete_all_disks_by_name(name)

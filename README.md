@@ -188,7 +188,7 @@ Copyright (c) VMware, Inc.
     delete_disk_by_name
       parameters:
         name (String): name of disk
-      returns: nil
+      returns: VDC object
       throws:
         'CloudError' when more than one disks matching the name exist
         'CloudError' when disk is attached to vm
