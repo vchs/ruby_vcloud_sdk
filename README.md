@@ -398,7 +398,7 @@ Copyright (c) VMware, Inc.
      delete_network_by_name
        parameters:
          name (String): name of network to delete
-       returns: nil
+       returns: VApp object
        throws:
          'ObjectNotFoundError' when network with the name does not exist
          'RestClient::BadRequest' for un-expected errors

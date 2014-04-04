@@ -517,9 +517,16 @@ describe VCloudSdk::VApp do
     end
 
     it "deletes the network from vapp" do
-      expect do
-        subject.delete_network_by_name(network_name)
-      end.to_not raise_error
+      subject
+        .send(:connection)
+        .should_receive(:put)
+        .with(VCloudSdk::Test::Response::INSTANTIATED_VAPP_NETWORK_CONFIG_SECTION_LINK,
+            an_instance_of(VCloudSdk::Xml::NetworkConfigSection),
+            VCloudSdk::Xml::MEDIA_TYPE[:NETWORK_CONFIG_SECTION])
+        .and_call_original
+
+      result = subject.delete_network_by_name(network_name)
+      result.should be_an_instance_of(VCloudSdk::VApp)
     end
 
     context "network with the name does not exist" do
