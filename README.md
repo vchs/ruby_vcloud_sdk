@@ -236,13 +236,13 @@ Copyright (c) VMware, Inc.
         parameters:
           name (String): name of item
           type (String, optional): type of item - "application/vnd.vmware.vcloud.vAppTemplate+xml" or "application/vnd.vmware.vcloud.media+xml"
-        returns: nil
+        returns: Catalog object
         throws:
           'ObjectNotFoundError' when an item matching the name and type is not found
           'RestClient::BadRequest' for un-expected errors
 
      delete_all_items
-        returns: nil
+        returns: Catalog object
         throws:
           'RestClient::BadRequest' for un-expected errors
 
@@ -516,7 +516,7 @@ Copyright (c) VMware, Inc.
     delete_nics
        parameters:
          nics (splat NIC objects): NICs to delete
-       return: nil
+       return: VM object
        throws:
          'CloudError' if vm is powered on
          'ObjectNotFoundError' if specified nic index does not exist

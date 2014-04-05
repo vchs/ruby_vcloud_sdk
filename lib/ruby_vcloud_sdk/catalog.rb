@@ -57,7 +57,7 @@ module VCloudSdk
 
       check_item_type(item, item_type)
       delete_item_by_link(link)
-      nil
+      self
     end
 
     def delete_all_items
@@ -65,7 +65,7 @@ module VCloudSdk
         Config.logger.info "Deleting catalog item \"#{link.name}\""
         delete_item_by_link(link)
       end
-      nil
+      self
     end
 
     def upload_media(
@@ -179,7 +179,7 @@ module VCloudSdk
       entity_xml = connection.get(link)
       delete_item_entity entity_xml.entity
 
-      connection.delete(entity_xml.remove_link)
+      connection.delete(entity_xml.remove_link.href)
     end
 
     def delete_item_entity(entity)
