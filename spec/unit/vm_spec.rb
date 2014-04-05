@@ -1053,7 +1053,7 @@ describe VCloudSdk::VM do
                 VCloudSdk::Xml::MEDIA_TYPE[:VM])
           .and_call_original
         result = subject.delete_nics(nic)
-        result.should be_nil
+        result.should be_an_instance_of(VCloudSdk::VM)
       end
     end
 
@@ -1071,7 +1071,7 @@ describe VCloudSdk::VM do
                 VCloudSdk::Xml::MEDIA_TYPE[:VM])
           .and_call_original
         result = subject.delete_nics(nic1, nic2)
-        result.should be_nil
+        result.should be_an_instance_of(VCloudSdk::VM)
       end
     end
 
@@ -1091,7 +1091,7 @@ describe VCloudSdk::VM do
                 VCloudSdk::Xml::MEDIA_TYPE[:VM])
           .and_call_original
         result = subject.delete_nics(nic0, nic1, nic2)
-        result.should be_nil
+        result.should be_an_instance_of(VCloudSdk::VM)
       end
     end
 
