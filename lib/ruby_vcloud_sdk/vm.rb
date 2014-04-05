@@ -259,7 +259,7 @@ module VCloudSdk
                              payload,
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
-      nil
+      self
     end
 
     def product_section_properties
