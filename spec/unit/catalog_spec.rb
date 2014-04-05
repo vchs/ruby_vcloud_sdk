@@ -132,8 +132,18 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
           subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(an_instance_of(VCloudSdk::Xml::Media))
+          .and_call_original
+          subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(VCloudSdk::Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK)
+            .and_call_original
+          subject
             .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
-            .should be_nil
+            .should be_an_instance_of(VCloudSdk::Catalog)
         end
       end
 
@@ -141,8 +151,18 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
           subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(an_instance_of(VCloudSdk::Xml::Media))
+            .and_call_original
+          subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(VCloudSdk::Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK)
+            .and_call_original
+          subject
             .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME)
-            .should be_nil
+            .should be_an_instance_of(VCloudSdk::Catalog)
         end
       end
     end
@@ -161,9 +181,19 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :busy
           subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(an_instance_of(VCloudSdk::Xml::Media))
+            .and_call_original
+          subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(VCloudSdk::Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK)
+            .and_call_original
+          subject
             .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
-                         VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
-            .should be_nil
+                                          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
+            .should be_an_instance_of(VCloudSdk::Catalog)
         end
       end
 
@@ -171,9 +201,19 @@ describe VCloudSdk::Catalog do
         it "deletes item successfully" do
           VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
           subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(an_instance_of(VCloudSdk::Xml::Media))
+            .and_call_original
+          subject
+            .send(:connection)
+            .should_receive(:delete)
+            .with(VCloudSdk::Test::Response::EXISTING_MEDIA_CATALOG_ITEM_LINK)
+            .and_call_original
+          subject
             .delete_item_by_name_and_type(VCloudSdk::Test::Response::EXISTING_MEDIA_NAME,
-                         VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
-            .should be_nil
+                                          VCloudSdk::Xml::MEDIA_TYPE[:MEDIA])
+            .should be_an_instance_of(VCloudSdk::Catalog)
         end
       end
     end
@@ -196,7 +236,12 @@ describe VCloudSdk::Catalog do
   describe "#delete_all_items" do
     it "deletes all items successfully" do
       VCloudSdk::Test::ResponseMapping.set_option existing_media_state: :done
-      subject.delete_all_items.should be_nil
+      subject
+        .send(:connection)
+        .should_receive(:delete)
+        .exactly(4).times
+        .and_call_original
+      subject.delete_all_items.should be_an_instance_of(VCloudSdk::Catalog)
     end
   end
 
