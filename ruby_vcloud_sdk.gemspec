@@ -3,7 +3,7 @@
 
 Gem::Specification.new do |s|
   s.name         = "ruby_vcloud_sdk"
-  s.version      = "0.6.0"
+  s.version      = "0.7.0"
   s.platform     = Gem::Platform::RUBY
   s.summary      = "BOSH vCloud API client"
   s.description  = "BOSH vCloud API client\n#{`git rev-parse HEAD`[0, 6]}"
