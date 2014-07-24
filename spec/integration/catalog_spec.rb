@@ -21,7 +21,6 @@ describe VCloudSdk::Catalog do
   end
 
   describe "#find_vapp_template_by_name" do
-
     it "find that targeted vapp template if it exists" do
       vapp_template = subject.find_vapp_template_by_name(vapp_template_name)
       vapp_template.name.should eq vapp_template_name
@@ -87,19 +86,17 @@ describe VCloudSdk::Catalog do
 
   describe "#find_item" do
     it "find that targeted catalog item via name and type if it exists" do
-      catalog_item_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
       catalog_item_type = VCloudSdk::Xml::MEDIA_TYPE[:VAPP_TEMPLATE]
       catalog_item = subject.find_item(
-          catalog_item_name, catalog_item_type
+          vapp_template_name, catalog_item_type
       )
-      catalog_item.name.should eq catalog_item_name
+      catalog_item.name.should eq vapp_template_name
       catalog_item.should_not be_nil
     end
 
     it "find that targeted catalog item via name if it exists" do
-      catalog_item_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
-      catalog_item = subject.find_item catalog_item_name
-      catalog_item.name.should eq catalog_item_name
+      catalog_item = subject.find_item vapp_template_name
+      catalog_item.name.should eq vapp_template_name
       catalog_item.should_not be_nil
     end
 
@@ -111,14 +108,13 @@ describe VCloudSdk::Catalog do
     end
 
     it "raises exception if the targeted catalog item type does not match" do
-      catalog_item_name = "sc-1f9f883e-968c-4bad-88e3-e7cb36881788"
       catalog_item_type = VCloudSdk::Xml::MEDIA_TYPE[:MEDIA]
       expect do
         subject.find_item(
-          catalog_item_name, catalog_item_type
+            vapp_template_name, catalog_item_type
         )
       end.to raise_exception VCloudSdk::ObjectNotFoundError,
-                             "Catalog Item '#{catalog_item_name}' is not found"
+                             "Catalog Item '#{vapp_template_name}' is not found"
     end
   end
 end
