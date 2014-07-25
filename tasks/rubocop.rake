@@ -76,7 +76,7 @@ namespace :rubocop do
   end
 
   desc "Run rubocop on modified files"
-  Rubocop::RakeTask.new(:modified) do |task|
+  RuboCop::RakeTask.new(:modified) do |task|
     files = get_modified_files
     abort("No ruby files found") unless files && !files.empty?
 
@@ -84,7 +84,7 @@ namespace :rubocop do
   end
 
   desc "Run rubocop on non-pushed commits"
-  Rubocop::RakeTask.new(:local) do |task|
+  RuboCop::RakeTask.new(:local) do |task|
     files = get_local_commit_files
     abort("No ruby files found") unless files && !files.empty?
 
@@ -92,7 +92,7 @@ namespace :rubocop do
   end
 
   desc "Run rubocop on files in a commit ex. rake rubocop:commit[$commit_id]"
-  Rubocop::RakeTask.new(:commit, :id) do |task, args|
+  RuboCop::RakeTask.new(:commit, :id) do |task, args|
     files = get_commit_files(args.id)
     abort("No ruby files found") unless files && !files.empty?
 

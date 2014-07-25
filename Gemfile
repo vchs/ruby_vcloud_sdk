@@ -5,10 +5,10 @@ gemspec
 group :development, :test do
   gem 'nokogiri-diff'
   gem 'rake', '~> 10.0'
-  gem 'ci_reporter'
-  gem 'rspec'
+  gem 'ci_reporter_rspec', '~> 1.0'
+  gem 'rspec', '2.14.1'
   gem 'simplecov'
   gem 'simplecov-rcov'
   gem 'rest-client'
-  gem 'rubocop'
+  gem 'rubocop', '>= 0.24.1'
 end
