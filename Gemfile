@@ -10,5 +10,5 @@ group :development, :test do
   gem 'simplecov'
   gem 'simplecov-rcov'
   gem 'rest-client'
-  gem 'rubocop'
+  gem 'rubocop', '>= 0.24.1'
 end
