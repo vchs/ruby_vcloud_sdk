@@ -31,9 +31,9 @@ module VCloudSdk
 
       def connect(username, password)
         login_password = "#{username}:#{password}"
-        auth_header_value = "Basic #{Base64.encode64(login_password)}"
-        response = @site[login_url].post(
-            Authorization: auth_header_value, Accept: ACCEPT)
+        auth_header_value = "Basic #{Base64.strict_encode64(login_password)}"
+        response = @site[login_url].post(nil,
+            {Authorization: auth_header_value, Accept: ACCEPT})
         Config.logger.debug(response)
         @cookies = response.cookies
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
