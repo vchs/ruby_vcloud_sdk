@@ -31,9 +31,9 @@ module VCloudSdk
 
       def connect(username, password)
         login_password = "#{username}:#{password}"
-        auth_header_value = "Basic #{Base64.encode64(login_password)}"
-        response = @site[login_url].post(
-            Authorization: auth_header_value, Accept: ACCEPT)
+        auth_header_value = "Basic #{Base64.strict_encode64(login_password)}"
+        response = @site[login_url].post(nil,
+            {Authorization: auth_header_value, Accept: ACCEPT})
         Config.logger.debug(response)
         @cookies = response.cookies
         unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
@@ -63,11 +63,13 @@ module VCloudSdk
             "Warning: content type not specified.  Default to '*/*'")
         end
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
+
         response = @site[get_nested_resource(destination)].post(data.to_s, {
             Accept: ACCEPT,
             cookies: @cookies,
             content_type: content_type
         })
+
         fail ApiRequestError if http_error?(response)
         @rest_logger.debug(response)
         wrap_response(response)

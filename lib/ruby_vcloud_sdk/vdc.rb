@@ -17,6 +17,7 @@ module VCloudSdk
     extend Forwardable
     def_delegators :entity_xml,
                    :name, :upload_link, :upload_media_link,
+                   :instantiate_ovf_link,
                    :instantiate_vapp_template_link
 
     public :find_network_by_name, :network_exists?
@@ -209,6 +210,101 @@ module VCloudSdk
       storage_profile
     end
 
+
+    def instantiate_ovf_params(vapp_name, vdc)
+      instantiate_ovf_params = VCloudSdk::Xml::WrapperFactory.create_instance("InstantiateOvfParams").tap do |params|
+        params.name = vapp_name
+      end
+
+      connection.post(entity_xml.instantiate_ovf_link,
+        instantiate_ovf_params,
+        Xml::MEDIA_TYPE[:INSTANTIATE_OVF_PARAMS])
+    end
+
+
+    def instantiate_ovf(vapp_name,directory)
+      if vapp_exists?(vapp_name)
+        fail CloudError,
+             "vApp '#{vapp_name}' already exists in vdc #{entity_xml.name}"
+      end
+
+      Config.logger.info "Uploading vApp #{vapp_name} to #{entity_xml.name}"
+      vapp = instantiate_ovf_params(vapp_name, entity_xml)
+      vapp = upload_vapp_files(vapp, ovf_directory(directory))
+
+    end
+
+
+    def ovf_directory(directory)
+      # if directory behaves like an OVFDirectory, then use it
+      is_ovf_directory = [:ovf_file, :ovf_file_path, :vmdk_file, :vmdk_file_path]
+        .reduce(true) do |present, name|
+        present && directory.respond_to?(name)
+      end
+
+      if is_ovf_directory
+        directory
+      else
+        OVFDirectory.new(directory)
+      end
+    end
+
+    def upload_vapp_files(
+        vapp_template,
+        ovf_directory,
+        tries = @session.retries[:upload_vapp_files])
+      tries.times do |try|
+        current_vapp_template = connection.get(vapp_template)
+        if !current_vapp_template.files || current_vapp_template.files.empty?
+          Config.logger.info %Q{
+            #{current_vapp_template.name} has tasks in progress...
+            Waiting until done...
+          }
+          current_vapp_template.running_tasks.each do |task|
+            monitor_task(task,
+                         @session.time_limit[:process_descriptor_vapp_template])
+          end
+
+          return current_vapp_template
+        end
+
+        Config.logger.debug "vapp files left to upload #{current_vapp_template.files}."
+        Config.logger.debug %Q{
+          vapp incomplete files left to upload:
+          #{current_vapp_template.incomplete_files}
+        }
+
+        current_vapp_template.incomplete_files.each do |f|
+          # switch on extension
+          case f.name.split(".")[-1].downcase
+          when "ovf"
+            Config.logger.info %Q{
+              Uploading OVF file:
+              #{ovf_directory.ovf_file_path} for #{vapp_template.name}
+            }
+            connection.put(f.upload_link, ovf_directory.ovf_file.read,
+                           Xml::MEDIA_TYPE[:OVF])
+          when "vmdk"
+            Config.logger.info %Q{
+              Uploading VMDK file:
+              #{ovf_directory.vmdk_file_path(f.name)} for #{vapp_template.name}
+            }
+            connection.put_file(f.upload_link,
+                                ovf_directory.vmdk_file(f.name))
+          end
+        end
+        # Repeat
+        sleep 2**try
+      end
+
+      fail ApiTimeoutError,
+           %Q{
+             Unable to finish uploading vApp after #{tries} tries.
+             current_vapp_template.files:
+             #{current_vapp_template.files}
+           }
+    end
+
     private
 
     def storage_profile_records
@@ -238,5 +334,6 @@ module VCloudSdk
 
       Config.logger.info "Disk deleted successfully"
     end
+
   end
 end

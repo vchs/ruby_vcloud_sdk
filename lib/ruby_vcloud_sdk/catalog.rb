@@ -230,7 +230,7 @@ module VCloudSdk
     end
 
     def admin_xml
-      admin_catalog_link = "/api/admin/catalog/#{id}"
+      admin_catalog_link = "/api/compute/api/catalog/#{id}"
       admin_catalog = connection.get(admin_catalog_link)
 
       unless admin_catalog

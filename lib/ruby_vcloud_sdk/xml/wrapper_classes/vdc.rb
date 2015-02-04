@@ -30,6 +30,12 @@ module VCloudSdk
                   .first
       end
 
+      def instantiate_ovf_link
+        get_nodes(XML_TYPE[:LINK],
+                  type: MEDIA_TYPE[:INSTANTIATE_OVF_PARAMS])
+                  .first
+      end
+
       def upload_media_link
         get_nodes(XML_TYPE[:LINK],
                   type: MEDIA_TYPE[:MEDIA])
