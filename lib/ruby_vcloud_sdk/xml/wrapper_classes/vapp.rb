@@ -40,6 +40,15 @@ module VCloudSdk
       def vm(name)
         get_nodes("Vm", name: name).first
       end
+
+      def files
+        get_nodes("File")
+      end
+
+      def incomplete_files
+        files.find_all {|f| f["size"].to_i < 0 ||
+          (f["size"].to_i > f["bytesTransferred"].to_i)}
+      end
     end
 
   end
