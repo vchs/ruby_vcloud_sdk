@@ -31,14 +31,11 @@ module VCloudSdk
 
       def connect(username, password)
         login_password = "#{username}:#{password}"
-        auth_header_value = "Basic #{Base64.encode64(login_password)}"
+        auth_header_value = "Basic #{Base64.strict_encode64(login_password)}"
         response = @site[login_url].post("",
             Authorization: auth_header_value, Accept: ACCEPT)
         Config.logger.debug(response)
-        @cookies = response.cookies
-        unless @cookies["vcloud-token"].gsub!("+", "%2B").nil?
-          Config.logger.debug("@cookies: #{@cookies.inspect}.")
-        end
+        @vcloud_auth_header = response.headers[:x_vcloud_authorization]
         wrap_response(response)
       end
 
@@ -49,7 +46,7 @@ module VCloudSdk
         sleep(delay)
         response = @site[get_nested_resource(destination)].get(
             Accept: ACCEPT,
-            cookies: @cookies)
+            x_vcloud_authorization: @vcloud_auth_header)
         @rest_logger.debug(response)
         wrap_response(response)
       end
@@ -65,7 +62,7 @@ module VCloudSdk
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
         response = @site[get_nested_resource(destination)].post(data.to_s, {
             Accept: ACCEPT,
-            cookies: @cookies,
+            x_vcloud_authorization: @vcloud_auth_header,
             content_type: content_type
         })
         fail ApiRequestError if http_error?(response)
@@ -84,7 +81,7 @@ module VCloudSdk
         @rest_logger.info("#{__method__.to_s.upcase} data:#{data.to_s}")
         response = @site[get_nested_resource(destination)].put(data.to_s,
             Accept: ACCEPT,
-            cookies: @cookies,
+            x_vcloud_authorization: @vcloud_auth_header,
             content_type: content_type
         )
         fail ApiRequestError if http_error?(response)
@@ -103,7 +100,7 @@ module VCloudSdk
         sleep(delay)
         response = @site[get_nested_resource(destination)].delete(
             Accept: ACCEPT,
-            cookies: @cookies
+            x_vcloud_authorization: @vcloud_auth_header,
         )
         @rest_logger.debug(response)
         if response && !response.strip.empty?
@@ -120,7 +117,7 @@ module VCloudSdk
       def put_file(destination, file)
         href = self.class.get_href(destination)
         @rest_logger.info "#{__method__.to_s.upcase}\t#{href}"
-        response = @file_uploader.upload(href, file, @cookies)
+        response = @file_uploader.upload(href, file, @vcloud_auth_header)
         response
       end
 
