@@ -3,8 +3,8 @@ module VCloudSdk
 
     class FileUploader
       class << self
-        def upload(href, file, cookies = nil, http_method = :Put)
-          request = create_request(href, file, cookies, http_method)
+        def upload(href, file, vcloud_auth_header, http_method = :Put)
+          request = create_request(href, file, vcloud_auth_header, http_method)
           net = create_connection(href)
           net.start do |http|
             response = http.request(request) {
@@ -17,9 +17,9 @@ module VCloudSdk
 
         private
 
-        def create_request(href, file, cookies = nil, http_method = :Put)
-          headers = cookies ? {"Cookie" => cookies.map { |(key, val)|
-            "#{key.to_s}=#{CGI::unescape(val)}" }.sort.join(";")} : {}
+        def create_request(href, file, vcloud_auth_header, http_method = :Put)
+          headers = {}
+          headers["x-vcloud-authorization"] = vcloud_auth_header
           # Ruby 1.8 does not have size on the file object
           headers["Content-Length"] = File.size(file.path).to_s
           headers["Transfer-Encoding"] = "chunked"
