@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CreateSnapshotParams
+   xmlns="http://www.vmware.com/vcloud/v1.5"
+   name="snap1">
+   <Description>Snapshot1</Description>
+</CreateSnapshotParams

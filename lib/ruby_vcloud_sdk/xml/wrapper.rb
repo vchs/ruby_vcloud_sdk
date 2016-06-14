@@ -147,6 +147,24 @@ module VCloudSdk
                   true).first
       end
 
+      def create_snapshot_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "snapshot:create"},
+                  true).first
+      end
+
+      def revert_snapshot_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "snapshot:revertToCurrent"},
+                  true).first
+      end
+
+      def remove_snapshot_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "snapshot:removeAll"},
+                  true).first
+      end
+
       def undeploy_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "undeploy" },
