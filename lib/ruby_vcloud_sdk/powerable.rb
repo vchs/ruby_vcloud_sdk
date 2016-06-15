@@ -3,7 +3,7 @@ module VCloudSdk
   module Powerable
     def status
       status_code = entity_xml[:status].to_i
-      Xml::RESOURCE_ENTITY_STATUS.each_pair do |k, v|
+      Xml::RESOURCE_ENTITY_STATUS.each_pair do |k, v|        
         return k.to_s if v == status_code
       end
 
@@ -59,6 +59,63 @@ module VCloudSdk
       Config.logger.info "#{class_name} #{target.name} is powered off."
 
       undeploy(target, class_name)
+      self
+    end
+
+    def reboot
+      target = entity_xml
+      class_name = self.class.name.split("::").last
+      Config.logger.debug "#{class_name} status: #{target[:status]}"
+      if !is_status?(target, :POWERED_ON)
+        Config.logger.info "#{class_name} #{target.name} must be powered-on."
+        return
+      end
+
+      reboot_link = target.reboot_link
+        
+      Config.logger.info "Rebooting #{class_name} #{target.name}."
+      task = connection.post(reboot_link.href, nil)
+      task = monitor_task task, @session.time_limit[:power_on]
+      Config.logger.info "#{class_name} #{target.name} is rebooted."
+      self
+
+    end
+
+    def reset
+      target = entity_xml
+      class_name = self.class.name.split("::").last
+      Config.logger.debug "#{class_name} status: #{target[:status]}"
+      if !is_status?(target, :POWERED_ON)
+        Config.logger.info "#{class_name} #{target.name} must be powered-on."
+        return
+      end
+
+      reset_link = target.reset_link      
+      
+      Config.logger.info "Reseting #{class_name} #{target.name}."
+      task = connection.post(reset_link.href, nil)
+      task = monitor_task task, @session.time_limit[:power_on]
+      Config.logger.info "#{class_name} #{target.name} is reseted."
+      self
+
+    end
+
+    def suspend
+      target = entity_xml
+      class_name = self.class.name.split("::").last
+      Config.logger.debug "#{class_name} status: #{target[:status]}"
+      puts "hola"
+      if !is_status?(target, :POWERED_ON)
+        Config.logger.info "#{class_name} #{target.name} must be powered-on."
+        return
+      end
+
+      suspend_link = target.suspend_link      
+      
+      Config.logger.info "Suspending #{class_name} #{target.name}."
+      task = connection.post(suspend_link.href, nil)
+      task = monitor_task task, @session.time_limit[:power_on]
+      Config.logger.info "#{class_name} #{target.name} is suspended."
       self
     end
 

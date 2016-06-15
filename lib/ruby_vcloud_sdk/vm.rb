@@ -17,6 +17,11 @@ module VCloudSdk
       @link = link
     end
 
+    def id      
+      id = entity_xml.urn
+      id.split(":")[3]      
+    end
+
     def href
       @link
     end
@@ -84,6 +89,11 @@ module VCloudSdk
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
       self
+    end
+
+    def ip_address      
+      entity_xml.ip_address
+
     end
 
     def list_networks
@@ -261,6 +271,15 @@ module VCloudSdk
       monitor_task(task)
       self
     end
+
+    def install_vmtools
+      Config.logger.info(
+        "Installing VMware tools on #{name} ...")
+      task = connection.put(entity_xml.install_vmtools_link.href,nil)
+      monitor_task(task)
+      self 
+    end    
+   
 
     def product_section_properties
       product_section = entity_xml.product_section

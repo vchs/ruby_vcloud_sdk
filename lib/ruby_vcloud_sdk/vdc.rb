@@ -76,16 +76,26 @@ module VCloudSdk
       fail ObjectNotFoundError, "VApp '#{name}' is not found"
     end
 
+    def find_vapp_by_id(uuid)      
+      entity_xml.vapps.each do |vapp_link|              
+        if vapp_link.href.split("/")[5] == "vapp-#{uuid}"          
+          return VCloudSdk::VApp.new(@session, vapp_link)
+        end
+      end
+
+      fail ObjectNotFoundError, "VApp '#{uuid}' is not found"
+    end
+
     def vapp_exists?(name)
       entity_xml.vapps.any? do |vapp|
         vapp.name == name
       end
     end
 
-    def resources
-      cpu = VCloudSdk::CPU.new(entity_xml.available_cpu_cores)
-      memory = VCloudSdk::Memory.new(entity_xml.available_memory_mb)
-      VCloudSdk::Resources.new(cpu, memory)
+    def resources      
+      cpu = VCloudSdk::CPU.new(entity_xml.available_cpu_cores,entity_xml.limit_cpu_cores)
+      memory = VCloudSdk::Memory.new(entity_xml.available_memory_mb,entity_xml.limit_memory_mb)
+      VCloudSdk::Resources.new(cpu,memory)
     end
 
     def networks

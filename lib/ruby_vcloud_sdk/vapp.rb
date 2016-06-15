@@ -13,6 +13,11 @@ module VCloudSdk
       @link = link
     end
 
+    def id      
+      id = entity_xml.urn
+      id.split(":")[3]     
+    end
+
     def name
       entity_xml.name
     end
@@ -145,37 +150,36 @@ module VCloudSdk
       self
     end
 
-    def create_snapshot
-      target = entity_xml    
-      create_snapshot_link = target.create_snapshot_link
+    def create_snapshot(snapshot_hash)
+      target = entity_xml          
+      create_snapshot_link = target.create_snapshot_link      
       params = Xml::WrapperFactory.create_instance("CreateSnapshotParams")
 
-      Config.logger.info "Creating a snapshot on vApp #{vapp.name}."
+      Config.logger.info "Creating a snapshot on vApp #{name}."      
       task = connection.post(target.create_snapshot_link.href,params)      
       monitor_task(task)
-      Config.logger.error "vApp #{vapp.name} has created a snapshot"
+      Config.logger.error "vApp #{name} has created a snapshot"
     end
 
     def remove_snapshot
       target = entity_xml
       remove_snapshot_link = target.remove_snapshot_link
-
-      Config.logger.info "Removing all snapshots on vApp #{vapp.name}."
+      
+      Config.logger.info "Removing all snapshots on vApp #{name}."
       task = connection.post(target.remove_snapshot_link.href,nil)
       monitor_task(task)
-      Config.logger.error "vApp #{vapp.name} has removed all snapshots" 
+      Config.logger.error "vApp #{name} has removed all snapshots" 
 
     end
 
     def revert_snapshot
       target = entity_xml
-      puts target
       revert_snapshot_link = target.revert_snapshot_link
       
-      Config.logger.info "Reverting to current snapshot on vApp #{vapp.name}."
+      Config.logger.info "Reverting to current snapshot on vApp #{name}."
       task = connection.post(target.revert_snapshot_link.href,nil)
       monitor_task(task)
-      Config.logger.error "vApp #{vapp.name} has reverted a snapshot"
+      Config.logger.error "vApp #{name} has reverted a snapshot"
     end
 
     private

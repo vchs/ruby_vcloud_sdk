@@ -4,7 +4,7 @@ module VCloudSdk
       def initialize(xml, ns = nil, ns_definitions = nil)
         super(xml, ns, ns_definitions)
         @logger = Config.logger
-      end
+      end      
 
       def vapp_link
         get_nodes(XML_TYPE[:LINK],
@@ -51,6 +51,10 @@ module VCloudSdk
         value
       end
 
+      def ip_address
+        ip = get_nodes("IpAddress").first.content
+      end
+
       def reconfigure_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "reconfigureVm" },
@@ -62,6 +66,14 @@ module VCloudSdk
                   { rel: "media:insertMedia" },
                   true).first
       end
+
+      def install_vmtools_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "installVmwareTools" },
+                  true).first
+      end
+      
+      def
 
       def eject_media_link
         get_nodes(XML_TYPE[:LINK],

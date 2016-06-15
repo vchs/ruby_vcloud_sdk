@@ -73,19 +73,30 @@ module VCloudSdk
                   .first
       end
 
+      def limit_cpu_cores
+         cpu_limit = get_nodes("ComputeCapacity")
+                              .first.get_nodes("Cpu").first.get_nodes("Limit").first.content
+      end
+
       def available_cpu_cores
         cpu_resource = get_nodes("ComputeCapacity")
                          .first.get_nodes("Cpu").first
         available_cpu_clock_speed = get_available_resource(cpu_resource)
-
+=begin
         # clock units can only be MHz or GHz
         units = cpu_resource.get_nodes("Units").first.content
         if units == "MHz"
           available_cpu_clock_speed = available_cpu_clock_speed / 1000
         end
-
+=end
         # We assume 1 GHz is converted to 1 vCpu core
         available_cpu_clock_speed
+      end
+
+      def limit_memory_mb
+        memory_limit = get_nodes("ComputeCapacity")
+                            .first.get_nodes("Memory").first.get_nodes("Limit").first.content
+
       end
 
       def available_memory_mb
