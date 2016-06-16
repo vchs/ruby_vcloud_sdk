@@ -103,8 +103,7 @@ module VCloudSdk
     def suspend
       target = entity_xml
       class_name = self.class.name.split("::").last
-      Config.logger.debug "#{class_name} status: #{target[:status]}"
-      puts "hola"
+      Config.logger.debug "#{class_name} status: #{target[:status]}"      
       if !is_status?(target, :POWERED_ON)
         Config.logger.info "#{class_name} #{target.name} must be powered-on."
         return

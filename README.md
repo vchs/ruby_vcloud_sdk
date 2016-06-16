@@ -1,6 +1,32 @@
 ## Ruby VCloud SDK is a gem to simplify making vCloud Director API calls.
 Copyright (c) VMware, Inc.
 
+## Object Structure
+
+  Client -> VDC     -> Vapp     -> Vm     -> Nic
+
+                                          -> Disk
+        
+
+                                -> Network
+
+
+                    -> Network  -> IpRanges                                
+
+                    -> Disk
+
+                    -> Resource
+
+                    -> Edge Gateway -> IpRanges
+
+                    -> Storage Profile
+
+         -> Catalog -> Catalog Item
+
+
+         -> RightRecord
+
+
 ## Object Model
 
   Client
@@ -445,6 +471,7 @@ Copyright (c) VMware, Inc.
         throws:
 
   VM
+
      id
        returns: VM's id
 
