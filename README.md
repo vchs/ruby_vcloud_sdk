@@ -677,15 +677,15 @@ Copyright (c) VMware, Inc.
   
     1. Create vCloud client object
         
-       'client = VCloudSdk::Client.new(url, username, password)'
+       `client = VCloudSdk::Client.new(url, username, password)`
 
        Note that the parameter 'username' should be the VDC user_name@organization_name. For example,
 	   the VDC user name is admin, the organization name is myorg, then the 'username' parameter 
        here should be admin@myorg. 
 	    
     2. Find the catalog where the vapp template is stored
-       'catalog = client.find_catalog_by_name(catalog_name)'
+       `catalog = client.find_catalog_by_name(catalog_name)`
 
     3. Create vApp from that vapp template
-	   'vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)'
+	   `vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)`
        
