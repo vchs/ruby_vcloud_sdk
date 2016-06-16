@@ -20,6 +20,7 @@ Copyright (c) VMware, Inc.
            -> Catalog -> Catalog Item
                       -> OVF Directory
            -> RightRecord
+           -> Session -> Connection
 
 ## Object Model
 
