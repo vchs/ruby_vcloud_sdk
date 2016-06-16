@@ -5,25 +5,16 @@ Copyright (c) VMware, Inc.
 =================
 
 
-    Client -> VDC   ->   Vapp   ->   Vm   -> Nic 
-  
+    Client -> VDC   -> Vapp     -> Vm     -> Nic 
                                           -> Disk
-                                          
                                 -> Network
-                                
                     -> Network  -> IpRanges 
-                    
                     -> Disk
-                    
                     -> Resource
-                    
                     -> Edge Gateway -> IpRanges
-                    
                     -> Storage Profile
-                    
-         -> Catalog -> Catalog Item
-         
-         -> RightRecord
+           -> Catalog -> Catalog Item
+           -> RightRecord
 
 ## Object Model
 ===============
