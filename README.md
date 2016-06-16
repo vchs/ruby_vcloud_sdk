@@ -2,17 +2,26 @@
 Copyright (c) VMware, Inc.
 
 ## Object Structure
-===================
+=================
 
-  Client -> VDC     -> Vapp     -> Vm     -> Nic  
-                                          -> Disk     
+  Client -> VDC     -> Vapp     -> Vm     -> Nic 
+  
+                                          -> Disk
+                                          
                                 -> Network
-                    -> Network  -> IpRanges                               
+                                
+                    -> Network  -> IpRanges 
+                    
                     -> Disk
+                    
                     -> Resource
+                    
                     -> Edge Gateway -> IpRanges
+                    
                     -> Storage Profile
+                    
          -> Catalog -> Catalog Item
+         
          -> RightRecord
 
 ## Object Model
