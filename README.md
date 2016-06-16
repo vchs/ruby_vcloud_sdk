@@ -24,7 +24,7 @@ Copyright (c) VMware, Inc.
 ### Client
  ------
   
-    find_vdc_by_name
+#### find_vdc_by_name
       parameters:
         name (String): name of VDC
       returns: VDC object matching name
@@ -32,19 +32,19 @@ Copyright (c) VMware, Inc.
         'ObjectNotFoundError' when VDC with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
-    vdc_exists?
+#### vdc_exists?
       parameters:
         name (String): name of VDC
       returns: boolean
       throws:
         'RestClient::BadRequest' for un-expected errors
 
-    catalogs
+#### catalogs
       returns: array of catalog objects
       throws:
         'RestClient::BadRequest' for un-expected errors
 
-    list_catalogs
+#### list_catalogs
       returns: array of catalog names
       throws:
         'RestClient::BadRequest' for un-expected errors
