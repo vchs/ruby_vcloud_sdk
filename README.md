@@ -21,7 +21,7 @@ Copyright (c) VMware, Inc.
 ## Object Model
 
 
-### Client
+#### Client
  ------
     find_vdc_by_name
       parameters:
@@ -73,7 +73,7 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
     
-### VDC
+#### VDC
   ---
     
     storage_profiles
@@ -230,7 +230,7 @@ Copyright (c) VMware, Inc.
         'CloudError' when any disk deletion failure occurs
         'RestClient::BadRequest' for un-expected errors
 
-### Catalog
+#### Catalog
   -------
   
      items
@@ -328,7 +328,7 @@ Copyright (c) VMware, Inc.
            'ApiError' when instantiating vapp template task is not successful
            'RestClient::BadRequest' for un-expected error
      
-### Network
+#### Network
   -------
   
      ip_ranges
@@ -341,7 +341,7 @@ Copyright (c) VMware, Inc.
         throws:
           'RestClient::BadRequest' for un-expected errors
      
-### VApp
+#### VApp
   ----
 
      id
@@ -466,7 +466,7 @@ Copyright (c) VMware, Inc.
         returns: nil
         throws:
 
-### VM
+#### VM
   ---
 
      id
@@ -653,7 +653,7 @@ Copyright (c) VMware, Inc.
          'ObjectNotFoundError' if no disk matching the given name
          'RestClient::BadRequest' for un-expected errors
 
-### VdcStorageProfile
+#### VdcStorageProfile
   -----------------
   
      available_storage
@@ -661,7 +661,7 @@ Copyright (c) VMware, Inc.
          integer number of available storage in MB, i.e. storageLimitMB - storageUsedMB
          -1 if 'storageLimitMB' is 0
 
-### EdgeGateway
+#### EdgeGateway
   -----------
 
      public_ips:
