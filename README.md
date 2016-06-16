@@ -5,7 +5,7 @@ Copyright (c) VMware, Inc.
 =================
 
 
-  Client -> VDC     -> Vapp     -> Vm     -> Nic 
+    Client -> VDC   ->   Vapp   ->   Vm   -> Nic 
   
                                           -> Disk
                                           
