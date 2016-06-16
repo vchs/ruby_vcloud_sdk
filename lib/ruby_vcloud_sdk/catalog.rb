@@ -132,16 +132,30 @@ module VCloudSdk
       find_vapp_template_by_name(template_name)
     end
 
+    def find_vapp_template_by_id(uuid)
+      ##CUTRE
+      link = nil
+      admin_xml.catalog_items.each do |item_link|    
+        link = item_link if uuid == item_link[:id]
+      end
+      fail ObjectNotFoundError, "Catalog Item '#{uuid}' is not found" if link.nil?
+  
+      item = VCloudSdk::CatalogItem.new(@session, link)      
+      check_item_type(item, Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
+      item
+            
+    end
+
     def find_vapp_template_by_name(name)
       find_item(name, Xml::MEDIA_TYPE[:VAPP_TEMPLATE])
     end
 
     def instantiate_vapp_template(template_name, vdc_name, vapp_name,
         description = nil, disk_locality = nil, network_config = nil)
-
+      
       instantiate_vapp_params = create_instantiate_vapp_params(
           template_name, vapp_name, description, disk_locality, network_config)
-
+      
       vdc = find_vdc_by_name vdc_name
 
       vapp = connection.post(vdc.instantiate_vapp_template_link,

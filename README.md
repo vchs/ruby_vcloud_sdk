@@ -102,6 +102,15 @@ Copyright (c) VMware, Inc.
         'ObjectNotFoundError' when vapp with the name does not exist
         'RestClient::BadRequest' for un-expected errors
 
+    find_vapp_by_id
+      parameters:
+        id (String): id of vapp
+      returns:
+        vapp object matching id
+      throws:
+        'ObjectNotFoundError' when vapp with the id does not exist
+        'RestClient::BadRequest' for un-expected errors
+
     vapp_exists?
       parameters:
         name (String): name of vapp
@@ -312,6 +321,15 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
      
   VApp
+
+     id
+       returns: vApp's id
+
+     name
+       returns: vApp's name
+
+     status:
+        returns: vApp's status
   
      delete
         returns: nil
@@ -331,6 +349,15 @@ Copyright (c) VMware, Inc.
           'CloudError' if power_off_link of VApp is missing
           'VappSuspendedError' if VApp is suspended
           'RestClient::BadRequest' for un-expected errors
+
+     reboot
+        returns: vApp object
+
+     reset
+        returns: vApp object
+
+     suspend:
+        returns: vApp object
 
      recompose_from_vapp_template
         parameters:
@@ -403,7 +430,29 @@ Copyright (c) VMware, Inc.
          'ObjectNotFoundError' when network with the name does not exist
          'RestClient::BadRequest' for un-expected errors
 
+     create_snapshot
+        parameters: 
+          snapshot_hash (Hash): hash with :name and :description
+        returns: nil
+        throws:
+
+     remove_snapshot        
+        returns: nil
+        throws:
+
+     revert_snapshot        
+        returns: nil
+        throws:
+
   VM
+     id
+       returns: VM's id
+
+     status
+        returns: VM's status
+
+     href
+       returns: VM's href
 
      vcpu:
        returns: number of virtual cpus of VM
@@ -433,6 +482,9 @@ Copyright (c) VMware, Inc.
         throws:
           'CloudError' when the memory size is less than or equal to 0
           'RestClient::BadRequest' for un-expected errors
+
+    ip_address
+        returns: The IP address(es) of the VM
 
     nics
       returns: array of NIC objects
@@ -479,6 +531,17 @@ Copyright (c) VMware, Inc.
          'VmSuspendedError' if VM is suspended
          'RestClient::BadRequest' for un-expected errors
 
+     reboot
+        returns: VM object
+
+     reset
+        returns: VM object
+      
+     suspend:
+        returns: VM object
+
+     undeploy:
+
      insert_media
        parameters:
          catalog_name (String): name of catalog
@@ -521,6 +584,9 @@ Copyright (c) VMware, Inc.
          'CloudError' if vm is powered on
          'ObjectNotFoundError' if specified nic index does not exist
          'RestClient::BadRequest' for un-expected errors
+
+    install_vmtools
+        returns: nil
 
      product_section_properties
         returns:
