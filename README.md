@@ -7,15 +7,18 @@ Copyright (c) VMware, Inc.
 
 
 
-    Client -> VDC   -> Vapp     -> Vm     -> Nic 
-                                          -> Disk
+    Client -> VDC   -> Vapp     -> Vm     -> Nic
+                                          -> Internal Disk
+                                          -> Disk        
+                                          -> Vapp
                                 -> Network
                     -> Network  -> IpRanges 
-                    -> Disk
-                    -> Resource
+                    -> Disk     -> Vm
+                    -> Resources
                     -> Edge Gateway -> IpRanges
-                    -> Storage Profile
+                    -> Vdc Storage Profile
            -> Catalog -> Catalog Item
+                      -> OVF Directory
            -> RightRecord
 
 ## Object Model
