@@ -4,6 +4,7 @@ Copyright (c) VMware, Inc.
 ## Object Structure
 =================
 
+
   Client -> VDC     -> Vapp     -> Vm     -> Nic 
   
                                           -> Disk
