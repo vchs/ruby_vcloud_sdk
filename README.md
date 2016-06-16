@@ -465,7 +465,7 @@ Copyright (c) VMware, Inc.
         throws:
 
   VM
-  --
+  ---
 
      id
        returns: VM's id
