@@ -2,6 +2,7 @@
 Copyright (c) VMware, Inc.
 
 ## Object Structure
+===================
 
   Client -> VDC     -> Vapp     -> Vm     -> Nic  
                                           -> Disk     
@@ -15,8 +16,10 @@ Copyright (c) VMware, Inc.
          -> RightRecord
 
 ## Object Model
+===============
 
   Client
+  ------
   
     find_vdc_by_name
       parameters:
@@ -69,6 +72,7 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
     
   VDC
+  ---
     
     storage_profiles
       returns: array of storage profile objects
@@ -225,6 +229,7 @@ Copyright (c) VMware, Inc.
         'RestClient::BadRequest' for un-expected errors
 
   Catalog
+  -------
   
      items
        returns: array of catalog item objects
@@ -322,6 +327,7 @@ Copyright (c) VMware, Inc.
            'RestClient::BadRequest' for un-expected error
      
   Network
+  -------
   
      ip_ranges
         returns: IpRanges object
@@ -334,6 +340,7 @@ Copyright (c) VMware, Inc.
           'RestClient::BadRequest' for un-expected errors
      
   VApp
+  ----
 
      id
        returns: vApp's id
@@ -458,6 +465,7 @@ Copyright (c) VMware, Inc.
         throws:
 
   VM
+  --
 
      id
        returns: VM's id
@@ -644,6 +652,7 @@ Copyright (c) VMware, Inc.
          'RestClient::BadRequest' for un-expected errors
 
   VdcStorageProfile
+  -----------------
   
      available_storage
        returns:
@@ -651,6 +660,7 @@ Copyright (c) VMware, Inc.
          -1 if 'storageLimitMB' is 0
 
   EdgeGateway
+  -----------
 
      public_ips:
        returns: IpRanges object
@@ -659,6 +669,7 @@ Copyright (c) VMware, Inc.
 
 
 ## Example
+==========
   VCloud_SDK is straightforward to use. Here is an example of creating vApp from vApp template.
   
     1. Create vCloud client object
@@ -673,5 +684,5 @@ Copyright (c) VMware, Inc.
        catalog = client.find_catalog_by_name(catalog_name)
 
     3. Create vApp from that vapp template
-	   vapp = instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
+	   vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
        
