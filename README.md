@@ -1,4 +1,7 @@
-# Ruby VCloud SDK is a gem to simplify making vCloud Director API calls.
+#Ruby VCloud SDK
+================
+
+Ruby VCloud SDK is a gem to simplify making vCloud Director API calls.
 Copyright (c) VMware, Inc.
 
 ## Object Structure
