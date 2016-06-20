@@ -1,11 +1,12 @@
 module VCloudSdk
 
   class VdcStorageProfile
-    attr_reader :name
+    attr_reader :name,:href
 
     def initialize(storage_profile_xml_obj)
       @storage_profile_xml_obj = storage_profile_xml_obj
       @name = @storage_profile_xml_obj[:name]
+      @href = @storage_profile_xml_obj[:href]
       @storage_used_mb = @storage_profile_xml_obj[:storageUsedMB].to_i
       @storage_limit_mb = @storage_profile_xml_obj[:storageLimitMB].to_i
       @vdc_name = @storage_profile_xml_obj[:vdcName]

@@ -145,7 +145,8 @@ module VCloudSdk
           capacity,
           vm = nil,
           bus_type = "scsi",
-          bus_sub_type = "lsilogic")
+          bus_sub_type = "lsilogic",
+          storage_profile = nil)
 
       fail(CloudError,
            "Invalid size in MB #{capacity}") if capacity <= 0
@@ -163,7 +164,7 @@ module VCloudSdk
         .info "Creating independent disk #{name} of #{capacity}MB."
 
       disk = connection.post(entity_xml.add_disk_link,
-                             disk_create_params(name, capacity, bus_type, bus_sub_type, vm),
+                             disk_create_params(name, capacity, bus_type, bus_sub_type, vm, storage_profile),
                              Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
 
       wait_for_running_tasks(disk, "Disk #{name}")
@@ -217,13 +218,14 @@ module VCloudSdk
         .org_vdc_storage_profile_records
     end
 
-    def disk_create_params(name, capacity, bus_type, bus_sub_type, vm)
+    def disk_create_params(name, capacity, bus_type, bus_sub_type, vm, storage_profile = nil)
       Xml::WrapperFactory.create_instance("DiskCreateParams").tap do |params|
         params.name = name
         params.size_bytes = capacity * 1024 * 1024 # VCD expects bytes
         params.bus_type = bus_type
         params.bus_sub_type = bus_sub_type
         params.add_locality(connection.get(vm.href)) if vm # Use xml form of vm
+        params.add_storage_profile(storage_profile) if storage_profile
       end
     end
 

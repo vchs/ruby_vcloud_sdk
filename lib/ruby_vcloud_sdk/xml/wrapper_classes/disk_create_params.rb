@@ -31,6 +31,12 @@ module VCloudSdk
         disk.node.after(node)
       end
 
+      def add_storage_profile(storage_profile)
+        node = create_child("StorageProfile")
+        node["href"] = storage_profile.href
+        node["name"] = storage_profile.name
+        disk.node.add_child(node)
+      end
       private
 
       def disk
