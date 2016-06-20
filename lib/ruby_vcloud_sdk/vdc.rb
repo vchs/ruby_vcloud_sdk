@@ -219,7 +219,7 @@ module VCloudSdk
     end
 
     def disk_create_params(name, capacity, bus_type, bus_sub_type, vm, storage_profile = nil)
-      x=Xml::WrapperFactory.create_instance("DiskCreateParams").tap do |params|
+      Xml::WrapperFactory.create_instance("DiskCreateParams").tap do |params|
         params.name = name
         params.size_bytes = capacity * 1024 * 1024 # VCD expects bytes
         params.bus_type = bus_type
@@ -227,8 +227,6 @@ module VCloudSdk
         params.add_locality(connection.get(vm.href)) if vm # Use xml form of vm
         params.add_storage_profile(storage_profile) if storage_profile
       end
-      puts x
-      x
     end
 
     def delete_single_disk(disk)
