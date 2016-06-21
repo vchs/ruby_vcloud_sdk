@@ -51,8 +51,20 @@ module VCloudSdk
         value
       end
 
+      def vm_tools               
+          get_nodes("VMWareTools").first["version"]
+      end
+
       def ip_address
-        ip = get_nodes("IpAddress").first.content
+        #puts get_nodes("IpAddress").first.content
+        #puts get_nodes("NetworkConnection")
+        ips = []
+        get_nodes("NetworkConnection").each do |ip|          
+          ips << ip.ip_address
+          end
+        ips.pop #elimina l'ultim element, que es un nil
+        return ips
+        #get_nodes("IpAddress").first.content if !get_nodes("IpAddress").first.nil?
       end
 
       def reconfigure_link
@@ -72,7 +84,7 @@ module VCloudSdk
                   { rel: "installVmwareTools" },
                   true).first
       end
-      
+
       def
 
       def eject_media_link
@@ -151,6 +163,13 @@ module VCloudSdk
         item = hardware_section.memory
         item.set_rasd("VirtualQuantity", mb)
       end
+
+      def change_name(name)
+        @logger.debug("Updating name on vm #{name} to #{name} ")
+        item = hardware_section.cpu
+        item.set_rasd("VirtualQuantity", quantity)
+      end  
+
 
       # Deletes NIC from VM.  Accepts variable number of arguments for NICs.
       # To delete all NICs from VM use the splat operator

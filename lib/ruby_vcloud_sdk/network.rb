@@ -7,10 +7,22 @@ module VCloudSdk
 
     extend Forwardable
     def_delegator :entity_xml, :name
-
+    
     def initialize(session, link)
       @session = session
       @link = link
+    end
+
+    def id      
+      @link.href.split("/")[5]      
+    end
+    
+    def description
+      entity_xml.description
+    end
+    
+    def fence_mode
+      entity_xml.fence_mode
     end
 
     def href

@@ -1,6 +1,25 @@
 module VCloudSdk
-  # Shared functions by classes VM and VApp
+  
+  ###############################################################################################
+  # This module defines the shared functions by classes VM and VApp
+  # We can retrieve the status, power on, power off, reboots, resets and suspend any VM or VApp 
+  ###############################################################################################
   module Powerable
+
+    #############################################################################################
+    # Returns the status of the vApp or VM
+    # @return [String]  The vApp or VM status:
+    #                   - FAILED_CREATION.
+    #                   - UNRESOLVED.
+    #                   - RESOLVED.
+    #                   - SUSPENDED.
+    #                   - POWERED_ON.
+    #                   - WAITING_FOR_INPUT.    
+    #                   - UNKNOWN.
+    #                   - UNRECOGNIZED.
+    #                   - POWERED_OFF.
+    #                   - other.
+    #############################################################################################
     def status
       status_code = entity_xml[:status].to_i
       Xml::RESOURCE_ENTITY_STATUS.each_pair do |k, v|        
@@ -11,7 +30,10 @@ module VCloudSdk
            "Fail to find corresponding status for code '#{status_code}'"
     end
 
-    # Power on VApp or VM
+    #############################################################################################
+    # Power on vApp or VM 
+    # @return [vApp] or [VM] Returns the object
+    #############################################################################################
     def power_on
       target = entity_xml
       class_name = self.class.name.split("::").last
@@ -34,7 +56,10 @@ module VCloudSdk
       self
     end
 
-    # Power off VApp or VM
+    #############################################################################################
+    # Power off vApp or VM 
+    # @return [vApp] or [VM] Returns the object
+    #############################################################################################
     def power_off
       target = entity_xml
       class_name = self.class.name.split("::").last
@@ -62,6 +87,10 @@ module VCloudSdk
       self
     end
 
+    #############################################################################################
+    # Reboots vApp or VM 
+    # @return [vApp] or [VM] Returns the object
+    #############################################################################################
     def reboot
       target = entity_xml
       class_name = self.class.name.split("::").last
@@ -81,6 +110,10 @@ module VCloudSdk
 
     end
 
+    #############################################################################################
+    # Resets vApp or VM 
+    # @return [vApp] or [VM] Returns the object
+    #############################################################################################
     def reset
       target = entity_xml
       class_name = self.class.name.split("::").last
@@ -97,9 +130,12 @@ module VCloudSdk
       task = monitor_task task, @session.time_limit[:power_on]
       Config.logger.info "#{class_name} #{target.name} is reseted."
       self
-
     end
 
+    #############################################################################################
+    # Suspends vApp or VM 
+    # @return [vApp] or [VM] Returns the object
+    #############################################################################################
     def suspend
       target = entity_xml
       class_name = self.class.name.split("::").last
