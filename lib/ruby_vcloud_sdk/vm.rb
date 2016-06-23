@@ -61,7 +61,6 @@ module VCloudSdk
       memory_mb
     end
 
-    
     ####################################################################################
     # Modifies the memory size of the VM.
     # @param   size     [String]  The new memory size in MB.
@@ -104,7 +103,7 @@ module VCloudSdk
 
     ####################################################################################
     # Modifies the number of virtual cpus of the VM.
-    # @param   count     [String]  The new number of virtual cpus.
+    # @param   count     [Integer]  The new number of virtual cpus.
     # @throw
     ####################################################################################
     def vcpu=(count)
@@ -125,11 +124,21 @@ module VCloudSdk
       self
     end
 
+    def name=(name)
+      payload = entity_xml
+      payload.name = name
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
+    end
+
     def reconfigure(options)
       
-      puts entity_xml
+      #puts entity_xml
 
-      puts "------------------------"
+      #puts "------------------------"
 
       payload = entity_xml
       payload.name = options[:name]
@@ -137,16 +146,17 @@ module VCloudSdk
       payload.change_cpu_count(options[:vcpu])
       payload.change_memory(options[:memory])
 
-      puts payload
+      #puts payload
 
       #task = connection.post(payload.reconfigure_link.href,
       #                       payload,
       #                       Xml::MEDIA_TYPE[:VM])
       #monitor_task(task)
-      self
+      #self
     end
 
-    def ip_address           
+    def ip_address
+      #puts entity_xml        
       entity_xml.ip_address
 
     end
@@ -185,7 +195,7 @@ module VCloudSdk
         return VCloudSdk::NIC.new(net,net.network_connection_index == primary_index)
       else
         fail(CloudError,
-           "No NIC found with MAC #{mac}")
+           "No NIC found with MAC #{mac} in VM #{name}")
       end       
     end
 
@@ -372,7 +382,7 @@ module VCloudSdk
    
 
     def product_section_properties
-      puts entity_xml
+      #puts entity_xml
       product_section = entity_xml.product_section
       return [] if product_section.nil?
 

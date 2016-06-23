@@ -147,6 +147,12 @@ module VCloudSdk
                   true).first
       end
 
+      def shutdown_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "power:shutdown"},
+                  true).first
+      end
+
       def suspend_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "power:suspend"},

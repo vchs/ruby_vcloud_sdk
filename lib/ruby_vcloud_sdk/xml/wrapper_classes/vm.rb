@@ -62,7 +62,7 @@ module VCloudSdk
         get_nodes("NetworkConnection").each do |ip|          
           ips << ip.ip_address
           end
-        ips.pop #elimina l'ultim element, que es un nil
+        ips.pop if ips.length > 1 #elimina l'ultim element, que es un nil, sempre i quan tingui mes d'una ip
         return ips
         #get_nodes("IpAddress").first.content if !get_nodes("IpAddress").first.nil?
       end

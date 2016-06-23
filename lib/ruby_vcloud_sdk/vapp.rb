@@ -15,7 +15,7 @@ module VCloudSdk
     ####################################################################################
     # Initializes a vApp object associated with a vCloud Session and the vApp's link. 
     # @param session   [Session] The client's session
-    # @param link      [String]  The XML representation of the vApp
+    # @param link      [String]  The vCloud link of the vApp
     ####################################################################################
     def initialize(session, link)
       @session = session
@@ -255,7 +255,7 @@ module VCloudSdk
     end
 
     ####################################################################################
-    # Revert the LAST snapshot of the vApp created.
+    # Revert the LAST snapshot created in the vApp.
     ####################################################################################
     def revert_snapshot
       target = entity_xml
@@ -303,16 +303,14 @@ module VCloudSdk
     def network_config_param(
         network,
         vapp_net_name,
-        fence_mode)
-      puts "hola"
+        fence_mode)      
       Xml::WrapperFactory.create_instance("NetworkConfig").tap do |params|
         network_entity_xml = connection.get(network.href)
         params.ip_scope.tap do |ip_scope|
           net_ip_scope = network_entity_xml.ip_scope
           ip_scope.is_inherited = net_ip_scope.is_inherited?
           ip_scope.gateway = net_ip_scope.gateway
-          ip_scope.netmask = net_ip_scope.netmask
-          puts "hola2"  
+          ip_scope.netmask = net_ip_scope.netmask   
           ip_scope.ip_ranges.add_ranges(net_ip_scope.ip_ranges.ranges) if !net_ip_scope.ip_ranges.nil?  ##per poder afegir xarxes amb DHCP que no tenen POOL IP STATIC                
         end
         params.fence_mode = fence_mode

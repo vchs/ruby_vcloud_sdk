@@ -87,6 +87,34 @@ module VCloudSdk
       self
     end
 
+    def shutdown
+      target = entity_xml
+      class_name = self.class.name.split("::").last
+      Config.logger.debug "#{class_name} status: #{target[:status]}"
+      if is_status?(target, :SUSPENDED)
+        error_msg = "#{class_name} #{target.name} suspended, discard state before powering off."
+        fail class_name == "VApp" ? VappSuspendedError : VmSuspendedError,
+             error_msg
+      end
+      if is_status?(target, :POWERED_OFF)
+        Config.logger.info "#{class_name} #{target.name} is already powered off."
+        return
+      end
+
+      shutdown_link = target.shutdown_link
+      unless shutdown_link
+        fail CloudError, "#{class_name} #{target.name} is not in a state that could be powered off."
+      end
+
+      task = connection.post(shutdown_link.href, nil)
+      monitor_task task, @session.time_limit[:power_off]
+      Config.logger.info "#{class_name} #{target.name} is powered off."
+
+      undeploy(target, class_name)
+      self
+
+    end
+
     #############################################################################################
     # Reboots vApp or VM 
     # @return [vApp] or [VM] Returns the object
