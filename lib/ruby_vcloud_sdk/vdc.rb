@@ -150,12 +150,18 @@ module VCloudSdk
       end
     end
 
+    ####################################################################################
+    # Creates a disk. 
+    # @param name          [String]   The disk's name.
+    # @param capacity      [Integer]  The capacity in MB of the disk.
+    # @return              [Disk]     The object created.disk_create_param
+    ####################################################################################
     def create_disk(
           name,
           capacity,
           vm = nil,
           bus_type = "scsi",
-          bus_sub_type = "lsilogic")
+          bus_sub_type = "lsilogic")    
 
       fail(CloudError,
            "Invalid size in MB #{capacity}") if capacity <= 0
@@ -174,7 +180,7 @@ module VCloudSdk
 
       disk = connection.post(entity_xml.add_disk_link,
                              disk_create_params(name, capacity, bus_type, bus_sub_type, vm),
-                             Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])
+                             Xml::MEDIA_TYPE[:DISK_CREATE_PARAMS])      
 
       wait_for_running_tasks(disk, "Disk #{name}")
 

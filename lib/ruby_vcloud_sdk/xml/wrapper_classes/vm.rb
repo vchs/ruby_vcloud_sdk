@@ -51,6 +51,11 @@ module VCloudSdk
         value
       end
 
+      def operating_system
+        get_nodes("OperatingSystemSection",nil,false,OVF).first.
+            get_nodes("Description",nil,false,OVF).first.content
+      end
+
       def vm_tools               
           get_nodes("VMWareTools").first["version"]
       end

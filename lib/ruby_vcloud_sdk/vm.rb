@@ -6,9 +6,9 @@ require_relative "nic"
 
 module VCloudSdk
 
-  ######################################################################################
+  #################################################################################################
   # This class represents a VM belonging a vApp of the Virtual Data Center.
-  ######################################################################################
+  #################################################################################################
   class VM
     include Infrastructure
     include Powerable
@@ -16,37 +16,37 @@ module VCloudSdk
     extend Forwardable
     def_delegator :entity_xml, :name
 
-    ####################################################################################
+    ###############################################################################################
     # Initializes a VM object associated with a vCloud Session and the VMs link. 
     # @param session   [Session] The client's session
     # @param link      [String]  The XML representation of the VM
-    ####################################################################################
+    ###############################################################################################
     def initialize(session, link)
       @session = session
       @link = link
     end
 
-    ####################################################################################
+    ###############################################################################################
     # Returns the identifier of the VM (uuid) 
     # @return      [String]  The identifier of the VM
-    ####################################################################################
+    ###############################################################################################
     def id      
       id = entity_xml.urn
       id.split(":")[3]      
     end
 
-    ####################################################################################
+    ###############################################################################################
     # Returns the vCloud link of the VM 
     # @return      [String]  The vCloud link of the VM
-    ####################################################################################
+    ###############################################################################################
     def href
       @link
     end
 
-    ####################################################################################
+    ###############################################################################################
     # Returns the memory of the VM 
     # @return      [String]  The memory in MB of the VM
-    ####################################################################################
+    ###############################################################################################
     def memory
       m = entity_xml
             .hardware_section
@@ -61,11 +61,11 @@ module VCloudSdk
       memory_mb
     end
 
-    ####################################################################################
+    ###############################################################################################
     # Modifies the memory size of the VM.
     # @param   size     [String]  The new memory size in MB.
     # @throw
-    ####################################################################################
+    ###############################################################################################
     def memory=(size)
       fail(CloudError,
            "Invalid vm memory size #{size}MB") if size <= 0
@@ -85,11 +85,11 @@ module VCloudSdk
     end
 
 
-    ####################################################################################
+    ###############################################################################################
     # Returns the number of virtual cpus of the VM.
     # @return   [Integer]  The number of virtual cpus of the VM
     # @throw
-    ####################################################################################
+    ###############################################################################################
     def vcpu
       cpus = entity_xml
               .hardware_section
@@ -101,11 +101,11 @@ module VCloudSdk
       cpus.to_i
     end
 
-    ####################################################################################
+    ###############################################################################################
     # Modifies the number of virtual cpus of the VM.
     # @param   count     [Integer]  The new number of virtual cpus.
     # @throw
-    ####################################################################################
+    ###############################################################################################
     def vcpu=(count)
       fail(CloudError,
            "Invalid virtual CPU count #{count}") if count <= 0
@@ -134,35 +134,86 @@ module VCloudSdk
       self
     end
 
-    def reconfigure(options)
-      
-      #puts entity_xml
-
-      #puts "------------------------"
+    ###############################################################################################
+    # Reconfigures the VM with the parameters passed in a hash.
+    # @param   options     [Hash]  The parameters of the VM.
+    #                       :name         [String] The name of the VM
+    #                       :description  [String] The description of the VM
+    #                       :vcpu         [String] The value for number of CPU
+    #                       :memory       [String] The value for memory in MB
+    #                       :nics         [Hash]   Optional.Array of Hashes representing the nics 
+    #                                              to attach to VM
+    #                                       :network_name [String] The network to attach nic
+    #                                       :mac          [String] Optional. The MAC of the nic
+    #                       :vapp_name    [String] The name of the vApp
+    # @return [VM]
+    ###############################################################################################
+    def reconfigure(options)     
 
       payload = entity_xml
-      payload.name = options[:name]
-      payload.description = options[:description]
-      payload.change_cpu_count(options[:vcpu])
-      payload.change_memory(options[:memory])
+      payload.name = options[:name] if !options[:name].nil?
+      payload.description = options[:description] if !options[:name].nil?
+      payload.change_cpu_count(options[:vcpu]) if !options[:name].nil?
+      payload.change_memory(options[:memory]) if !options[:name].nil?
+    
+      if options[:nics] !=[]
+        #ADD NICS
+        options[:nics].each { |nic|
+            
+            nic_index = add_nic_index
+            network_name = nic[:network_name]
+            ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL]
+            ip = ""
+            mac_address = nic[:mac]
+
+            # Add Network to vapp
+            vapp.add_network_by_name(network_name) if !vapp.list_networks.include? "#{network_name}"
+            # Add NIC          
+            payload.hardware_section.add_item(nic_params(payload.hardware_section,
+                             nic_index,
+                             network_name,
+                             ip_addressing_mode,
+                             ip))
+            # Connect NIC
+            payload.network_connection_section.add_item(network_connection_params(payload.network_connection_section,
+                                            nic_index,
+                                            network_name,
+                                            ip_addressing_mode,
+                                            ip))
+            #Add the mac address passed
+            if mac_address
+              payload
+              .network_connection_section
+              .network_connections.last
+              .mac_address = mac_address
+            end
+
+            #STDERR.puts payload
+        }
+      end
+
+        #DELETE NICS
+        nics.each{ |nc|
+          if options[:nic].nil? or !options[:nic][:mac].include? "#{nc.mac_address}"
+              payload.delete_nics(nc)
+          end
+        }
+
 
       #puts payload
 
-      #task = connection.post(payload.reconfigure_link.href,
-      #                       payload,
-      #                       Xml::MEDIA_TYPE[:VM])
-      #monitor_task(task)
-      #self
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
     end
 
-    def ip_address
-      #puts entity_xml        
+    def ip_address       
       entity_xml.ip_address
-
     end
 
     def list_networks
-
       entity_xml
         .network_connection_section
         .network_connections
@@ -194,6 +245,7 @@ module VCloudSdk
       if net     
         return VCloudSdk::NIC.new(net,net.network_connection_index == primary_index)
       else
+        return false
         fail(CloudError,
            "No NIC found with MAC #{mac} in VM #{name}")
       end       
@@ -222,6 +274,11 @@ module VCloudSdk
       end
     end
 
+    ###############################################################################################
+    # Attaches a disk to VM.
+    # @param   disk     [Disk]  The disk object to attach.
+    # @throw
+    ###############################################################################################
     def attach_disk(disk)
       fail CloudError,
            "Disk '#{disk.name}' of link #{disk.href} is attached to VM '#{disk.vm.name}'" if disk.attached?
@@ -361,6 +418,10 @@ module VCloudSdk
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
       self
+    end
+
+    def operating_ssystem
+      entity_xml.operating_system
     end
 
     def vmtools_version 
