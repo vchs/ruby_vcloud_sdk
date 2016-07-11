@@ -87,9 +87,15 @@ module VCloudSdk
       self
     end
 
+    #############################################################################################
+    # Shutdown the GuestOS of vApp or VM
+    # Depending the version of vmtools installed on VM it could fail. Version 9227 on Windows KO
+    # @return [vApp] or [VM] Returns the object
+    #############################################################################################
     def shutdown
       target = entity_xml
-      class_name = self.class.name.split("::").last
+      class_name = self.class.name.split("::").last  
+
       Config.logger.debug "#{class_name} status: #{target[:status]}"
       if is_status?(target, :SUSPENDED)
         error_msg = "#{class_name} #{target.name} suspended, discard state before powering off."
@@ -179,6 +185,8 @@ module VCloudSdk
       task = connection.post(suspend_link.href, nil)
       task = monitor_task task, @session.time_limit[:power_on]
       Config.logger.info "#{class_name} #{target.name} is suspended."
+
+      undeploy(target, class_name)
       self
     end
 

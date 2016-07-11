@@ -136,15 +136,18 @@ module VCloudSdk
 
     ###############################################################################################
     # Reconfigures the VM with the parameters passed in a hash.
+    # All params are optional.
     # @param   options     [Hash]  The parameters of the VM.
     #                       :name         [String] The name of the VM
     #                       :description  [String] The description of the VM
     #                       :vcpu         [String] The value for number of CPU
     #                       :memory       [String] The value for memory in MB
-    #                       :nics         [Hash]   Optional.Array of Hashes representing the nics 
+    #                       :nics         [Array]   Array of Hashes representing the nics 
     #                                              to attach to VM
     #                                       :network_name [String] The network to attach nic
     #                                       :mac          [String] Optional. The MAC of the nic
+    #                       :disks        [Array]   Array of Hases representing the disks to 
+    #                                              attach to VM                                                   
     #                       :vapp_name    [String] The name of the vApp
     # @return [VM]
     ###############################################################################################
@@ -159,36 +162,38 @@ module VCloudSdk
       if options[:nics] !=[]
         #ADD NICS
         options[:nics].each { |nic|
-            
-            nic_index = add_nic_index
-            network_name = nic[:network_name]
-            ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL]
-            ip = ""
+
             mac_address = nic[:mac]
 
-            # Add Network to vapp
-            vapp.add_network_by_name(network_name) if !vapp.list_networks.include? "#{network_name}"
-            # Add NIC          
-            payload.hardware_section.add_item(nic_params(payload.hardware_section,
+            if !mac_address or (mac_address and !find_nic_by_mac(mac_address)) ###NOMES S'AFEGEIX NIC NI NO ESTÀ JA AFEGIDA
+              
+              nic_index = add_nic_index
+              network_name = nic[:network_name]
+              ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL]
+              ip = ""           
+
+              # Add Network to vapp
+              vapp.add_network_by_name(network_name) if !vapp.list_networks.include? "#{network_name}"
+              # Add NIC          
+              payload.hardware_section.add_item(nic_params(payload.hardware_section,
                              nic_index,
                              network_name,
                              ip_addressing_mode,
                              ip))
-            # Connect NIC
-            payload.network_connection_section.add_item(network_connection_params(payload.network_connection_section,
+              # Connect NIC
+              payload.network_connection_section.add_item(network_connection_params(payload.network_connection_section,
                                             nic_index,
                                             network_name,
                                             ip_addressing_mode,
                                             ip))
-            #Add the mac address passed
-            if mac_address
-              payload
-              .network_connection_section
-              .network_connections.last
-              .mac_address = mac_address
+              #Add the mac address passed
+              if mac_address
+                payload
+                .network_connection_section
+                .network_connections.last
+                .mac_address = mac_address
+              end              
             end
-
-            #STDERR.puts payload
         }
       end
 
@@ -198,10 +203,7 @@ module VCloudSdk
               payload.delete_nics(nc)
           end
         }
-
-
-      #puts payload
-
+      
       task = connection.post(payload.reconfigure_link.href,
                              payload,
                              Xml::MEDIA_TYPE[:VM])
@@ -420,7 +422,7 @@ module VCloudSdk
       self
     end
 
-    def operating_ssystem
+    def operating_system
       entity_xml.operating_system
     end
 
@@ -516,6 +518,32 @@ module VCloudSdk
       self
     end
 
+    ############################################################################################################
+    # Set up the options for the OS of the VM
+    # All params are optional.
+    # @param   customization     [Hash]  The parameters of the guestOS customization. All parameters are 
+    #                                    optional.
+    #                             :computer_name      [String] The name of the computer
+    #                             :admin_pass         [String] The password for the Administrator/root user
+    #                             :reset_pass         [String] Values "true" or "false". To reset password.
+    #                             :custom_script      [String] The customization script (Max 49,000 characters)
+    #                          
+    # @return [VM]
+    ############################################################################################################
+    def customization(customization)
+      link    = entity_xml.guest_customization_link
+      payload = connection.get(link)
+      #puts payload
+      payload = add_customization(payload,customization)    
+    
+      #puts payload
+      task = connection.put(link,
+                            payload,
+                            Xml::MEDIA_TYPE[:GUEST_CUSTOMIZATION_SECTION])
+      monitor_task(task)
+      self
+    end
+
     private
 
     def add_nic_index
@@ -586,6 +614,30 @@ module VCloudSdk
           params.ip_address = ip unless ip.nil?
           params.is_connected = true
       end
+    end
+
+    def add_customization(section, customization)
+#=begin
+      section
+      .tap do |params|
+          params.enable          
+          params.computer_name = customization[:computer_name]
+          params.admin_pass    = customization[:admin_pass] unless customization[:admin_pass].nil?
+          #params.reset_pass    = customization[:reset_pass] unless customization[:reset_pass].nil?
+          params.script        = customization[:custom_script] unless customization[:custom_script].nil?
+        end
+#=end 
+
+=begin
+     Xml::WrapperFactory.create_instance("GuestCustomizationSection", nil, section.doc_namespaces)
+      .tap do |params|
+          #params.href = section.href
+          params.enable(self.id)          
+          params.computer_name = customization[:computer_name]
+          params.admin_pass    = customization[:admin_pass] unless customization[:admin_pass].nil?
+          params.script        = customization[:custom_script] unless customization[:custom_script].nil?
+        end
+=end
     end
 
     def product_section_list_params(properties)

@@ -25,7 +25,7 @@ module VCloudSdk
     # Return the name of the Catalog Item object 
     # @return      [String]  The name of the catalog item
     ############################################################################
-    def name
+    def name      
       entity_xml.entity[:name]
     end
 

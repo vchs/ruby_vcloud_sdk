@@ -50,13 +50,17 @@ module VCloudSdk
                   true).first
       end
 
+      def snapshot_section
+          get_nodes("SnapshotSection").first
+      end
+
       def vdc_link
         get_nodes(XML_TYPE[:LINK],
                   { type: MEDIA_TYPE[:VDC] },
                   true).first
       end
 
-      def vms
+      def vms        
         get_nodes("Vm")
       end
 

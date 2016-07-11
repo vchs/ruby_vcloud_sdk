@@ -12,7 +12,7 @@ module VCloudSdk
       @link = link
     end
 
-    def name
+    def name      
       admin_xml.name
     end
 

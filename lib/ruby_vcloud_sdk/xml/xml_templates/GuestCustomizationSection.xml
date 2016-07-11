@@ -1,1 +1,78 @@
+<!--
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?><ns7:GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/extension/v1" xmlns:ns2="http://www.vmware.com/vcloud/v1" xmlns:ns3="http://schemas.dmtf.org/ovf/envelope/1" xmlns:ns4="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:ns5="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:ns6="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ns7="http://www.vmware.com/vcloud/v1.5" xmlns:ns8="http://schemas.dmtf.org/ovf/environment/1" xmlns:ns9="http://www.vmware.com/vcloud/extension/v1.5" xmlns:ns10="http://www.vmware.com/vcloud/versions" type="" href="" ns3:required="false"><ns3:Info/><ns7:Enabled>false</ns7:Enabled><ns7:ChangeSid>false</ns7:ChangeSid><ns7:VirtualMachineId></ns7:VirtualMachineId><ns7:JoinDomainEnabled>false</ns7:JoinDomainEnabled><ns7:UseOrgSettings>false</ns7:UseOrgSettings><ns7:DomainName></ns7:DomainName><ns7:DomainUserName></ns7:DomainUserName><ns7:DomainUserPassword></ns7:DomainUserPassword><ns7:AdminPasswordEnabled>false</ns7:AdminPasswordEnabled><ns7:AdminPasswordAuto>false</ns7:AdminPasswordAuto><ns7:AdminPassword></ns7:AdminPassword><ns7:ResetPasswordRequired>false</ns7:ResetPasswordRequired><ns7:CustomizationScript></ns7:CustomizationScript><ns7:ComputerName></ns7:ComputerName></ns7:GuestCustomizationSection>
+-->
+<!--
+<?xml version="1.0" encoding="UTF-8"?>
+<GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="" ovf:required="false" xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1.5 http://cloud.nexica.com/api/v1.5/schema/master.xsd">
+	<ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+	<Enabled>false</Enabled>
+	<ChangeSid>false</ChangeSid>
+	<VirtualMachineId></VirtualMachineId>
+	<JoinDomainEnabled>false</JoinDomainEnabled>
+	<UseOrgSettings>false</UseOrgSettings>
+	<DomainName></DomainName>
+	<DomainUserName></DomainUserName>
+	<DomainUserPassword></DomainUserPassword>
+	<AdminPasswordEnabled>false</AdminPasswordEnabled>
+	<AdminPasswordAuto>false</AdminPasswordAuto>
+	<AdminPassword></AdminPassword>
+	<ResetPasswordRequired>false</ResetPasswordRequired>
+	<CustomizationScript></CustomizationScript>
+	<ComputerName></ComputerName>		
+</GuestCustomizationSection>
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<GuestCustomizationSection
+   xmlns="http://www.vmware.com/vcloud/v1.5"
+   xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+   ovf:required="false">
+   <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+   <Enabled>false</Enabled>
+   <ChangeSid>false</ChangeSid>
+   <VirtualMachineId></VirtualMachineId>
+   <JoinDomainEnabled>false</JoinDomainEnabled>
+   <UseOrgSettings>false</UseOrgSettings>
+   <DomainName></DomainName>
+   <DomainUserName></DomainUserName>
+   <DomainUserPassword></DomainUserPassword>
+   <AdminPasswordEnabled>false</AdminPasswordEnabled>
+   <AdminPasswordAuto>true</AdminPasswordAuto>
+   <AdminPassword />
+   <ResetPasswordRequired>false</ResetPasswordRequired>
+   <CustomizationScript />
+   <ComputerName></ComputerName>
+</GuestCustomizationSection>
+<!--
+<GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="https://cloud.nexica.com/api/vApp/vm-2591828a-613d-424c-a101-a8a7d4815330/guestCustomizationSection/" ovf:required="false" xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1.5 http://cloud.nexica.com/api/v1.5/schema/master.xsd">
+    <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+    <Enabled>true</Enabled>
+    <ChangeSid>false</ChangeSid>
+    <VirtualMachineId>2591828a-613d-424c-a101-a8a7d4815330</VirtualMachineId>
+    <JoinDomainEnabled>false</JoinDomainEnabled>
+    <UseOrgSettings>false</UseOrgSettings>
+    <AdminPasswordEnabled>false</AdminPasswordEnabled>
+    <AdminPasswordAuto>true</AdminPasswordAuto>
+    <ResetPasswordRequired>false</ResetPasswordRequired>
+    <ComputerName>PlantillaLi-001</ComputerName>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="https://cloud.nexica.com/api/vApp/vm-2591828a-613d-424c-a101-a8a7d4815330/guestCustomizationSection/"/>
+</GuestCustomizationSection>
+
+<GuestCustomizationSection xmlns="http://www.vmware.com/vcloud/v1.5" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml" href="https://cloud.nexica.com/api/vApp/vm-2591828a-613d-424c-a101-a8a7d4815330/guestCustomizationSection/" ovf:required="false" xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1.5 http://cloud.nexica.com/api/v1.5/schema/master.xsd">
+	<Info/>
+	<Enabled>true</Enabled>
+	<ChangeSid>false</ChangeSid>
+	<VirtualMachineId>2591828a-613d-424c-a101-a8a7d4815330</VirtualMachineId>
+	<JoinDomainEnabled>false</JoinDomainEnabled>
+	<UseOrgSettings>false</UseOrgSettings>
+	<DomainName/>
+	<DomainUserName/>
+	<DomainUserPassword/>
+	<AdminPasswordEnabled>true</AdminPasswordEnabled>
+	<AdminPasswordAuto>false</AdminPasswordAuto>
+	<AdminPassword>root</AdminPassword>
+	<ResetPasswordRequired>false</ResetPasswordRequired>
+	<CustomizationScript>if '%1%' == 'postcustomization' { net user ois password /ADD }</CustomizationScript>
+	<ComputerName>hola</ComputerName>
+</GuestCustomizationSection>
+
+-->

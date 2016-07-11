@@ -92,7 +92,7 @@ module VCloudSdk
     # Returns array of Vm objects associated with vApp
     # @return [VApp] an array of vApp
     ####################################################################################
-    def vms
+    def vms      
       entity_xml.vms.map do |vm|
         VCloudSdk::VM.new(@session, vm.href)
       end
@@ -197,7 +197,8 @@ module VCloudSdk
     ####################################################################################
     # Deletes the network identified with name.
     # To delete the network, it cannot be used by any VM's.
-    # @return [VApp] The vApp.
+    # @param  name [String] The name of the network.
+    # @return      [VApp]   The vApp.
     ####################################################################################
     def delete_network_by_name(name)
       unless list_networks.any? { |network_name| network_name == name }
@@ -222,42 +223,47 @@ module VCloudSdk
     end
 
     ####################################################################################
-    # Creates a snapshot of the vApp.
-    # @param snapshot_name  [String] Optional.The name of the snapshot
+    # Creates a snapshot of the vApp. There is only one snapshot. It will replace any 
+    # existing snapshot      
+    #  @param snapshot_name  [Hash] Optional.The options of the snapshot
+    #                              :name            [String]  The name of snapshot
+    #                              :description     [String]  The snapshot's description
+    #  @return               [VApp]    The vApp
     ####################################################################################
-    def create_snapshot(snapshot_name)
-      new_snapshot_name = snapshot_name.nil? ? "#{name} Snapshot" : snapshot_name    
-      options = {
-        :name => new_snapshot_name,
-        :description => "Snapshot of vApp #{name}"
-      }
+    def create_snapshot(snapshot_hash=nil)
+      new_snapshot_name = snapshot_hash.nil? ? "#{name} Snapshot" : snapshot_hash[:name]    
+     
       target = entity_xml          
       create_snapshot_link = target.create_snapshot_link      
-      params = Xml::WrapperFactory.create_instance("CreateSnapshotParams")
+      params = Xml::WrapperFactory.create_instance("CreateSnapshotParams")      
 
       Config.logger.info "Creating a snapshot on vApp #{name}."      
       task = connection.post(target.create_snapshot_link.href,params)      
       monitor_task(task)
       Config.logger.error "vApp #{name} has created a snapshot"
+      self
     end
 
     ####################################################################################
-    # Deletes ALL the snapshots of the vApp.
+    # Delete the current snapshot of the vApp.
+    #  @return      [VApp]    The vApp
     ####################################################################################
     def remove_snapshot
       target = entity_xml
       remove_snapshot_link = target.remove_snapshot_link
 
-      Config.logger.info "Removing all snapshots on vApp #{name}."
+      Config.logger.info "Removing the snapshot on vApp #{name}."
       task = connection.post(target.remove_snapshot_link.href,nil)
       monitor_task(task)
-      Config.logger.error "vApp #{name} has removed all snapshots"
+      Config.logger.error "vApp #{name} has removed the current snapshot"
+      self
     end
 
     ####################################################################################
-    # Revert the LAST snapshot created in the vApp.
+    # Revert the snapshot created in the vApp.
+    #  @return      [VApp]    The vApp
     ####################################################################################
-    def revert_snapshot
+    def revert_snapshot      
       target = entity_xml
       revert_snapshot_link = target.revert_snapshot_link
       
@@ -265,6 +271,20 @@ module VCloudSdk
       task = connection.post(target.revert_snapshot_link.href,nil)
       monitor_task(task)
       Config.logger.error "vApp #{name} has reverted a snapshot"
+    end
+
+    ####################################################################################
+    # Return the snapshot info in the vApp.
+    #  @return      [String]    Info of the Snapshot.
+    #               [False]     If no snapshot has been created in the vApp.
+    ####################################################################################
+    def snapshot_info
+        info = entity_xml.snapshot_section.get_nodes("Snapshot")        
+        if info != []                   
+          return info
+        else 
+          return false
+        end
     end
 
     private

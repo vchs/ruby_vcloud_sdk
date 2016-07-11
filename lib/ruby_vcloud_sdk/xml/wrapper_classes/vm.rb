@@ -60,16 +60,13 @@ module VCloudSdk
           get_nodes("VMWareTools").first["version"]
       end
 
-      def ip_address
-        #puts get_nodes("IpAddress").first.content
-        #puts get_nodes("NetworkConnection")
+      def ip_address       
         ips = []
         get_nodes("NetworkConnection").each do |ip|          
           ips << ip.ip_address
           end
-        ips.pop if ips.length > 1 #elimina l'ultim element, que es un nil, sempre i quan tingui mes d'una ip
+        #ips.pop if ips.length > 1 #elimina l'ultim element, que es un nil, sempre i quan tingui mes d'una ip
         return ips
-        #get_nodes("IpAddress").first.content if !get_nodes("IpAddress").first.nil?
       end
 
       def reconfigure_link
@@ -88,6 +85,10 @@ module VCloudSdk
         get_nodes(XML_TYPE[:LINK],
                   { rel: "installVmwareTools" },
                   true).first
+      end
+
+      def guest_customization_link
+         get_nodes("GuestCustomizationSection").first["href"]
       end
 
       def
@@ -119,6 +120,10 @@ module VCloudSdk
 
       def product_section
         get_nodes("ProductSection", nil, true, OVF).first
+      end
+
+      def guest_customization_section
+        get_nodes("GuestCustomizationSection").first
       end
 
       # hardware modification methods
