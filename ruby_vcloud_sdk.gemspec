@@ -1,16 +1,17 @@
 # -*- encoding: utf-8 -*-
 # Copyright (c) 2009-2012 VMware, Inc.
+#Copyright 2016-2016, vCloud Driver Project, CSUC 
 
 Gem::Specification.new do |s|
-  s.name         = "ruby_vcloud_sdk"
-  s.version      = "0.7.3"
+  s.name         = "vcloudSDK"
+  s.version      = "0.7.4"
   s.platform     = Gem::Platform::RUBY
   s.summary      = "BOSH vCloud API client"
   s.description  = "BOSH vCloud API client\n#{`git rev-parse HEAD`[0, 6]}"
-  s.author       = "VMware"
-  s.homepage     = 'https://github.com/vchs/ruby_vcloud_sdk'
+  s.author       = "CSUC"
+  s.homepage     = 'https://www.csuc.cat'
   s.license      = 'Apache 2.0'
-  s.email        = "support@cloudfoundry.com"
+  s.email        = "ois@csuc.cat"
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.3")
 
   s.files        = `git ls-files -- lib/*`.split("\n") + %w(README.md)

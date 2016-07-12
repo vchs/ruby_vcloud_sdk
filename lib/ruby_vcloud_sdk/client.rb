@@ -17,7 +17,7 @@ module VCloudSdk
 
     public :find_vdc_by_name, :catalogs, :list_catalogs,
            :catalog_exists?, :find_catalog_by_name,
-           :vdc_exists?
+           :vdc_exists?, :vdcs
 
     ##############################################################################
     # Initializes the Client and creates a Session to vCloud API. 

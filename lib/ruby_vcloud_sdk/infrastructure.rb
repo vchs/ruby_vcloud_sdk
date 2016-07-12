@@ -20,6 +20,10 @@ module VCloudSdk
       end
     end
 
+    def vdcs
+       @session.org.vdcs
+    end
+
     def find_network_by_name(name)
       @session.org.networks.each do |network_link|
         if network_link.name == name
