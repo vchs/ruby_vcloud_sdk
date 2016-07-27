@@ -153,8 +153,8 @@ module VCloudSdk
     ###############################################################################################
     def reconfigure(options)     
 
-      payload = entity_xml
-      payload.name = options[:name] if !options[:name].nil?
+      payload             = entity_xml
+      payload.name        = options[:name] if !options[:name].nil?
       payload.description = options[:description] if !options[:name].nil?
       payload.change_cpu_count(options[:vcpu]) if !options[:name].nil?
       payload.change_memory(options[:memory]) if !options[:name].nil?
@@ -431,13 +431,13 @@ module VCloudSdk
     end
 
     def vmtools?  
-        #puts entity_xml     
+        puts entity_xml     
        !entity_xml.vm_tools.nil?   
     end
 
     def install_vmtools
       Config.logger.info(
-        "Installing VMware tools on #{name} ...")
+        "Mounting VMware tools on #{name} ...")
       task = connection.post(entity_xml.install_vmtools_link.href,nil)
       monitor_task(task)
       self 
@@ -650,4 +650,5 @@ module VCloudSdk
 
     BYTES_PER_MEGABYTE = 1_048_576 # 1048576 = 1024 * 1024 = 2^20
   end
+  #################################################################################################
 end

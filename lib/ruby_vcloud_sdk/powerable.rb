@@ -197,11 +197,13 @@ module VCloudSdk
     end
 
     def undeploy(target, class_name)
-      params = Xml::WrapperFactory.create_instance("UndeployVAppParams") # Even for VM it's called UndeployVappParams
+      params = Xml::WrapperFactory.create_instance("UndeployVAppParams")
+      # Even for VM it's called UndeployVappParams
       task = connection.post(target.undeploy_link.href, params)
       task = monitor_task(task, @session.time_limit[:undeploy])
       Config.logger.info "#{class_name} #{target.name} is undeployed."
       task
     end
   end
+  ###############################################################################################
 end

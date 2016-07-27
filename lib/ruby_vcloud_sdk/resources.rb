@@ -2,14 +2,16 @@ module VCloudSdk
 
   ################################################################################
   # This class represents the resource of the Virtual Data Center.
+  # CPU and MEMORY are quantified in MHZ and MB.
   ################################################################################
   class Resources
     attr_reader :cpu_available, :cpu_limit, :cpu_used 
     attr_reader :memory_available, :memory_limit, :memory_used 
+
     ##############################################################################
     # Initialize a Resource for the VDC. 
-    # @param cpu       [CPU]    The CPU resource of the VDC.
-    # @param memory    [Memory] The Memory resource of the VDC.
+    # @param cpu       [CPU]    The CPU resource in Mhz of the VDC.
+    # @param memory    [Memory] The Memory resource in MB of the VDC.
     ##############################################################################
     def initialize(cpu,memory)
       @cpu_available 	  	= cpu.available_cores
@@ -21,4 +23,5 @@ module VCloudSdk
       @memory_used 		  	= memory.limit_mb.to_i - memory.available_mb.to_i
     end
   end
+  ################################################################################
 end

@@ -56,8 +56,10 @@ module VCloudSdk
             get_nodes("Description",nil,false,OVF).first.content
       end
 
-      def vm_tools               
-          get_nodes("VMWareTools").first["version"]
+      def vm_tools     
+          tools = get_nodes("VMWareTools")
+          return tools.first["version"] if !tools.empty?
+          return nil              
       end
 
       def ip_address       

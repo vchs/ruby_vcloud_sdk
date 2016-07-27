@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 # Copyright (c) 2009-2012 VMware, Inc.
-#Copyright 2016-2016, vCloud Driver Project, CSUC 
+# Copyright 2016-2016, vCloud Driver Project, CSUC 
 
 Gem::Specification.new do |s|
-  s.name         = "vcloudSDK"
-  s.version      = "0.7.4"
+  s.name         = "ruby_vcloud_sdk"
+  s.version      = "0.7.5"
+  s.date         = Date.today.to_s
   s.platform     = Gem::Platform::RUBY
   s.summary      = "BOSH vCloud API client"
   s.description  = "BOSH vCloud API client\n#{`git rev-parse HEAD`[0, 6]}"
@@ -19,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "builder", ">= 3.1"
   s.add_dependency "httpclient", ">= 2.4.0"
-  s.add_dependency "rest-client", ">= 1.6.7"
+  s.add_dependency "rest-client", "<= 1.8.0"
   s.add_dependency "nokogiri", ">= 1.5.6"
   s.add_dependency "netaddr"
 end

@@ -14,6 +14,21 @@ module VCloudSdk
       @link = link
     end
 
+    def add_fw_rule(rules)
+      link    = entity_xml.configure_services_link
+      payload  = entity_xml.add_rule(rules)
+
+      #task = connection.post(link,
+      #                      payload,
+      #                      Xml::ADMIN_MEDIA_TYPE[:EDGE_SERVICES_CONFIG])
+      #monitor_task(task)
+      #self
+    end
+
+    def ent
+      entity_xml
+    end
+    
     def public_ip_ranges
       uplink_gateway_interface = entity_xml
                                    .gateway_interfaces

@@ -207,6 +207,7 @@ module VCloudSdk
       :ADMIN_NETWORK => "application/vnd.vmware.admin.network+xml",
       :NETWORK => "application/vnd.vmware.vcloud.network+xml",
       :NETWORK_POOL => "application/vnd.vmware.admin.networkPool+xml",
+      :EDGE_SERVICES_CONFIG => "application/vnd.vmware.admin.edgeGatewayServiceConfiguration+xml",
       :CATALOG_PUBLISH =>
         "application/vnd.vmware.admin.publishCatalogParams+xml",
       :OWNER => "application/vnd.vmware.vcloud.owner+xml",
