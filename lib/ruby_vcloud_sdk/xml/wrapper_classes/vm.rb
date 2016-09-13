@@ -67,8 +67,8 @@ module VCloudSdk
         get_nodes("NetworkConnection").each do |ip|          
           ips << ip.ip_address
           end
-        #ips.pop if ips.length > 1 #elimina l'ultim element, que es un nil, sempre i quan tingui mes d'una ip
-        return ips
+        return ips if !ips.empty?
+        return nil
       end
 
       def reconfigure_link

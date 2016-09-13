@@ -30,7 +30,8 @@ module VCloudSdk
     # Returns the identifier of the VM (uuid) 
     # @return      [String]  The identifier of the VM
     ###############################################################################################
-    def id      
+    def id
+      puts entity_xml      
       id = entity_xml.urn
       id.split(":")[3]      
     end
@@ -211,6 +212,10 @@ module VCloudSdk
       self
     end
 
+    ###############################################################################################
+    # Returns the IP addresses assigned to the VM or nil.
+    # @return   [Array or nil]  The IP addresses or nil.
+    ###############################################################################################
     def ip_address       
       entity_xml.ip_address
     end
@@ -617,7 +622,6 @@ module VCloudSdk
     end
 
     def add_customization(section, customization)
-#=begin
       section
       .tap do |params|
           params.enable          
@@ -626,18 +630,6 @@ module VCloudSdk
           #params.reset_pass    = customization[:reset_pass] unless customization[:reset_pass].nil?
           params.script        = customization[:custom_script] unless customization[:custom_script].nil?
         end
-#=end 
-
-=begin
-     Xml::WrapperFactory.create_instance("GuestCustomizationSection", nil, section.doc_namespaces)
-      .tap do |params|
-          #params.href = section.href
-          params.enable(self.id)          
-          params.computer_name = customization[:computer_name]
-          params.admin_pass    = customization[:admin_pass] unless customization[:admin_pass].nil?
-          params.script        = customization[:custom_script] unless customization[:custom_script].nil?
-        end
-=end
     end
 
     def product_section_list_params(properties)

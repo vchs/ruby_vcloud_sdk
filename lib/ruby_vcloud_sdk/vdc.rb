@@ -117,9 +117,9 @@ module VCloudSdk
     # Returns the vApp identified by uuid.
     # @return         [VApp]  The vApp hosted in VDC.
     #############################################################################################
-    def find_vapp_by_id(uuid)      
-      entity_xml.vapps.each do |vapp_link|              
-        if vapp_link.href.split("/")[5] == "vapp-#{uuid}"          
+    def find_vapp_by_id(uuid)   
+      entity_xml.vapps.each do |vapp_link|                     
+        if vapp_link.href.split("/")[5] == "vapp-#{uuid}"        
           return VCloudSdk::VApp.new(@session, vapp_link)
         end
       end

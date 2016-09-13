@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FirewallRule xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Id></Id>
+    <IsEnabled></IsEnabled>
+    <MatchOnTranslate>false</MatchOnTranslate>
+    <Description></Description>
+    <Policy>allow</Policy>
+    <Protocols>
+        <Tcp>true</Tcp>
+    </Protocols>
+    <Port></Port>
+    <DestinationPortRange></DestinationPortRange>
+    <DestinationIp></DestinationIp>
+    <SourcePort></SourcePort>
+    <SourcePortRange></SourcePortRange>
+    <SourceIp></SourceIp>
+    <EnableLogging>false</EnableLogging>
+</FirewallRule>
