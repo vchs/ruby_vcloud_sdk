@@ -30,8 +30,7 @@ module VCloudSdk
     # Returns the identifier of the VM (uuid) 
     # @return      [String]  The identifier of the VM
     ###############################################################################################
-    def id
-      puts entity_xml      
+    def id    
       id = entity_xml.urn
       id.split(":")[3]      
     end
@@ -146,6 +145,7 @@ module VCloudSdk
     #                       :nics         [Array]   Array of Hashes representing the nics 
     #                                              to attach to VM
     #                                       :network_name [String] The network to attach nic
+    #                                       :ip           [String] Optional. The IP of the nic
     #                                       :mac          [String] Optional. The MAC of the nic
     #                       :disks        [Array]   Array of Hases representing the disks to 
     #                                              attach to VM                                                   
@@ -159,6 +159,8 @@ module VCloudSdk
       payload.description = options[:description] if !options[:name].nil?
       payload.change_cpu_count(options[:vcpu]) if !options[:name].nil?
       payload.change_memory(options[:memory]) if !options[:name].nil?
+
+      nic_index = add_nic_index
     
       if options[:nics] !=[]
         #ADD NICS
@@ -166,12 +168,18 @@ module VCloudSdk
 
             mac_address = nic[:mac]
 
-            if !mac_address or (mac_address and !find_nic_by_mac(mac_address)) ###NOMES S'AFEGEIX NIC NI NO ESTÀ JA AFEGIDA
+            if !mac_address or (mac_address and !find_nic_by_mac(mac_address))
               
-              nic_index = add_nic_index
               network_name = nic[:network_name]
               ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL]
-              ip = ""           
+
+              ip = ""
+
+              if !nic[:ip].nil?
+                ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:MANUAL] 
+                ip = nic[:ip]
+              end
+                        
 
               # Add Network to vapp
               vapp.add_network_by_name(network_name) if !vapp.list_networks.include? "#{network_name}"
@@ -193,7 +201,8 @@ module VCloudSdk
                 .network_connection_section
                 .network_connections.last
                 .mac_address = mac_address
-              end              
+              end
+              nic_index = nic_index + 1  
             end
         }
       end
@@ -435,8 +444,7 @@ module VCloudSdk
         entity_xml.vm_tools
     end
 
-    def vmtools?  
-        puts entity_xml     
+    def vmtools?    
        !entity_xml.vm_tools.nil?   
     end
 
@@ -450,7 +458,6 @@ module VCloudSdk
    
 
     def product_section_properties
-      #puts entity_xml
       product_section = entity_xml.product_section
       return [] if product_section.nil?
 
@@ -538,10 +545,9 @@ module VCloudSdk
     def customization(customization)
       link    = entity_xml.guest_customization_link
       payload = connection.get(link)
-      #puts payload
+  
       payload = add_customization(payload,customization)    
     
-      #puts payload
       task = connection.put(link,
                             payload,
                             Xml::MEDIA_TYPE[:GUEST_CUSTOMIZATION_SECTION])
