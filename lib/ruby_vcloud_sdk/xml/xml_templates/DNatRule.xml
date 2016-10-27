@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NatRule xmlns="http://www.vmware.com/vcloud/v1.5">
+	<Description></Description>
+    <RuleType></RuleType>
+    <IsEnabled></IsEnabled>
+    <Id></Id>
+    <GatewayNatRule>
+        <Interface type="" name="" href=""/>
+        <OriginalIp></OriginalIp>
+        <OriginalPort></OriginalPort>
+        <TranslatedIp></TranslatedIp>
+        <TranslatedPort></TranslatedPort>
+        <Protocol></Protocol>
+    </GatewayNatRule>
+</NatRule>

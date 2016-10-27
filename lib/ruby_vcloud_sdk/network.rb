@@ -37,7 +37,15 @@ module VCloudSdk
     def description
       entity_xml.description
     end
-    
+
+    def gateway
+      entity_xml.gateway
+    end
+
+    def netmask
+      entity_xml.netmask
+    end
+
     ####################################################################################
     # Returns the fence mode of the Network.
     # @return      [String]  The fence mode of the Network.
@@ -51,7 +59,6 @@ module VCloudSdk
     # @return      [String]  The vCloud link of the Network.
     ####################################################################################
     def href
-      #puts entity_xml
       @link
     end
 

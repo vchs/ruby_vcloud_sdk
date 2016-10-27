@@ -1,10 +1,8 @@
 # -*- encoding: utf-8 -*-
-# Copyright (c) 2009-2012 VMware, Inc.
-# Copyright 2016-2016, vCloud Driver Project, CSUC 
 
 Gem::Specification.new do |s|
   s.name         = "ruby_vcloud_sdk"
-  s.version      = "0.7.5"
+  s.version      = "0.7.7"
   s.date         = Date.today.to_s
   s.platform     = Gem::Platform::RUBY
   s.summary      = "BOSH vCloud API client"

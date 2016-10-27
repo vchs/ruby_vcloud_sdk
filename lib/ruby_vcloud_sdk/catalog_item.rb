@@ -58,8 +58,12 @@ module VCloudSdk
     # Return the type of the Catalog Item object. It can be: 
     # @return      [String]  The type of the catalog item
     ############################################################################
-    def type
+    def type      
       entity_xml.entity[:type]
+    end
+
+    def size
+      entity_xml.size   
     end
 
     ############################################################################

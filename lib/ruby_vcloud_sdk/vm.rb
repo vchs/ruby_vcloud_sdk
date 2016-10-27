@@ -159,16 +159,15 @@ module VCloudSdk
       payload.description = options[:description] if !options[:name].nil?
       payload.change_cpu_count(options[:vcpu]) if !options[:name].nil?
       payload.change_memory(options[:memory]) if !options[:name].nil?
-
       nic_index = add_nic_index
-    
+
       if options[:nics] !=[]
         #ADD NICS
         options[:nics].each { |nic|
 
             mac_address = nic[:mac]
 
-            if !mac_address or (mac_address and !find_nic_by_mac(mac_address))
+            if !mac_address or (mac_address and !find_nic_by_mac(mac_address))              
               
               network_name = nic[:network_name]
               ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL]
@@ -207,13 +206,22 @@ module VCloudSdk
         }
       end
 
-        #DELETE NICS
-        nics.each{ |nc|
-          if options[:nic].nil? or !options[:nic][:mac].include? "#{nc.mac_address}"
-              payload.delete_nics(nc)
+      #DELETE NICS
+      macs = []
+      options[:nics].each do |nic|
+        macs.push(nic[:mac])
+      end   
+
+      if macs.empty?
+        payload.delete_nics(*nics)
+      else
+        nics.each do |nc| 
+          options[:nics].each do |nic|         
+            payload.delete_nics(nc) if !macs.include? "#{nc.mac_address}"                      
           end
-        }
-      
+        end
+      end
+
       task = connection.post(payload.reconfigure_link.href,
                              payload,
                              Xml::MEDIA_TYPE[:VM])
@@ -291,7 +299,7 @@ module VCloudSdk
     end
 
     ###############################################################################################
-    # Attaches a disk to VM.
+    # Attaches an independent disk to VM.
     # @param   disk     [Disk]  The disk object to attach.
     # @throw
     ###############################################################################################
@@ -446,6 +454,18 @@ module VCloudSdk
 
     def vmtools?    
        !entity_xml.vm_tools.nil?   
+    end
+
+    def acquire_VMRC_ticket
+
+        fail(CloudError,
+           "The VM must be powered on") if self.status != "POWERED_ON"
+
+        Config.logger.info(
+          "Obtaining VMware VMware Remote Console Ticket on #{name} ...")
+        task = connection.post(entity_xml.vmrc_ticket_link.href,nil)
+        task = task.nil? ? nil : task.content                
+       
     end
 
     def install_vmtools
@@ -631,9 +651,8 @@ module VCloudSdk
       section
       .tap do |params|
           params.enable          
-          params.computer_name = customization[:computer_name]
+          params.computer_name = customization[:computer_name] unless customization[:computer_name].nil?
           params.admin_pass    = customization[:admin_pass] unless customization[:admin_pass].nil?
-          #params.reset_pass    = customization[:reset_pass] unless customization[:reset_pass].nil?
           params.script        = customization[:custom_script] unless customization[:custom_script].nil?
         end
     end

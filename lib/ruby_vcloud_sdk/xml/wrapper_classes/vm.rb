@@ -62,6 +62,12 @@ module VCloudSdk
           return nil              
       end
 
+      def vmrc_ticket_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "screen:acquireTicket" },
+                  true).first
+      end
+
       def ip_address       
         ips = []
         get_nodes("NetworkConnection").each do |ip|          

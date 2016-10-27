@@ -43,8 +43,8 @@ module VCloudSdk
     ############################################################################
     def add_fw_rules(rules)
       link      = entity_xml.configure_services_link
-      payload   = entity_xml.add_rules(rules)
-
+      payload   = entity_xml.add_fw_rules(rules)
+         
       task      = connection.post(link,
                             payload.configure_services,
                             Xml::ADMIN_MEDIA_TYPE[:EDGE_SERVICES_CONFIG])
@@ -59,7 +59,7 @@ module VCloudSdk
     ############################################################################
     def remove_fw_rules(ips)
       link     = entity_xml.configure_services_link
-      payload  = entity_xml.remove_rules(ips)
+      payload  = entity_xml.remove_fw_rules(ips)
 
       task    = connection.post(link,
                             payload.configure_services,
@@ -68,8 +68,46 @@ module VCloudSdk
       self
     end
 
-    def ent
-      entity_xml
+    ############################################################################
+    # Add Nat rules to the Edge Gateyay.
+    # @param rules [Array]   Array of Hashes representing the rules to be added.
+    #                      :description     [String] Description about the rule.
+    #                      :rule_type       [String] "SNAT" or "DNAT". 
+    #                      :enabled         [String] "true" or "false".
+    #                      :interface       [String] The name of the uplink network.
+    #                      :original_ip     [String] The original IP or "Any".
+    #                      :original_port   [String] The translated IP,"Any" or range ("startIP"-"finalIP").
+    #                      :translated_ip   [String] The destination IP or "Any".
+    #                      :translated_port [String] 
+    #                      :protocol        [String] 
+    #
+    # @return      [EdgeGateway]  The Edge Gateway object.
+    ############################################################################    
+    def add_nat_rules(rules)
+      link      = entity_xml.configure_services_link
+      payload   = entity_xml.add_nat_rules(rules)
+      
+      task      = connection.post(link,
+                            payload.configure_services,
+                            Xml::ADMIN_MEDIA_TYPE[:EDGE_SERVICES_CONFIG])
+      monitor_task(task)
+      self      
+    end
+
+    ############################################################################
+    # Remove the Nat rules with the VM IPs passed as an argument 
+    # @param ips [Array] Array of IPs addresses                    
+    # @return    [EdgeGateway]  The Edge Gateway object.
+    ############################################################################
+    def remove_nat_rules(ips)
+      link     = entity_xml.configure_services_link
+      payload  = entity_xml.remove_nat_rules(ips)
+
+      task    = connection.post(link,
+                            payload.configure_services,
+                            Xml::ADMIN_MEDIA_TYPE[:EDGE_SERVICES_CONFIG])
+      monitor_task(task)
+      self
     end
     
     def public_ip_ranges

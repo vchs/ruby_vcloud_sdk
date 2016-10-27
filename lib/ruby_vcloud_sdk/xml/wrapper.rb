@@ -122,6 +122,10 @@ module VCloudSdk
       def type=(type)
         @root["type"] = type
       end
+      
+      def size
+        @root["size"]
+      end
 
       def remove_link
         get_nodes(XML_TYPE[:LINK],

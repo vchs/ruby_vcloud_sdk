@@ -202,7 +202,7 @@ module VCloudSdk
 
     #############################################################################################
     # Returns the Disks identified by name. 
-    # @return         [Disk]  The Disk or Disks created in VDC.
+    # @return         [Array]  The Disk or Disks created in VDC.
     #############################################################################################
     def find_disks_by_name(name)
       disks = entity_xml
