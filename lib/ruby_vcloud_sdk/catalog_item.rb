@@ -1,5 +1,6 @@
 require_relative "session"
 require_relative "infrastructure"
+require_relative "template_vapp"
 
 module VCloudSdk
   
@@ -72,6 +73,10 @@ module VCloudSdk
     ############################################################################
     def href
       entity_xml.entity[:href]
+    end
+
+    def vapp_template      
+      VCloudSdk::TemplateVapp.new(@session, entity_xml.entity[:href])      
     end
 
     ############################################################################

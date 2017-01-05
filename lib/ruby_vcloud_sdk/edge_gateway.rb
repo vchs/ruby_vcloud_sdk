@@ -67,7 +67,9 @@ module VCloudSdk
       monitor_task(task)
       self
     end
-
+    def ent
+      entity_xml
+    end
     ############################################################################
     # Add Nat rules to the Edge Gateyay.
     # @param rules [Array]   Array of Hashes representing the rules to be added.
@@ -110,6 +112,31 @@ module VCloudSdk
       self
     end
     
+    def public_net_name
+      uplink_gateway_interface = entity_xml
+                                   .gateway_interfaces
+                                   .find { |g| g.interface_type == "uplink" }
+      return uplink_gateway_interface.get_nodes("Name").first.content
+           
+    end
+
+    def public_ip_net
+      uplink_gateway_interface = entity_xml
+                                   .gateway_interfaces
+                                   .find { |g| g.interface_type == "uplink" }
+
+      ip_address = uplink_gateway_interface.get_nodes("IpAddress").first.content.split(".")
+      netmask = uplink_gateway_interface.get_nodes("Netmask").first.content.split(".")
+     
+      ip_net = ""
+      ip_net << (ip_address[0].to_i & netmask[0].to_i).to_s << "."
+      ip_net << (ip_address[1].to_i & netmask[1].to_i).to_s << "."
+      ip_net << (ip_address[2].to_i & netmask[2].to_i).to_s << "."
+      ip_net << (ip_address[3].to_i & netmask[3].to_i).to_s
+
+      return ip_net
+    end 
+
     def public_ip_ranges
       uplink_gateway_interface = entity_xml
                                    .gateway_interfaces

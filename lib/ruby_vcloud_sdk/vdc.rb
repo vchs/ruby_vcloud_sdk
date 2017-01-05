@@ -34,7 +34,7 @@ module VCloudSdk
       @session = session
       @link = link
     end
-
+    
     #############################################################################################
     # Returns the storage profiles assoaciated with the Virtual Data Center. 
     # @return         [VdcStorageProfile]  The storafe profiles of de VDC.

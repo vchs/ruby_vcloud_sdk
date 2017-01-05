@@ -36,7 +36,6 @@ module VCloudSdk
     # @return         [VDC]  The array of VDC.
     #############################################################################################
     def vdcs
-       #@session.org.vdcs
         @session.org.vdcs.map do |vdc_link|
         VCloudSdk::VDC.new(@session, vdc_link)
       end

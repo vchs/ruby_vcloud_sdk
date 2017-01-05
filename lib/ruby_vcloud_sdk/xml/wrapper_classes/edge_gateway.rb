@@ -21,9 +21,14 @@ module VCloudSdk
                 params.ports(rule[:port_src],rule[:port_dest])
                 params.action = rule[:action]
                 params.enabled = rule[:enabled]            
-            end
-            nm = get_nodes("FirewallRule").last.node
-            nm.after(fw_rule.node) 
+            end            
+            if (!get_nodes("FirewallRule").empty?)
+              nm = get_nodes("FirewallRule").last.node
+              nm.after(fw_rule.node)
+            else
+              nm = get_nodes("FirewallService").first.node
+              nm.add_child(fw_rule.node)
+            end        
         end
         self
       end
@@ -52,8 +57,13 @@ module VCloudSdk
                   params.original_ip      = rule[:original_ip]       
                   params.translated_ip    = rule[:translated_ip]                  
                 end
-                nm = get_nodes("NatRule").last.node         
-                nm.after(snat_rule.node)
+                if (!get_nodes("NatRule").empty?)
+                  nm = get_nodes("NatRule").last.node
+                  nm.after(snat_rule.node)
+                else
+                  nm = get_nodes("NatService").first.node
+                  nm.add_child(snat_rule.node)
+                end       
 
             elsif rule[:rule_type] == "DNAT"
                 dnat_rule = Xml::WrapperFactory.create_instance("DNatRule").tap do |params|
@@ -68,8 +78,14 @@ module VCloudSdk
                   params.translated_port   = rule[:translated_port]
                   params.protocol         = rule[:protocol]      
                 end
-                nm = get_nodes("NatRule").last.node         
-                nm.after(dnat_rule.node)
+                if (!get_nodes("NatRule").empty?)
+                  nm = get_nodes("NatRule").last.node
+                  nm.after(dnat_rule.node)
+                else
+                  nm = get_nodes("NatService").first.node
+                  nm.add_child(dnat_rule.node)
+                end         
+                
             end    
         end
         self
@@ -79,7 +95,7 @@ module VCloudSdk
         rules = get_nodes("NatRule")
         rules.each do |rule|
           ips.each do |ip|                     
-              rule.node.remove if rule.original_ip == ip or rule.translated_ip         
+              rule.node.remove if rule.original_ip == ip or rule.translated_ip == ip         
           end
         end
         self     

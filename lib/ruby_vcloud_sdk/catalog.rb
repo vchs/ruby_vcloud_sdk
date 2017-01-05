@@ -151,13 +151,15 @@ module VCloudSdk
     end
 
     def instantiate_vapp_template(template_name, vdc_name, vapp_name,
-        description = nil, disk_locality = nil, network_config = nil)
-      
-      instantiate_vapp_params = create_instantiate_vapp_params(
-          template_name, vapp_name, description, disk_locality, network_config)
-      
-      vdc = find_vdc_by_name vdc_name
+        description = nil, disk_locality = nil, network_config = nil, vm_params = nil)
 
+      catalog_item = find_vapp_template_by_name(template_name)
+      vm_link = catalog_item.vapp_template.vm_link
+
+      instantiate_vapp_params = create_instantiate_vapp_params(
+          template_name, vapp_name, description, disk_locality, network_config,vm_params,vm_link)     
+
+      vdc = find_vdc_by_name vdc_name      
       vapp = connection.post(vdc.instantiate_vapp_template_link,
                              instantiate_vapp_params)
       vapp.running_tasks.each do |task|
@@ -344,7 +346,7 @@ module VCloudSdk
     end
 
     def create_instantiate_vapp_params(template_name,
-        vapp_name, description, disk_locality, network_config)
+        vapp_name, description, disk_locality, network_config,vm_params,vm_link)
 
       source_vapp_template = retrieve_vapp_template_xml_node(template_name)
 
@@ -360,6 +362,9 @@ module VCloudSdk
       instantiate_vapp_params.linked_clone = false
       instantiate_vapp_params.set_locality = locality_spec(
           source_vapp_template, disk_locality)
+     
+      disk = vm_params.first
+      instantiate_vapp_params.disk_size(disk[:id],disk[:size],vm_link)
 
       instantiate_vapp_params
     end

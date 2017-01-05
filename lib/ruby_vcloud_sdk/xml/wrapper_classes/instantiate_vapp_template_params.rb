@@ -27,6 +27,15 @@ module VCloudSdk
         @root["linkedClone"] = value.to_s
       end
 
+      def disk_size(id,size,vm_link)
+        return unless id    
+        sourced = Xml::WrapperFactory
+        .create_instance("SourcedVmInstantiationParams", nil, nil)
+        sourced.resize_disk(id,size,vm_link)
+        nm = get_nodes("IsSourceDelete").first.node
+        nm.after(sourced.node)
+      end
+
       def source=(src)
         source_node = get_nodes("Source").first
         source_node["href"] = src["href"]

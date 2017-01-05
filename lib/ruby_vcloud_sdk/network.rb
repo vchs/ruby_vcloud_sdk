@@ -29,6 +29,10 @@ module VCloudSdk
     def id      
       @link.href.split("/")[5]      
     end
+
+    def ent
+      entity_xml
+    end
     
     ####################################################################################
     # Returns the description of the Network.

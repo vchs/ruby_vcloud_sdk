@@ -26,6 +26,7 @@ module VCloudSdk
         :CONNECTION => "Connection",
         :PARENT => "Parent",
         :ELEMENT_NAME => "ElementName",
+        :DESCRIPTION => "Description",
         :ALLOCATION_UNITS => "AllocationUnits",
         :VIRTUAL_QUANTITY => "VirtualQuantity"
     }

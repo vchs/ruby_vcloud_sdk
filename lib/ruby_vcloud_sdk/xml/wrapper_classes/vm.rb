@@ -76,7 +76,7 @@ module VCloudSdk
         return ips if !ips.empty?
         return nil
       end
-
+      
       def reconfigure_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "reconfigureVm" },
@@ -134,19 +134,37 @@ module VCloudSdk
         get_nodes("GuestCustomizationSection").first
       end
 
+      def hard_disk_exists?(disk_id)
+          hardware_section.hard_disks.each do |disk|
+            return true if disk.disk_id == disk_id
+          end
+          return false
+      end
+
       # hardware modification methods
 
-      def add_hard_disk(capacity, bus_type, bus_sub_type)
+      def add_hard_disk(capacity, bus_type, bus_sub_type,disk_id=nil)
         section = hardware_section
         # Create a RASD item
         new_disk = WrapperFactory
                      .create_instance("Item",
                                       nil,
                                       hardware_section.doc_namespaces)
-        section.add_item(new_disk)
-        # The order matters!
+        section.add_item(new_disk)       
+        # The order matters!    
+        if !disk_id.nil?
+          ap = RASD_TYPES[:ADDRESS_ON_PARENT]
+          new_disk.add_rasd(ap)
+          new_disk.set_rasd(ap,disk_id)          
+        end      
         new_disk.add_rasd(RASD_TYPES[:HOST_RESOURCE])
         new_disk.add_rasd(RASD_TYPES[:INSTANCE_ID])
+        if !disk_id.nil?
+          p = RASD_TYPES[:PARENT]
+          new_disk.add_rasd(p)          
+          new_disk.set_rasd(RASD_TYPES[:PARENT],1)          
+        end
+               
         rt = RASD_TYPES[:RESOURCE_TYPE]
         new_disk.add_rasd(rt)
         new_disk.set_rasd(rt, HARDWARE_TYPE[:HARD_DISK])
@@ -159,6 +177,18 @@ module VCloudSdk
           "busType", VCLOUD_NAMESPACE)] = bus_type
       end
 
+      def modify_hard_disk(name,new_capacity)
+        section = hardware_section
+        disks = section.hard_disks
+        disk  = disks.find do |d|  
+                  d.element_name == name            
+                end                      
+        host_resource = disk.get_rasd(RASD_TYPES[:HOST_RESOURCE])
+        host_resource[disk.create_qualified_name(
+          "capacity", VCLOUD_NAMESPACE)] = new_capacity.to_s                                             
+      end
+
+
       def delete_hard_disk?(disk_name)
         hardware_section.hard_disks.each do |disk|
           if disk.element_name == disk_name
@@ -166,7 +196,16 @@ module VCloudSdk
             return true
           end
         end
+        false
+      end
 
+      def delete_hard_disk_by_id(disk_id)
+        hardware_section.hard_disks.each do |disk|
+          if disk.disk_id == disk_id
+            disk.node.remove
+            return true
+          end
+        end
         false
       end
 

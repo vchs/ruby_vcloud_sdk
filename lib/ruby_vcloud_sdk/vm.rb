@@ -25,7 +25,7 @@ module VCloudSdk
       @session = session
       @link = link
     end
-
+    
     ###############################################################################################
     # Returns the identifier of the VM (uuid) 
     # @return      [String]  The identifier of the VM
@@ -42,7 +42,9 @@ module VCloudSdk
     def href
       @link
     end
-
+    def ent
+      entity_xml
+    end
     ###############################################################################################
     # Returns the memory of the VM 
     # @return      [String]  The memory in MB of the VM
@@ -148,12 +150,13 @@ module VCloudSdk
     #                                       :ip           [String] Optional. The IP of the nic
     #                                       :mac          [String] Optional. The MAC of the nic
     #                       :disks        [Array]   Array of Hases representing the disks to 
-    #                                              attach to VM                                                   
+    #                                              attach to VM
+    #                                        :id          [String] Disk's identifier.
+    #                                        :size        [String] Size of disk in MB.                                         
     #                       :vapp_name    [String] The name of the vApp
     # @return [VM]
     ###############################################################################################
-    def reconfigure(options)     
-
+    def reconfigure(options)           
       payload             = entity_xml
       payload.name        = options[:name] if !options[:name].nil?
       payload.description = options[:description] if !options[:name].nil?
@@ -161,9 +164,10 @@ module VCloudSdk
       payload.change_memory(options[:memory]) if !options[:name].nil?
       nic_index = add_nic_index
 
+      #NETWORK CONFIGURATION
       if options[:nics] !=[]
         #ADD NICS
-        options[:nics].each { |nic|
+        options[:nics].each do |nic|
 
             mac_address = nic[:mac]
 
@@ -203,7 +207,7 @@ module VCloudSdk
               end
               nic_index = nic_index + 1  
             end
-        }
+        end
       end
 
       #DELETE NICS
@@ -220,6 +224,41 @@ module VCloudSdk
             payload.delete_nics(nc) if !macs.include? "#{nc.mac_address}"                      
           end
         end
+      end
+
+      #DISK CONFIGURATION
+
+      if !options[:disks].empty?
+
+          options[:disks].each do |disk|
+
+            capacity = disk[:size].to_i                   
+            fail(CloudError,"Invalid size in MB #{capacity}") if capacity <= 0
+            disk_id = disk[:id]
+            if !payload.hard_disk_exists?(disk_id)                             
+                bus_type = "scsi"                              
+                bus_type = Xml::BUS_TYPE_NAMES[bus_type.downcase]
+                fail(CloudError,"Invalid bus type!") unless bus_type
+
+                bus_sub_type = "lsilogic" 
+                bus_sub_type = Xml::BUS_SUB_TYPE_NAMES[bus_sub_type.downcase]
+                fail(CloudError,"Invalid bus sub type!") unless bus_sub_type            
+            
+                payload.add_hard_disk(capacity.to_s, bus_type, bus_sub_type,disk_id)                
+            end                       
+          end      
+
+      end      
+
+      #DELETE DISKS  
+
+      disks = []
+      options[:disks].each do |disk|
+        disks.push(disk[:id])
+      end
+
+      internal_disks.each do |i_disk|
+        payload.delete_hard_disk_by_id(i_disk.id) if !disks.include?(i_disk.id)
       end
 
       task = connection.post(payload.reconfigure_link.href,
@@ -509,7 +548,8 @@ module VCloudSdk
     def create_internal_disk(
           capacity,
           bus_type = "scsi",
-          bus_sub_type = "lsilogic")
+          bus_sub_type = "lsilogic",
+          disk_id = nil)
 
       fail(CloudError,
            "Invalid size in MB #{capacity}") if capacity <= 0
@@ -527,15 +567,15 @@ module VCloudSdk
         .info "Creating internal disk #{name} of #{capacity}MB."
 
       payload = entity_xml
-      payload.add_hard_disk(capacity, bus_type, bus_sub_type)
+      payload.add_hard_disk(capacity, bus_type, bus_sub_type,disk_id)
 
       task = connection.post(payload.reconfigure_link.href,
                              payload,
-                             Xml::MEDIA_TYPE[:VM])
+                             Xml::MEDIA_TYPE[:VM])      
       monitor_task(task)
       self
     end
-
+    
     def delete_internal_disk_by_name(name)
       payload = entity_xml
 
@@ -555,10 +595,12 @@ module VCloudSdk
     # All params are optional.
     # @param   customization     [Hash]  The parameters of the guestOS customization. All parameters are 
     #                                    optional.
-    #                             :computer_name      [String] The name of the computer
-    #                             :admin_pass         [String] The password for the Administrator/root user
-    #                             :reset_pass         [String] Values "true" or "false". To reset password.
-    #                             :custom_script      [String] The customization script (Max 49,000 characters)
+    #                             :computer_name      [String]  The name of the computer
+    #                             :admin_pass         [String]  The password for the Administrator/root user                             
+    #                             :custom_script      [String]  The customization script (Max 49,000 characters)
+    #                             :sid                [Boolean] Applicable for Windows VMs and will run Sysprep 
+    #                                                           to change Windows SID.
+    #                             :auto_password      [Boolean] Generates an automatic Administrator's password.
     #                          
     # @return [VM]
     ############################################################################################################
@@ -654,6 +696,8 @@ module VCloudSdk
           params.computer_name = customization[:computer_name] unless customization[:computer_name].nil?
           params.admin_pass    = customization[:admin_pass] unless customization[:admin_pass].nil?
           params.script        = customization[:custom_script] unless customization[:custom_script].nil?
+          params.change_sid    = customization[:sid]
+          params.auto_password = customization[:auto_password] unless customization[:auto_password].nil? or !customization[:admin_pass].nil?
         end
     end
 

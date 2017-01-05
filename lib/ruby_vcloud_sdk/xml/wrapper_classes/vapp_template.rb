@@ -2,6 +2,15 @@ module VCloudSdk
   module Xml
 
     class VAppTemplate < VApp
+
+      def vm_link
+        get_nodes("Vm").first["href"]
+      end
+
+      def ovf_link
+        get_nodes("Link", {"rel" => "ovf"}, true).first["href"]
+      end
+
       def files
         get_nodes("File")
       end

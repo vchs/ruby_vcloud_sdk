@@ -7,14 +7,14 @@ module VCloudSdk
       class << self
         def wrap_document(xml, ns = nil, namespace_defintions = nil, *args)
           doc = Nokogiri::XML(xml)
-          type_name = doc.root.name
-          node_class = find_wrapper_class(type_name)
+          type_name = doc.root.name                
+          node_class = find_wrapper_class(type_name)          
           node_class.new(doc, ns, namespace_defintions, *args)
         end
 
         def wrap_node(node, ns, namespace_defintions = nil, *args)
-          type_name = node.node_name
-          node_class = find_wrapper_class(type_name)
+          type_name = node.node_name          
+          node_class = find_wrapper_class(type_name)          
           node_class.new(node, ns, namespace_defintions, *args)
         end
 
@@ -29,10 +29,11 @@ module VCloudSdk
         # TODO: We might run into a bug later if there are ever XML node types
         # of the same name but different namespace
         def find_wrapper_class(type_name)
-          # for Ruby 1.9, we would need pass false in as the 2nd parameter
-          if Xml.constants.find { |c| c.to_sym == type_name.to_sym }
-            Xml.const_get(type_name.to_sym)
-          else
+          # for Ruby 1.9, we would need pass false in as the 2nd parameter          
+          #Xml.constants.find { |c| puts "#{c.to_sym} . #{type_name.to_sym}"}     
+          if Xml.constants.find { |c| c.to_sym == type_name.to_sym }                                      
+            Xml.const_get(type_name.to_sym)            
+          else                                   
             Wrapper
           end
         end
@@ -115,7 +116,7 @@ module VCloudSdk
         @root["id"]
       end
 
-      def type
+      def type        
         @root["type"]
       end
 

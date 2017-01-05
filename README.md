@@ -27,7 +27,7 @@ Copyright (c) VMware, Inc.
            |         |
            |         |-> Vdc Storage Profile
            |
-           |-> Catalog |-> Catalog Item
+           |-> Catalog |-> Catalog Item |-> Template Vapp |-> Envelope
            |           |
            |           |-> OVF Directory
            |
