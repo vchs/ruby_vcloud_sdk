@@ -4,7 +4,7 @@ module VCloudSdk
       def initialize(xml, ns = nil, ns_definitions = nil)
         super(xml, ns, ns_definitions)
         @logger = Config.logger
-      end
+      end      
 
       def vapp_link
         get_nodes(XML_TYPE[:LINK],
@@ -51,6 +51,32 @@ module VCloudSdk
         value
       end
 
+      def operating_system
+        get_nodes("OperatingSystemSection",nil,false,OVF).first.
+            get_nodes("Description",nil,false,OVF).first.content
+      end
+
+      def vm_tools     
+          tools = get_nodes("VMWareTools")
+          return tools.first["version"] if !tools.empty?
+          return nil              
+      end
+
+      def vmrc_ticket_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "screen:acquireTicket" },
+                  true).first
+      end
+
+      def ip_address       
+        ips = []
+        get_nodes("NetworkConnection").each do |ip|          
+          ips << ip.ip_address
+          end
+        return ips if !ips.empty?
+        return nil
+      end
+      
       def reconfigure_link
         get_nodes(XML_TYPE[:LINK],
                   { rel: "reconfigureVm" },
@@ -62,6 +88,18 @@ module VCloudSdk
                   { rel: "media:insertMedia" },
                   true).first
       end
+
+      def install_vmtools_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "installVmwareTools" },
+                  true).first
+      end
+
+      def guest_customization_link
+         get_nodes("GuestCustomizationSection").first["href"]
+      end
+
+      def
 
       def eject_media_link
         get_nodes(XML_TYPE[:LINK],
@@ -92,19 +130,41 @@ module VCloudSdk
         get_nodes("ProductSection", nil, true, OVF).first
       end
 
+      def guest_customization_section
+        get_nodes("GuestCustomizationSection").first
+      end
+
+      def hard_disk_exists?(disk_id)
+          hardware_section.hard_disks.each do |disk|
+            return true if disk.disk_id == disk_id
+          end
+          return false
+      end
+
       # hardware modification methods
 
-      def add_hard_disk(capacity, bus_type, bus_sub_type)
+      def add_hard_disk(capacity, bus_type, bus_sub_type,disk_id=nil)
         section = hardware_section
         # Create a RASD item
         new_disk = WrapperFactory
                      .create_instance("Item",
                                       nil,
                                       hardware_section.doc_namespaces)
-        section.add_item(new_disk)
-        # The order matters!
+        section.add_item(new_disk)       
+        # The order matters!    
+        if !disk_id.nil?
+          ap = RASD_TYPES[:ADDRESS_ON_PARENT]
+          new_disk.add_rasd(ap)
+          new_disk.set_rasd(ap,disk_id)          
+        end      
         new_disk.add_rasd(RASD_TYPES[:HOST_RESOURCE])
         new_disk.add_rasd(RASD_TYPES[:INSTANCE_ID])
+        if !disk_id.nil?
+          p = RASD_TYPES[:PARENT]
+          new_disk.add_rasd(p)          
+          new_disk.set_rasd(RASD_TYPES[:PARENT],1)          
+        end
+               
         rt = RASD_TYPES[:RESOURCE_TYPE]
         new_disk.add_rasd(rt)
         new_disk.set_rasd(rt, HARDWARE_TYPE[:HARD_DISK])
@@ -117,6 +177,18 @@ module VCloudSdk
           "busType", VCLOUD_NAMESPACE)] = bus_type
       end
 
+      def modify_hard_disk(name,new_capacity)
+        section = hardware_section
+        disks = section.hard_disks
+        disk  = disks.find do |d|  
+                  d.element_name == name            
+                end                      
+        host_resource = disk.get_rasd(RASD_TYPES[:HOST_RESOURCE])
+        host_resource[disk.create_qualified_name(
+          "capacity", VCLOUD_NAMESPACE)] = new_capacity.to_s                                             
+      end
+
+
       def delete_hard_disk?(disk_name)
         hardware_section.hard_disks.each do |disk|
           if disk.element_name == disk_name
@@ -124,7 +196,16 @@ module VCloudSdk
             return true
           end
         end
+        false
+      end
 
+      def delete_hard_disk_by_id(disk_id)
+        hardware_section.hard_disks.each do |disk|
+          if disk.disk_id == disk_id
+            disk.node.remove
+            return true
+          end
+        end
         false
       end
 
@@ -139,6 +220,13 @@ module VCloudSdk
         item = hardware_section.memory
         item.set_rasd("VirtualQuantity", mb)
       end
+
+      def change_name(name)
+        @logger.debug("Updating name on vm #{name} to #{name} ")
+        item = hardware_section.cpu
+        item.set_rasd("VirtualQuantity", quantity)
+      end  
+
 
       # Deletes NIC from VM.  Accepts variable number of arguments for NICs.
       # To delete all NICs from VM use the splat operator

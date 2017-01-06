@@ -5,6 +5,10 @@ require_relative "internal_disk"
 require_relative "nic"
 
 module VCloudSdk
+
+  #################################################################################################
+  # This class represents a VM belonging a vApp of the Virtual Data Center.
+  #################################################################################################
   class VM
     include Infrastructure
     include Powerable
@@ -12,16 +16,39 @@ module VCloudSdk
     extend Forwardable
     def_delegator :entity_xml, :name
 
+    ###############################################################################################
+    # Initializes a VM object associated with a vCloud Session and the VMs link. 
+    # @param session   [Session] The client's session
+    # @param link      [String]  The XML representation of the VM
+    ###############################################################################################
     def initialize(session, link)
       @session = session
       @link = link
     end
+    
+    ###############################################################################################
+    # Returns the identifier of the VM (uuid) 
+    # @return      [String]  The identifier of the VM
+    ###############################################################################################
+    def id    
+      id = entity_xml.urn
+      id.split(":")[3]      
+    end
 
+    ###############################################################################################
+    # Returns the vCloud link of the VM 
+    # @return      [String]  The vCloud link of the VM
+    ###############################################################################################
     def href
       @link
     end
-
-    # returns size of memory in megabytes
+    def ent
+      entity_xml
+    end
+    ###############################################################################################
+    # Returns the memory of the VM 
+    # @return      [String]  The memory in MB of the VM
+    ###############################################################################################
     def memory
       m = entity_xml
             .hardware_section
@@ -36,7 +63,11 @@ module VCloudSdk
       memory_mb
     end
 
-    # sets size of memory in megabytes
+    ###############################################################################################
+    # Modifies the memory size of the VM.
+    # @param   size     [String]  The new memory size in MB.
+    # @throw
+    ###############################################################################################
     def memory=(size)
       fail(CloudError,
            "Invalid vm memory size #{size}MB") if size <= 0
@@ -55,7 +86,12 @@ module VCloudSdk
       self
     end
 
-    # returns number of virtual cpus of VM
+
+    ###############################################################################################
+    # Returns the number of virtual cpus of the VM.
+    # @return   [Integer]  The number of virtual cpus of the VM
+    # @throw
+    ###############################################################################################
     def vcpu
       cpus = entity_xml
               .hardware_section
@@ -67,7 +103,11 @@ module VCloudSdk
       cpus.to_i
     end
 
-    # sets number of virtual cpus of VM
+    ###############################################################################################
+    # Modifies the number of virtual cpus of the VM.
+    # @param   count     [Integer]  The new number of virtual cpus.
+    # @throw
+    ###############################################################################################
     def vcpu=(count)
       fail(CloudError,
            "Invalid virtual CPU count #{count}") if count <= 0
@@ -84,6 +124,156 @@ module VCloudSdk
                              Xml::MEDIA_TYPE[:VM])
       monitor_task(task)
       self
+    end
+
+    def name=(name)
+      payload = entity_xml
+      payload.name = name
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
+    end
+
+    ###############################################################################################
+    # Reconfigures the VM with the parameters passed in a hash.
+    # All params are optional.
+    # @param   options     [Hash]  The parameters of the VM.
+    #                       :name         [String] The name of the VM
+    #                       :description  [String] The description of the VM
+    #                       :vcpu         [String] The value for number of CPU
+    #                       :memory       [String] The value for memory in MB
+    #                       :nics         [Array]   Array of Hashes representing the nics 
+    #                                              to attach to VM
+    #                                       :network_name [String] The network to attach nic
+    #                                       :ip           [String] Optional. The IP of the nic
+    #                                       :mac          [String] Optional. The MAC of the nic
+    #                       :disks        [Array]   Array of Hases representing the disks to 
+    #                                              attach to VM
+    #                                        :id          [String] Disk's identifier.
+    #                                        :size        [String] Size of disk in MB.                                         
+    #                       :vapp_name    [String] The name of the vApp
+    # @return [VM]
+    ###############################################################################################
+    def reconfigure(options)           
+      payload             = entity_xml
+      payload.name        = options[:name] if !options[:name].nil?
+      payload.description = options[:description] if !options[:name].nil?
+      payload.change_cpu_count(options[:vcpu]) if !options[:name].nil?
+      payload.change_memory(options[:memory]) if !options[:name].nil?
+      nic_index = add_nic_index
+
+      #NETWORK CONFIGURATION
+      if options[:nics] !=[]
+        #ADD NICS
+        options[:nics].each do |nic|
+
+            mac_address = nic[:mac]
+
+            if !mac_address or (mac_address and !find_nic_by_mac(mac_address))              
+              
+              network_name = nic[:network_name]
+              ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL]
+
+              ip = ""
+
+              if !nic[:ip].nil?
+                ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:MANUAL] 
+                ip = nic[:ip]
+              end
+                        
+
+              # Add Network to vapp
+              vapp.add_network_by_name(network_name) if !vapp.list_networks.include? "#{network_name}"
+              # Add NIC          
+              payload.hardware_section.add_item(nic_params(payload.hardware_section,
+                             nic_index,
+                             network_name,
+                             ip_addressing_mode,
+                             ip))
+              # Connect NIC
+              payload.network_connection_section.add_item(network_connection_params(payload.network_connection_section,
+                                            nic_index,
+                                            network_name,
+                                            ip_addressing_mode,
+                                            ip))
+              #Add the mac address passed
+              if mac_address
+                payload
+                .network_connection_section
+                .network_connections.last
+                .mac_address = mac_address
+              end
+              nic_index = nic_index + 1  
+            end
+        end
+      end
+
+      #DELETE NICS
+      macs = []
+      options[:nics].each do |nic|
+        macs.push(nic[:mac])
+      end   
+
+      if macs.empty?
+        payload.delete_nics(*nics)
+      else
+        nics.each do |nc| 
+          options[:nics].each do |nic|         
+            payload.delete_nics(nc) if !macs.include? "#{nc.mac_address}"                      
+          end
+        end
+      end
+
+      #DISK CONFIGURATION
+
+      if !options[:disks].empty?
+
+          options[:disks].each do |disk|
+
+            capacity = disk[:size].to_i                   
+            fail(CloudError,"Invalid size in MB #{capacity}") if capacity <= 0
+            disk_id = disk[:id]
+            if !payload.hard_disk_exists?(disk_id)                             
+                bus_type = "scsi"                              
+                bus_type = Xml::BUS_TYPE_NAMES[bus_type.downcase]
+                fail(CloudError,"Invalid bus type!") unless bus_type
+
+                bus_sub_type = "lsilogic" 
+                bus_sub_type = Xml::BUS_SUB_TYPE_NAMES[bus_sub_type.downcase]
+                fail(CloudError,"Invalid bus sub type!") unless bus_sub_type            
+            
+                payload.add_hard_disk(capacity.to_s, bus_type, bus_sub_type,disk_id)                
+            end                       
+          end      
+
+      end      
+
+      #DELETE DISKS  
+
+      disks = []
+      options[:disks].each do |disk|
+        disks.push(disk[:id])
+      end
+
+      internal_disks.each do |i_disk|
+        payload.delete_hard_disk_by_id(i_disk.id) if !disks.include?(i_disk.id)
+      end
+
+      task = connection.post(payload.reconfigure_link.href,
+                             payload,
+                             Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
+    end
+
+    ###############################################################################################
+    # Returns the IP addresses assigned to the VM or nil.
+    # @return   [Array or nil]  The IP addresses or nil.
+    ###############################################################################################
+    def ip_address       
+      entity_xml.ip_address
     end
 
     def list_networks
@@ -104,6 +294,24 @@ module VCloudSdk
           VCloudSdk::NIC.new(network_connection,
                              network_connection.network_connection_index == primary_index)
         end
+    end
+
+    def find_nic_by_mac(mac)
+      primary_index = entity_xml
+                        .network_connection_section
+                        .primary_network_connection_index
+       net = entity_xml
+        .network_connection_section
+        .network_connections.find do |n|
+          n.mac_address == mac.to_s
+        end 
+      if net     
+        return VCloudSdk::NIC.new(net,net.network_connection_index == primary_index)
+      else
+        return false
+        fail(CloudError,
+           "No NIC found with MAC #{mac} in VM #{name}")
+      end       
     end
 
     def independent_disks
@@ -129,6 +337,11 @@ module VCloudSdk
       end
     end
 
+    ###############################################################################################
+    # Attaches an independent disk to VM.
+    # @param   disk     [Disk]  The disk object to attach.
+    # @throw
+    ###############################################################################################
     def attach_disk(disk)
       fail CloudError,
            "Disk '#{disk.name}' of link #{disk.href} is attached to VM '#{disk.vm.name}'" if disk.attached?
@@ -200,7 +413,9 @@ module VCloudSdk
     def add_nic(
           network_name,
           ip_addressing_mode = Xml::IP_ADDRESSING_MODE[:POOL],
-          ip = nil)
+          mac_address = nil,
+          ip = nil) 
+
       fail CloudError,
            "Invalid IP_ADDRESSING_MODE '#{ip_addressing_mode}'" unless Xml::IP_ADDRESSING_MODE
                                                                        .each_value
@@ -214,10 +429,9 @@ module VCloudSdk
            "Network #{network_name} is not added to parent VApp #{vapp.name}" unless vapp
                                                                                        .list_networks
                                                                                        .any? { |n| n == network_name }
-
       payload = entity_xml
       fail CloudError,
-           "VM #{name} is powered-on and cannot add NIC." if is_status?(payload, :POWERED_ON)
+           "VM #{name} is powered-on and vmware tools are not installed, cannot add NIC." if is_status?(payload, :POWERED_ON) && !self.vmtools? ##si està power-on i no té les vmware tools, error
 
       nic_index = add_nic_index
 
@@ -232,7 +446,6 @@ module VCloudSdk
                              network_name,
                              ip_addressing_mode,
                              ip))
-
       # Connect NIC
       payload
         .network_connection_section
@@ -242,6 +455,14 @@ module VCloudSdk
                                             ip_addressing_mode,
                                             ip))
 
+      # Si li subministrem una mac, li afegeix la que li diem
+      if mac_address
+        payload
+          .network_connection_section
+          .network_connections.last
+          .mac_address = mac_address
+      end
+      
       task = connection.post(payload.reconfigure_link.href,
                              payload,
                              Xml::MEDIA_TYPE[:VM])
@@ -261,6 +482,39 @@ module VCloudSdk
       monitor_task(task)
       self
     end
+
+    def operating_system
+      entity_xml.operating_system
+    end
+
+    def vmtools_version 
+        entity_xml.vm_tools
+    end
+
+    def vmtools?    
+       !entity_xml.vm_tools.nil?   
+    end
+
+    def acquire_VMRC_ticket
+
+        fail(CloudError,
+           "The VM must be powered on") if self.status != "POWERED_ON"
+
+        Config.logger.info(
+          "Obtaining VMware VMware Remote Console Ticket on #{name} ...")
+        task = connection.post(entity_xml.vmrc_ticket_link.href,nil)
+        task = task.nil? ? nil : task.content                
+       
+    end
+
+    def install_vmtools
+      Config.logger.info(
+        "Mounting VMware tools on #{name} ...")
+      task = connection.post(entity_xml.install_vmtools_link.href,nil)
+      monitor_task(task)
+      self 
+    end    
+   
 
     def product_section_properties
       product_section = entity_xml.product_section
@@ -294,7 +548,8 @@ module VCloudSdk
     def create_internal_disk(
           capacity,
           bus_type = "scsi",
-          bus_sub_type = "lsilogic")
+          bus_sub_type = "lsilogic",
+          disk_id = nil)
 
       fail(CloudError,
            "Invalid size in MB #{capacity}") if capacity <= 0
@@ -312,15 +567,15 @@ module VCloudSdk
         .info "Creating internal disk #{name} of #{capacity}MB."
 
       payload = entity_xml
-      payload.add_hard_disk(capacity, bus_type, bus_sub_type)
+      payload.add_hard_disk(capacity, bus_type, bus_sub_type,disk_id)
 
       task = connection.post(payload.reconfigure_link.href,
                              payload,
-                             Xml::MEDIA_TYPE[:VM])
+                             Xml::MEDIA_TYPE[:VM])      
       monitor_task(task)
       self
     end
-
+    
     def delete_internal_disk_by_name(name)
       payload = entity_xml
 
@@ -331,6 +586,33 @@ module VCloudSdk
       task = connection.post(payload.reconfigure_link.href,
                              payload,
                              Xml::MEDIA_TYPE[:VM])
+      monitor_task(task)
+      self
+    end
+
+    ############################################################################################################
+    # Set up the options for the OS of the VM
+    # All params are optional.
+    # @param   customization     [Hash]  The parameters of the guestOS customization. All parameters are 
+    #                                    optional.
+    #                             :computer_name      [String]  The name of the computer
+    #                             :admin_pass         [String]  The password for the Administrator/root user                             
+    #                             :custom_script      [String]  The customization script (Max 49,000 characters)
+    #                             :sid                [Boolean] Applicable for Windows VMs and will run Sysprep 
+    #                                                           to change Windows SID.
+    #                             :auto_password      [Boolean] Generates an automatic Administrator's password.
+    #                          
+    # @return [VM]
+    ############################################################################################################
+    def customization(customization)
+      link    = entity_xml.guest_customization_link
+      payload = connection.get(link)
+  
+      payload = add_customization(payload,customization)    
+    
+      task = connection.put(link,
+                            payload,
+                            Xml::MEDIA_TYPE[:GUEST_CUSTOMIZATION_SECTION])
       monitor_task(task)
       self
     end
@@ -407,6 +689,18 @@ module VCloudSdk
       end
     end
 
+    def add_customization(section, customization)
+      section
+      .tap do |params|
+          params.enable          
+          params.computer_name = customization[:computer_name] unless customization[:computer_name].nil?
+          params.admin_pass    = customization[:admin_pass] unless customization[:admin_pass].nil?
+          params.script        = customization[:custom_script] unless customization[:custom_script].nil?
+          params.change_sid    = customization[:sid]
+          params.auto_password = customization[:auto_password] unless customization[:auto_password].nil? or !customization[:admin_pass].nil?
+        end
+    end
+
     def product_section_list_params(properties)
       Xml::WrapperFactory.create_instance("ProductSectionList").tap do |params|
         properties.each do |property|
@@ -417,4 +711,5 @@ module VCloudSdk
 
     BYTES_PER_MEGABYTE = 1_048_576 # 1048576 = 1024 * 1024 = 2^20
   end
+  #################################################################################################
 end

@@ -1,6 +1,7 @@
 module VCloudSdk
   module Xml
     class VApp < Wrapper
+
       def description
         get_nodes("Description").first.content
       end
@@ -11,6 +12,10 @@ module VCloudSdk
 
       def reboot_link
         get_nodes("Link", {"rel" => "power:reboot"}, true).first
+      end
+
+      def reset_link
+        get_nodes("Link", {"rel" => "power:reset"}, true).first
       end
 
       def tasks
@@ -27,13 +32,35 @@ module VCloudSdk
                          true).first
       end
 
+      def create_snapshot_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "snapshot:create"},
+                  true).first
+      end
+
+      def revert_snapshot_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "snapshot:revertToCurrent"},
+                  true).first
+      end
+
+      def remove_snapshot_link
+        get_nodes(XML_TYPE[:LINK],
+                  { rel: "snapshot:removeAll"},
+                  true).first
+      end
+
+      def snapshot_section
+          get_nodes("SnapshotSection").first
+      end
+
       def vdc_link
         get_nodes(XML_TYPE[:LINK],
                   { type: MEDIA_TYPE[:VDC] },
                   true).first
       end
 
-      def vms
+      def vms        
         get_nodes("Vm")
       end
 

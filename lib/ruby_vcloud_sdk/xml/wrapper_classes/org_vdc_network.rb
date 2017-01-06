@@ -10,6 +10,24 @@ module VCloudSdk
                   { type: MEDIA_TYPE[:ALLOCATED_NETWORK_IPS] },
                   true).first
       end
+
+      def description
+        get_nodes("Description").first.content        
+      end
+
+      def gateway
+        get_nodes(:IpScope).first.
+          get_nodes("Gateway").first.content
+      end
+
+      def netmask
+        get_nodes(:IpScope).first.
+          get_nodes("Netmask").first.content
+      end
+
+      def fence_mode
+        get_nodes("FenceMode").first.content
+      end
     end
   end
 end

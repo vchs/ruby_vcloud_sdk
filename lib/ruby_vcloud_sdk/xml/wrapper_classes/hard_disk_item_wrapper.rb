@@ -17,9 +17,17 @@ module VCloudSdk
       def capacity_mb
         host_resource[HOST_RESOURCE_ATTRIBUTE[:CAPACITY]]
       end
+      
+      def capacity_mb= new_capacity           
+        host_resource[HOST_RESOURCE_ATTRIBUTE[:CAPACITY]] = new_capacity
+      end
 
       def disk_id
         get_rasd_content(RASD_TYPES[:ADDRESS_ON_PARENT])
+      end
+
+      def disk_id= new_id
+        set_rasd_content(new_id,RASD_TYPES[:ADDRESS_ON_PARENT])
       end
 
       def instance_id
@@ -40,6 +48,10 @@ module VCloudSdk
 
       def element_name
         get_rasd_content(RASD_TYPES[:ELEMENT_NAME])
+      end
+
+      def element_name= new_name
+        set_rasd_content(new_name,RASD_TYPES[:ELEMENT_NAME])
       end
 
       def host_resource

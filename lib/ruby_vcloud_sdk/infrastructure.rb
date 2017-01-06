@@ -1,6 +1,9 @@
 module VCloudSdk
-  # Shared functions by classes such as Client, Catalog and VDC
-  # Make sure instance variable @session is available
+
+  ###############################################################################################
+  # This module defines the shared functions by classes such as Client, Catalog and VDC
+  # Make sure instance variable @session is available 
+  ###############################################################################################
   module Infrastructure
     ERROR_STATUSES = [Xml::TASK_STATUS[:ABORTED], Xml::TASK_STATUS[:ERROR],
                       Xml::TASK_STATUS[:CANCELED]]
@@ -8,18 +11,41 @@ module VCloudSdk
 
     private
 
+    #############################################################################################
+    # Returns the Virtual Data Center identified by name. 
+    # @return         [VDC]  The VDC.
+    #############################################################################################
     def find_vdc_by_name(name)
       vdc_link = @session.org.vdc_link(name)
       fail ObjectNotFoundError, "VDC #{name} not found" unless vdc_link
       VCloudSdk::VDC.new(@session, vdc_link)
     end
 
+    #############################################################################################
+    # Obtain if the VDC identified by name exists.
+    # @return         [Boolean]  If the VDC identified by name exists, returns "True".
+    #############################################################################################
     def vdc_exists?(name)
       @session.org.vdcs.any? do |vdc|
         vdc.name == name
       end
     end
 
+    #############################################################################################
+    # Returns the list of VDC existing.
+    # @return         [VDC]  The array of VDC.
+    #############################################################################################
+    def vdcs
+        @session.org.vdcs.map do |vdc_link|
+        VCloudSdk::VDC.new(@session, vdc_link)
+      end
+
+    end
+
+    #############################################################################################
+    # Returns the Network identified by name. 
+    # @return         [Network]  The network returned.
+    #############################################################################################
     def find_network_by_name(name)
       @session.org.networks.each do |network_link|
         if network_link.name == name
@@ -30,30 +56,50 @@ module VCloudSdk
       fail ObjectNotFoundError, "Network '#{name}' is not found"
     end
 
+    #############################################################################################
+    # Obtain if the network identified by name exists.
+    # @return         [Boolean]  If the network identified by name exists, returns "True".
+    #############################################################################################
     def network_exists?(name)
       @session.org.networks.any? do |network|
         network.name == name
       end
     end
 
+    #############################################################################################
+    # Returns the list of catalogs.
+    # @return         [Catalog]  The array of existing catalogs.
+    #############################################################################################
     def catalogs
       @session.org.catalogs.map do |catalog_link|
         VCloudSdk::Catalog.new(@session, catalog_link)
       end
     end
 
+    #############################################################################################
+    # Returns the name's list of Networks created in the Virtual Data Center. 
+    # @return         [String]  The array of Network's names.
+    #############################################################################################
     def list_catalogs
       @session.org.catalogs.map do |catalog_link|
         catalog_link.name
       end
     end
 
+    #############################################################################################
+    # Obtain if the catalog identified by name exists.
+    # @return         [Boolean]  If the catalog identified by name exists, returns "True".
+    #############################################################################################
     def catalog_exists?(name)
       @session.org.catalogs.any? do |catalog|
         catalog.name == name
       end
     end
 
+    #############################################################################################
+    # Returns the catalog identified by name. 
+    # @return         [Catalog]  The catalog returned.
+    #############################################################################################
     def find_catalog_by_name(name)
       @session.org.catalogs.each do |catalog_link|
         if catalog_link.name == name
@@ -64,10 +110,17 @@ module VCloudSdk
       fail ObjectNotFoundError, "Catalog '#{name}' is not found"
     end
 
+    #############################################################################################
+    # Returns the object's connection. 
+    # @return         [Connection]  The connection returned.
+    #############################################################################################
     def connection
       @session.connection
     end
 
+    #############################################################################################
+    # Monitores the task passed as a argument.
+    #############################################################################################
     def monitor_task(
       task,
       time_limit = @session.time_limit[:default],
@@ -124,23 +177,39 @@ module VCloudSdk
            "Task #{task.operation} did not complete within limit of #{time_limit} seconds."
     end
 
+    #############################################################################################
+    # Obtain if the task has progressed or not.
+    # @return         [Boolean]  If the task has progressed, returns "True".
+    #############################################################################################
     def task_progressed?(current_task, prev_progress, prev_status)
       (current_task.progress && (current_task.progress != prev_progress)) ||
         (current_task.status && (current_task.status != prev_status))
     end
 
+    #############################################################################################
+    # Obtain if the task has succeeded or not.
+    # @return         [Boolean]  If the task has succeeded, returns "True".
+    #############################################################################################
     def task_is_success(current_task, success = SUCCESS_STATUS)
       success.find do |s|
         s.downcase == current_task.status.downcase
       end
     end
 
+    #############################################################################################
+    # Obtain if the task has an error or not.
+    # @return         [Boolean]  If the task has an error, returns "True".
+    #############################################################################################
     def task_has_error(current_task, error_statuses = ERROR_STATUSES)
       error_statuses.find do |s|
         s.downcase == current_task.status.downcase
       end
     end
 
+    #############################################################################################
+    # Returns the object's XML representation. 
+    # @return         [String]  The XML representation of the object.
+    #############################################################################################
     def entity_xml
       connection.get(@link)
     end
@@ -154,4 +223,5 @@ module VCloudSdk
       end
     end
   end
+  ###############################################################################################
 end

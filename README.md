@@ -1,10 +1,45 @@
-## Ruby VCloud SDK is a gem to simplify making vCloud Director API calls.
+#Ruby VCloud SDK
+
+Ruby VCloud SDK is a gem to simplify making vCloud Director API calls.
 Copyright (c) VMware, Inc.
+
+## Object Structure
+
+
+
+    Client |-> VDC   |-> Vapp    |-> Vm     |-> Nic
+           |         |           |          |
+           |         |           |          |-> Internal Disk
+           |         |           |          |
+           |         |           |          |-> Disk 
+           |         |           |          |
+           |         |           |          |-> Vapp
+           |         |           |
+           |         |           |-> Network
+           |         |
+           |         |-> Network |-> IpRanges
+           |         |
+           |         |-> Disk    |-> Vm
+           |         |
+           |         |-> Resources
+           |         |
+           |         |-> Edge Gateway |-> IpRanges
+           |         |
+           |         |-> Vdc Storage Profile
+           |
+           |-> Catalog |-> Catalog Item |-> Template Vapp |-> Envelope
+           |           |
+           |           |-> OVF Directory
+           |
+           |-> RightRecord
+           |
+           |-> Session |-> Connection
 
 ## Object Model
 
-  Client
-  
+
+#### Client
+ ------
     find_vdc_by_name
       parameters:
         name (String): name of VDC
@@ -55,7 +90,8 @@ Copyright (c) VMware, Inc.
       throws:
         'RestClient::BadRequest' for un-expected errors
     
-  VDC
+#### VDC
+  ---
     
     storage_profiles
       returns: array of storage profile objects
@@ -100,6 +136,15 @@ Copyright (c) VMware, Inc.
         vapp object matching name
       throws:
         'ObjectNotFoundError' when vapp with the name does not exist
+        'RestClient::BadRequest' for un-expected errors
+
+    find_vapp_by_id
+      parameters:
+        id (String): id of vapp
+      returns:
+        vapp object matching id
+      throws:
+        'ObjectNotFoundError' when vapp with the id does not exist
         'RestClient::BadRequest' for un-expected errors
 
     vapp_exists?
@@ -202,7 +247,8 @@ Copyright (c) VMware, Inc.
         'CloudError' when any disk deletion failure occurs
         'RestClient::BadRequest' for un-expected errors
 
-  Catalog
+#### Catalog
+  -------
   
      items
        returns: array of catalog item objects
@@ -299,7 +345,8 @@ Copyright (c) VMware, Inc.
            'ApiError' when instantiating vapp template task is not successful
            'RestClient::BadRequest' for un-expected error
      
-  Network
+#### Network
+  -------
   
      ip_ranges
         returns: IpRanges object
@@ -311,7 +358,17 @@ Copyright (c) VMware, Inc.
         throws:
           'RestClient::BadRequest' for un-expected errors
      
-  VApp
+#### VApp
+  ----
+
+     id
+       returns: vApp's id
+
+     name
+       returns: vApp's name
+
+     status:
+        returns: vApp's status
   
      delete
         returns: nil
@@ -331,6 +388,15 @@ Copyright (c) VMware, Inc.
           'CloudError' if power_off_link of VApp is missing
           'VappSuspendedError' if VApp is suspended
           'RestClient::BadRequest' for un-expected errors
+
+     reboot
+        returns: vApp object
+
+     reset
+        returns: vApp object
+
+     suspend:
+        returns: vApp object
 
      recompose_from_vapp_template
         parameters:
@@ -403,7 +469,31 @@ Copyright (c) VMware, Inc.
          'ObjectNotFoundError' when network with the name does not exist
          'RestClient::BadRequest' for un-expected errors
 
-  VM
+     create_snapshot
+        parameters: 
+          snapshot_hash (Hash): hash with :name and :description
+        returns: nil
+        throws:
+
+     remove_snapshot        
+        returns: nil
+        throws:
+
+     revert_snapshot        
+        returns: nil
+        throws:
+
+#### VM
+  ---
+
+     id
+       returns: VM's id
+
+     status
+        returns: VM's status
+
+     href
+       returns: VM's href
 
      vcpu:
        returns: number of virtual cpus of VM
@@ -433,6 +523,9 @@ Copyright (c) VMware, Inc.
         throws:
           'CloudError' when the memory size is less than or equal to 0
           'RestClient::BadRequest' for un-expected errors
+
+    ip_address
+        returns: The IP address(es) of the VM
 
     nics
       returns: array of NIC objects
@@ -479,6 +572,17 @@ Copyright (c) VMware, Inc.
          'VmSuspendedError' if VM is suspended
          'RestClient::BadRequest' for un-expected errors
 
+     reboot
+        returns: VM object
+
+     reset
+        returns: VM object
+      
+     suspend:
+        returns: VM object
+
+     undeploy:
+
      insert_media
        parameters:
          catalog_name (String): name of catalog
@@ -522,6 +626,9 @@ Copyright (c) VMware, Inc.
          'ObjectNotFoundError' if specified nic index does not exist
          'RestClient::BadRequest' for un-expected errors
 
+    install_vmtools
+        returns: nil
+
      product_section_properties
         returns:
           array of hash values representing properties of product section of VM
@@ -563,14 +670,16 @@ Copyright (c) VMware, Inc.
          'ObjectNotFoundError' if no disk matching the given name
          'RestClient::BadRequest' for un-expected errors
 
-  VdcStorageProfile
+#### VdcStorageProfile
+  -----------------
   
      available_storage
        returns:
          integer number of available storage in MB, i.e. storageLimitMB - storageUsedMB
          -1 if 'storageLimitMB' is 0
 
-  EdgeGateway
+#### EdgeGateway
+  -----------
 
      public_ips:
        returns: IpRanges object
@@ -579,19 +688,20 @@ Copyright (c) VMware, Inc.
 
 
 ## Example
+
   VCloud_SDK is straightforward to use. Here is an example of creating vApp from vApp template.
   
     1. Create vCloud client object
         
-       client = VCloudSdk::Client.new(url, username, password)
+       `client = VCloudSdk::Client.new(url, username, password)`
 
        Note that the parameter 'username' should be the VDC user_name@organization_name. For example,
-	   the VDC user name is admin, the organization name is myorg, then the 'username' parameter 
+     the VDC user name is admin, the organization name is myorg, then the 'username' parameter 
        here should be admin@myorg. 
-	    
+      
     2. Find the catalog where the vapp template is stored
-       catalog = client.find_catalog_by_name(catalog_name)
+       `catalog = client.find_catalog_by_name(catalog_name)`
 
     3. Create vApp from that vapp template
-	   vapp = instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)
+     `vapp = catalog.instantiate_vapp_template(vapp_template_name, vdc_name, vapp_name)`
        
